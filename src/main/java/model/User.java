@@ -4,6 +4,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.text.RandomStringGenerator;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class User {
     private int highScore;
     private int rank;
@@ -42,10 +45,18 @@ public class User {
     }
 
     public static boolean checkUsernameFormat(String username) {
-        return true;
+        return username.matches("\\w+");
     }
 
     public static boolean checkPasswordFormat(String password) {
+        return password.matches("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\\W)^.{6,}");
+    }
+
+    public static boolean checkEmailFormat(String email){
+        Matcher matcher = Pattern
+                .compile("([0-9a-zA-Z_.]*)@([0-9a-zA-Z_.]*)\\.([0-9a-zA-Z_.]*)").matcher(email);
+        if (!matcher.matches()) return false;
+        for (int i = 1; i <= 3; i++) if (matcher.group(i).equals("")) return false;
         return true;
     }
 
