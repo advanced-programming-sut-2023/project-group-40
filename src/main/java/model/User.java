@@ -1,16 +1,24 @@
 package model;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.text.RandomStringGenerator;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class User {
     private int highScore;
     private int rank;
-    private boolean isLoginStayed;
     private String username;
     private String passwordHash;
     private String nickname;
@@ -18,8 +26,9 @@ public class User {
     private String slogan;
     private String securityAnswer;
     private int securityQuestionNumber;
-    private final String PATH = "src/main/resources/users.json";
+    private static final String PATH = "src/main/resources/users.json";
     private static ArrayList<User> users = new ArrayList<>();
+    private boolean isStayLoggedIn;
 
     public User(String username, String password, String nickname, String email, String slogan) {
         this.username = username;
@@ -81,16 +90,36 @@ public class User {
         users.remove(user);
     }
 
-    public User getUserByUsername(String username) {
-        return null;
+    public static User getUserByUsername(String username) {
+        Stream<User> stream = users.stream().filter(user -> user.username.equals(username));
+        Optional<User> user = stream.findAny();
+        return user.orElse(null);
     }
 
-    public static void fetchDatabase(){
-
+    public static User getStayedLoginUser(){
+        Stream<User> stream = users.stream().filter(user -> user.isStayLoggedIn = true);
+        Optional<User> user = stream.findAny();
+        return user.orElse(null);
+    }
+    public static void fetchDatabase() {
+        if(!new File(PATH).exists()) return;
+        try (FileReader reader = new FileReader(PATH)) {
+            users = new Gson().fromJson(reader, new TypeToken<List<User>>() {}.getType());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void updateDatabase(){
-
+    public static void updateDatabase() throws IOException {
+        File file = new File(PATH);
+        if(!file.exists()) file.createNewFile();
+        try (FileWriter writer = new FileWriter(PATH,false)) {
+            writer.write(new Gson().toJson(users));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setUsername(String username) {
