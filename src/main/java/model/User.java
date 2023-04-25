@@ -82,7 +82,7 @@ public class User {
         return users;
     }
 
-    public void addUser(User user) {
+    public static void addUser(User user) {
         users.add(user);
     }
 
