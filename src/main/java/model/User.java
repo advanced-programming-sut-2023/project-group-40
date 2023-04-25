@@ -20,7 +20,7 @@ public class User {
     private int highScore;
     private int rank;
     private String username;
-    private final String passwordHash;
+    private String passwordHash;
     private String nickname;
     private String email;
     private String slogan;
@@ -69,6 +69,10 @@ public class User {
         return true;
     }
 
+    public void setPasswordHash(String password) {
+        this.passwordHash = generatePasswordHash(password);
+    }
+
     public static boolean isUsernameExists(String username){
         return users.stream().anyMatch(user -> user.username.equals(username));
     }
@@ -94,6 +98,11 @@ public class User {
         Stream<User> stream = users.stream().filter(user -> user.username.equals(username));
         Optional<User> user = stream.findAny();
         return user.orElse(null);
+    }
+
+
+    public String getSecurityAnswer() {
+        return securityAnswer;
     }
 
     public static User getStayedLoginUser(){
@@ -173,5 +182,9 @@ public class User {
 
     public static String generatePasswordHash(String password){
         return new DigestUtils("SHA3-256").digestAsHex(password);
+    }
+
+    public void setStayLoggedIn(boolean stayLoggedIn) {
+        isStayLoggedIn = stayLoggedIn;
     }
 }
