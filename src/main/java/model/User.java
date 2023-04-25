@@ -174,4 +174,8 @@ public class User {
     public static String generatePasswordHash(String password){
         return new DigestUtils("SHA3-256").digestAsHex(password);
     }
+
+    public void setStayLoggedIn(boolean stayLoggedIn) {
+        isStayLoggedIn = stayLoggedIn;
+    }
 }
