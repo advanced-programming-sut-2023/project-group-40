@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class MainMenu {
-    public static void run(Scanner scanner){
+    public static void run(){
     }
     public static String enterProfileMenu(Matcher matcher){
         return null;
