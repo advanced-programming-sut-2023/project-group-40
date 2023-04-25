@@ -35,7 +35,8 @@ public class LoginMenu {
         RegisterMenu.run();
         return null;
     }
-    public static String forgetPassword() {
-        return null;
+    public static String forgetPassword(Matcher matcher) {
+        String username = matcher.group("username");
+        return LoginMenuController.forgetPassword(username);
     }
 }
