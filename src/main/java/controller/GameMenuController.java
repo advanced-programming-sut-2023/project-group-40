@@ -146,4 +146,8 @@ public class GameMenuController {
     public static String nextTurn(){
         return null;
     }
+
+    public static void setCurrentGovernment(Government currentGovernment) {
+        GameMenuController.currentGovernment = currentGovernment;
+    }
 }

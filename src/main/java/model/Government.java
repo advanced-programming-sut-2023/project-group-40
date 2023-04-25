@@ -3,6 +3,8 @@ package model;
 import view.TradeMenu;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class Government {
     private static ArrayList<Government> governments = new ArrayList<>();
@@ -51,5 +53,11 @@ public class Government {
 
     public void setPopularity(int popularity) {
         this.popularity = popularity;
+    }
+
+    public static Government getGovernmentByUser(User user) {
+        Stream<Government> stream = governments.stream().filter(government -> government.owner == user);
+        Optional<Government> government = stream.findAny();
+        return government.orElse(null);
     }
 }
