@@ -1,5 +1,6 @@
 package model;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.text.RandomStringGenerator;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ public class User {
     private int rank;
     private boolean isLoginStayed;
     private String username;
-    private String password;
+    private String passwordHash;
     private String nickname;
     private String email;
     private String slogan;
@@ -19,7 +20,7 @@ public class User {
 
     public User(String username, String password, String nickname, String email, String slogan) {
         this.username = username;
-        this.password = password;
+        this.passwordHash = generatePasswordHash(password);
         this.nickname = nickname;
         this.email = email;
         this.slogan = slogan;
@@ -117,8 +118,8 @@ public class User {
         return username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
     public String getNickname() {
@@ -131,5 +132,9 @@ public class User {
 
     public String getSlogan() {
         return slogan;
+    }
+
+    public static String generatePasswordHash(String password){
+        return new DigestUtils("SHA3-256").digestAsHex(password);
     }
 }
