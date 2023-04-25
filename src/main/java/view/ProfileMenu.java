@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class ProfileMenu {
-    public static void run(Scanner scanner){
+    public static void run(){
     }
     public static String changeUsername(Matcher matcher){
         return null;

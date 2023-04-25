@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class RegisterMenu {
-    public static void run(Scanner scanner){
+    public static void run(){
     }
     public static String register (Matcher matcher){
         return null;
