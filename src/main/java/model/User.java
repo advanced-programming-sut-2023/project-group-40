@@ -1,5 +1,7 @@
 package model;
 
+import org.apache.commons.text.RandomStringGenerator;
+
 import java.util.ArrayList;
 public class User {
     private int highScore;
@@ -24,7 +26,15 @@ public class User {
     }
 
     public static String generateRandomPassword(){
-        return null;
+        String chars = "abcdefghijklmnopqrstuvwxyz";
+        chars += chars.toUpperCase();
+        chars += "0123456789!@#$%";
+        RandomStringGenerator passwordGenerator = new RandomStringGenerator.Builder().selectFrom(chars.toCharArray()).build();
+        String password;
+        while(true){
+            password = passwordGenerator.generate(16);
+            if(checkPasswordFormat(password)) return password;
+        }
     }
     public static String generateRandomSlogan(){
         return null;
