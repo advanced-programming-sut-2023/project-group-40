@@ -60,13 +60,13 @@ public class User {
         return true;
     }
 
-    public static boolean isUsernameExists(){
-       return true;
+    public static boolean isUsernameExists(String username){
+        return users.stream().anyMatch(user -> user.username.equals(username));
+    }
+    public static boolean isEmailExists(String email){
+        return users.stream().anyMatch(user -> user.email.equalsIgnoreCase(email));
     }
 
-    public static boolean isEmailExists(){
-        return true;
-    }
 
 
     public ArrayList<User> getUsers() {
@@ -93,21 +93,18 @@ public class User {
 
     }
 
-    public void setUsername(String username){
-
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setPassword(String password){
-
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setNickname(String nickname){
-
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
-    public void setEmail(String email){
-
-    }
 
     public void setHighScore(int highScore) {
         this.highScore = highScore;
