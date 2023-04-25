@@ -152,6 +152,10 @@ public class User {
         this.rank = rank;
     }
 
+    public void setSlogan(String slogan) {
+        this.slogan = slogan;
+    }
+
     public int getHighScore() {
         return highScore;
     }
@@ -186,5 +190,9 @@ public class User {
 
     public void setStayLoggedIn(boolean stayLoggedIn) {
         isStayLoggedIn = stayLoggedIn;
+    }
+
+    public boolean checkPassword(String password) {
+        return generatePasswordHash(password).equals(this.passwordHash);
     }
 }
