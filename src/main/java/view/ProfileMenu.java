@@ -39,14 +39,21 @@ public class ProfileMenu {
     }
 
     public static String displayHighScore(Matcher matcher){
-        return null;
+        return ProfileMenuController.displayHighScore();
     }
 
     public static String displayRank(Matcher matcher){
-        return null;
+        return ProfileMenuController.displayRank();
+    }
+    public static String displaySlogan(Matcher matcher) {
+        return ProfileMenuController.displaySlogan();
     }
 
     public static String displayProfile(Matcher matcher){
-        return null;
+        return ProfileMenuController.displayProfile();
+    }
+
+    public static String removeSlogan(){
+        return ProfileMenuController.removeSlogan();
     }
 }

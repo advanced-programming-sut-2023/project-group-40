@@ -10,7 +10,7 @@ public class ProfileMenuController {
         if (!User.checkUsernameFormat(username)) return "username is invalid!";
         if (User.isUsernameExists(username)) return "username is exists!";
         currentUser.setUsername(username);
-        //return "username changed!";
+        return "username changed!";
     }
     public static String changePassword(String oldPassword, String newPassword){
         if (oldPassword == null || oldPassword.equals("")) return "old-password is empty!";
@@ -45,15 +45,30 @@ public class ProfileMenuController {
     }
 
     public static String displayHighScore(){
-        return null;
+        return "your highscore: " + currentUser.getHighScore();
     }
 
     public static String displayRank(){
-        return null;
+        return "your rank: " + currentUser.getRank();
+    }
+    public static String displaySlogan() {
+        String slogan = currentUser.getSlogan();
+        if(slogan == null || slogan.equals("")) return "slogan is empty!";
+        return "your slogan: " + slogan;
+    }
+    public static String displayProfile(){
+        String result = "username: " + currentUser.getUsername() + '\n';
+        result += "nickname: " + currentUser.getNickname() + '\n';
+        result += "email: " + currentUser.getEmail() + '\n';
+        result += "rank: " + currentUser.getRank() + '\n';
+        result += "highscore: " + currentUser.getHighScore() + '\n';
+        result += "slogan: " + currentUser.getSlogan();
+        return result;
     }
 
-    public static String displayProfile(){
-        return null;
+    public static String removeSlogan(){
+        currentUser.setSlogan(null);
+        return "remove slogan";
     }
 
     public static void setCurrentUser(User currentUser) {
