@@ -20,7 +20,7 @@ public class User {
     private int highScore;
     private int rank;
     private String username;
-    private String passwordHash;
+    private final String passwordHash;
     private String nickname;
     private String email;
     private String slogan;
@@ -82,7 +82,7 @@ public class User {
         return users;
     }
 
-    public void addUser(User user) {
+    public static void addUser(User user) {
         users.add(user);
     }
 
