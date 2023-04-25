@@ -1,18 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-enum DefaultSlogans{
-    s1("");
-
-    private final String slogan;
-    DefaultSlogans(String slogan) {
-        this.slogan = slogan;
-    }
-
-    public String getSlogan() {
-        return slogan;
-    }
-}
 public class User {
     private int highScore;
     private int rank;
