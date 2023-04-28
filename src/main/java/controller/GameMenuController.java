@@ -1,6 +1,7 @@
 package controller;
 
 import model.Government;
+import model.Map;
 import model.Unit;
 import model.buildings.Building;
 
@@ -14,8 +15,14 @@ public class GameMenuController {
     private static Government currentGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;
+    private static Map map;
+
+    public static void setMapSize(int size) {
+        map = new Map(size);
+    }
 
     public static String showMap(int x, int y) {
+        System.out.println(map.getMap()[x][y]);
         return null;
     }
 

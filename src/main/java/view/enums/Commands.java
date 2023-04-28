@@ -1,14 +1,11 @@
 package view.enums;
 
-import view.LoginMenu;
-import view.MainMenu;
-import view.ProfileMenu;
-import view.RegisterMenu;
+import view.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum Commands {
+public enum Commands{
     REGISTER("^user create (?=.*-u( (?<username>\\S*))?)(?=.*-p( (?<password>\\S*))? (?<passwordConfirmation>\\S*))(?=.*--email( (?<email>\\S*))?)(?=.*-n( (?<nickname>(\"[^\"]*\")|([^\"\\s]*)))?)(?=.*(?<sloganExist>-s) (?<slogan>(\"[^\"]*\")|([^\"\\s]*)))?.*$", RegisterMenu.class,"register"),
     LOGIN("user login (?=.*-u( (?<username>\\S*))?)(?=.*-p( (?<password>\\S*))?)(?=.*(?<stayLoggedIn>--stay-logged-in))?.*|user login",LoginMenu.class,"login"),
     FORGET_PASSWORD("forget my password -u (?<username>\\S+)",LoginMenu.class,"forgetPassword"),
@@ -27,7 +24,8 @@ public enum Commands {
     PROFILE_DISPLAY_HIGH_SCORE("profile display highscore", ProfileMenu.class, "displayHighscore"),
     PROFILE_DISPLAY_RANK("profile display rank", ProfileMenu.class, "displayRank"),
     PROFILE_DISPLAY_SLOGAN("profile display slogan", ProfileMenu.class, "displaySlogan"),
-    PROFILE_DISPLAY("profile display", ProfileMenu.class, "profileDisplay");
+    PROFILE_DISPLAY("profile display", ProfileMenu.class, "profileDisplay"),
+    SHOW_MAP("show map -x (?<x>\\d+) -y (?<y>\\d+)", GameMenu.class,"showMap");
     private final String regex;
     private final String methodName;
     private final Class<?> menuClass;
