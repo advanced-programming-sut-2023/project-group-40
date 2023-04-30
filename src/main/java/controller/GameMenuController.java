@@ -5,6 +5,10 @@ import model.Map;
 import model.Unit;
 import model.buildings.Building;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 
 enum Direction {
@@ -16,19 +20,30 @@ public class GameMenuController {
     private static Building selectedBuilding;
     private static Unit selectedUnit;
     private static Map map;
+    private static int x;
+    private static int y;
+
+    public static void increaseX(int amount) {
+        x += amount;
+    }
+
+    public static void increaseY(int amount) {
+        y += amount;
+    }
 
     public static void setMapSize(int size) {
         map = new Map(size);
     }
 
-    public static String showMap(int x, int y) {
-        System.out.println(map.getMap()[x][y]);
+    public static String showMap(int x, int y) throws IOException {
+        GameMenuController.x = x;
+        GameMenuController.y = y;
         return null;
     }
 
-    public static String changeSightArea(int[] moveAmount) {
-        return null;
-    }
+//    public static String changeSightArea(int[] moveAmount) {
+//        return null;
+//    }
 
     public static String showDetails(int x, int y) {
         return null;
