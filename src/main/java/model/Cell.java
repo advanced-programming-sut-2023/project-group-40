@@ -19,6 +19,10 @@ public class Cell {
         this.building = building;
     }
 
+    public Building getBuilding() {
+        return building;
+    }
+
     public void setTexture(Texture texture) {
         this.texture = texture;
     }

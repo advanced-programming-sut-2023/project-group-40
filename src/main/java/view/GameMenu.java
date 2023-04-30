@@ -91,7 +91,9 @@ public class GameMenu {
     }
 
     public static String selectBuilding(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.selectBuilding(x,y);
     }
 
     public static String createUnit(Matcher matcher) {

@@ -84,11 +84,12 @@ public class GameMenuController {
 
     public static String dropBuilding(int x, int y, String type) {
         map.getMap()[x][y].setBuilding(Buildings.getBuildingObjectByType(type));
-        return "building dropped to the target cell";
+        return "building dropped to the target cell!";
     }
 
     public static String selectBuilding(int x, int y) {
-        return null;
+        selectedBuilding = map.getMap()[x][y].getBuilding();
+        return "target building selected";
     }
 
     public static String createUnit(String type, int count) {
