@@ -84,7 +84,10 @@ public class GameMenu {
     }
 
     public static String dropBuilding(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        String type = matcher.group("type");
+        return GameMenuController.dropBuilding(x,y,type);
     }
 
     public static String selectBuilding(Matcher matcher) {

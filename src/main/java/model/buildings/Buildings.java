@@ -7,7 +7,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-enum Buildings{
+public enum Buildings{
     ;
     String fullName;
     Building buildingObject;
@@ -17,12 +17,10 @@ enum Buildings{
         this.buildingObject = buildingObject;
     }
 
-    public static Building getBuildingObjectByName(String name){
-        for (Buildings building:values()) {
-            if(building.fullName.equals(name)){
-
-            }
-        }
+    public static Building getBuildingObjectByType(String type){
+        for (Buildings building:values())
+            if(building.fullName.equals(type))
+                return building.buildingObject;
         return null;
     }
 }

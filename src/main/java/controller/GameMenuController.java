@@ -4,6 +4,7 @@ import model.Government;
 import model.Map;
 import model.Unit;
 import model.buildings.Building;
+import model.buildings.Buildings;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -40,10 +41,6 @@ public class GameMenuController {
         GameMenuController.y = y;
         return null;
     }
-
-//    public static String changeSightArea(int[] moveAmount) {
-//        return null;
-//    }
 
     public static String showDetails(int x, int y) {
         return null;
@@ -85,8 +82,9 @@ public class GameMenuController {
         return null;
     }
 
-    public static String dropBuilding(int x, int y, String name) {
-        return null;
+    public static String dropBuilding(int x, int y, String type) {
+        map.getMap()[x][y].setBuilding(Buildings.getBuildingObjectByType(type));
+        return "building dropped to the target cell";
     }
 
     public static String selectBuilding(int x, int y) {
