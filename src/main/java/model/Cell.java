@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class Cell {
     private boolean isAvailable = true,isPassable = true;
-    private Building building;
+    private Building building = null;
     private Tree tree;
     private Texture texture;
     private ArrayList<Troop> troops = new ArrayList<>();

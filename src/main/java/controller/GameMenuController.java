@@ -6,11 +6,7 @@ import model.Unit;
 import model.buildings.Building;
 import model.buildings.Buildings;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
-import java.util.regex.Matcher;
 
 enum Direction {
 
@@ -82,12 +78,23 @@ public class GameMenuController {
         return null;
     }
 
+    public static boolean isCoordinateValid(int coordinate){
+        return coordinate > 0 && coordinate <= map.getSize();
+    }
     public static String dropBuilding(int x, int y, String type) {
+        if (!isCoordinateValid(x) || !isCoordinateValid(y))
+            return "your coordinates is incorrect!";
+        if (map.getMap()[x][y].getBuilding() != null)
+            return "There is already a building in your coordinates!";
         map.getMap()[x][y].setBuilding(Buildings.getBuildingObjectByType(type));
         return "building dropped to the target cell!";
     }
 
     public static String selectBuilding(int x, int y) {
+        if (!isCoordinateValid(x) || !isCoordinateValid(y))
+            return "your coordinates is incorrect!";
+        if (map.getMap()[x][y].getBuilding() == null)
+            return "There is no existing building in your coordinates!";
         selectedBuilding = map.getMap()[x][y].getBuilding();
         return "target building selected";
     }
