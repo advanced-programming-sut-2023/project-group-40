@@ -78,15 +78,21 @@ public class GameMenuController {
         return null;
     }
 
-    public static boolean isCoordinateValid(int coordinate){
+    private static boolean isCoordinateValid(int coordinate){
         return coordinate > 0 && coordinate <= map.getSize();
     }
+
     public static String dropBuilding(int x, int y, String type) {
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
         if (map.getMap()[x][y].getBuilding() != null)
             return "There is already a building in your coordinates!";
-        map.getMap()[x][y].setBuilding(Buildings.getBuildingObjectByType(type));
+        Building targetBuilding = Buildings.getBuildingObjectByType(type);
+        if (targetBuilding == null)
+            return "your building type is incorrect!";
+        if(targetBuilding.checkTexture(map.getMap()[x][y].getTexture()))
+            return "you can not drop building to target cell!";
+        map.getMap()[x][y].setBuilding(targetBuilding);
         return "building dropped to the target cell!";
     }
 

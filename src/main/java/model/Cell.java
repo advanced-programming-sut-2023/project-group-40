@@ -34,4 +34,8 @@ public class Cell {
     public void removeTroop(Troop troop){
         troops.remove(troop);
     }
+
+    public Texture getTexture() {
+        return texture;
+    }
 }

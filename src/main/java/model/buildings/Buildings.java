@@ -1,11 +1,13 @@
 package model.buildings;
 
 import model.Food;
+import model.Texture;
 import model.Weapon;
 
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.HashSet;
 
 public enum Buildings{
     ;

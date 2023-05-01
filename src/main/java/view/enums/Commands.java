@@ -26,7 +26,7 @@ public enum Commands{
     PROFILE_DISPLAY_SLOGAN("profile display slogan", ProfileMenu.class, "displaySlogan"),
     PROFILE_DISPLAY("profile display", ProfileMenu.class, "profileDisplay"),
     SHOW_MAP("show map -x (?<x>\\d+) -y (?<y>\\d+)", GameMenu.class,"showMap"),
-    CHANGE_SIGHT_AREA("map (?<left>left(\\s(?<leftNumber>\\d+))?)|(?<top>top(\\s(?<topNumber>\\d+))?)|(?<right>right(\\s(?<rightNumber>\\d+))?)|(?<down>down(\\s(?<downNumber>\\d+)?))", GameMenu.class,"changeSightArea"),
+    CHANGE_SIGHT_AREA("map (?<left>left(\\s(?<leftNumber>\\d+))?)|(?<top>top(\\s(?<topNumber>\\d+))?)|(?<right>right(\\s(?<rightNumber>\\d+))?)|(?<down>down(\\s(?<downNumber>\\d+))?)", GameMenu.class,"changeSightArea"),
     DROP_BUILDING("drop building -x (?<x>\\d+) -y (?<y>\\d+) -type (?<type>\\w+)", GameMenu.class,"dropBuilding"),
     SELECT_BUILDING("select building -x (?<x>\\d+) -y (?<y>\\d+)", GameMenu.class,"selectBuilding");
     private final String regex;

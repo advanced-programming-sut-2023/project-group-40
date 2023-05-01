@@ -1,14 +1,17 @@
 package model.buildings;
 
+import model.Texture;
+
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Storage<T> extends Building{
     private HashMap<T, Integer> products = new HashMap<>();
 
     private int capacity;
 
-    public Storage(String name, int height, int width, int hp, int[] cost, int capacity) {
-        super(name, height, width, hp, cost);
+    public Storage(String name, int height, int width, int hp, int[] cost, int capacity, HashSet<Texture> textures,boolean isIllegal) {
+        super(name, height, width, hp, cost,textures,isIllegal);
         this.capacity = capacity;
     }
 

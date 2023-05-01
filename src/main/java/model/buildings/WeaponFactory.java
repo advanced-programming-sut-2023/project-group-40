@@ -1,7 +1,10 @@
 package model.buildings;
 
 import model.Material;
+import model.Texture;
 import model.Weapon;
+
+import java.util.HashSet;
 
 public class WeaponFactory extends Building{
     private final Material material;
@@ -9,8 +12,8 @@ public class WeaponFactory extends Building{
     private int produceRate;
 
     public WeaponFactory(String name, int height, int width, int hp, int[] cost, int workersRequired, Material material, Weapon weapon,
-                         int produceRate) {
-        super(name,height,width, hp, cost, workersRequired);
+                         int produceRate, HashSet<Texture> textures,boolean isIllegal) {
+        super(name,height,width, hp, cost, workersRequired,textures,isIllegal);
         this.material = material;
         this.weapon = weapon;
         this.produceRate = produceRate;

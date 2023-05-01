@@ -1,11 +1,15 @@
 package model.buildings;
 
+import model.Texture;
+
+import java.util.HashSet;
+
 public class GateHouse extends Building{
     private final int maxCapacity;
     private int capacity = 0;
 
-    public GateHouse(String name, int height, int width, int hp, int[] cost, int maxCapacity) {
-        super(name, height, width, hp, cost);
+    public GateHouse(String name, int height, int width, int hp, int[] cost, int maxCapacity, HashSet<Texture> textures,boolean isIllegal) {
+        super(name, height, width, hp, cost,textures,isIllegal);
         this.maxCapacity = maxCapacity;
     }
 

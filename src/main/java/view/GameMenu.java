@@ -28,18 +28,21 @@ public class GameMenu {
     }
 
     public static String changeSightArea(Matcher matcher) {
-        int leftNumber = StringUtils.isNotBlank(matcher.group("leftNumber")) ? Integer.parseInt(matcher.group("leftNumber")) : 1;
-        int topNumber = StringUtils.isNotBlank(matcher.group("topNumber")) ? Integer.parseInt(matcher.group("topNumber")) : 1;
-        int rightNumber = StringUtils.isNotBlank(matcher.group("rightNumber")) ? Integer.parseInt(matcher.group("rightNumber")) : 1;
-        int downNumber = StringUtils.isNotBlank(matcher.group("downNumber")) ? Integer.parseInt(matcher.group("downNumber")) : 1;
-        if (matcher.group("left") != null)
-            GameMenuController.increaseX(-1 * leftNumber);
-        if (matcher.group("top") != null)
-            GameMenuController.increaseY(topNumber);
-        if (matcher.group("right") != null)
-            GameMenuController.increaseX(rightNumber);
-        if (matcher.group("down") != null)
-            GameMenuController.increaseY(-1 * downNumber);
+        //left in another first
+        while (matcher.find()) {
+            int leftNumber = StringUtils.isNotBlank(matcher.group("leftNumber")) ? Integer.parseInt(matcher.group("leftNumber")) : 1;
+            int topNumber = StringUtils.isNotBlank(matcher.group("topNumber")) ? Integer.parseInt(matcher.group("topNumber")) : 1;
+            int rightNumber = StringUtils.isNotBlank(matcher.group("rightNumber")) ? Integer.parseInt(matcher.group("rightNumber")) : 1;
+            int downNumber = StringUtils.isNotBlank(matcher.group("downNumber")) ? Integer.parseInt(matcher.group("downNumber")) : 1;
+            if (matcher.group("left") != null)
+                GameMenuController.increaseX(-1 * leftNumber);
+            if (matcher.group("top") != null)
+                GameMenuController.increaseY(topNumber);
+            if (matcher.group("right") != null)
+                GameMenuController.increaseX(rightNumber);
+            if (matcher.group("down") != null)
+                GameMenuController.increaseY(-1 * downNumber);
+        }
         return "sight area changed!";
     }
 
