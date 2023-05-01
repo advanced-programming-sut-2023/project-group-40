@@ -173,14 +173,23 @@ public class GameMenuController {
     }
 
     public static String setTexture(int x, int y, Texture type) {
+        if (!isCoordinateValid(x) || !isCoordinateValid(y))
+            return "your coordinates is incorrect!";
+        if (map.getMap()[x][y].getBuilding() != null)
+            return "There is already a building in your coordinates!";
         map.getMap()[x][y].setTexture(type);
         return "texture successfully changed";
     }
 
     public static String setTexture(int x1, int y1,int x2,int y2,Texture type) {
+        if (!isCoordinateValid(x1) || !isCoordinateValid(x2) || !isCoordinateValid(y1) || !isCoordinateValid(y2))
+            return "your coordinates is incorrect!";
         for (int i = x1; i < x2 ; i++)
-            for (int j = y1; j < y2; j++)
+            for (int j = y1; j < y2; j++){
+                if (map.getMap()[i][j].getBuilding() != null)
+                    return "There is already a building in your coordinates!";
                 map.getMap()[i][j].setTexture(type);
+            }
         return "texture successfully changed";
     }
 
