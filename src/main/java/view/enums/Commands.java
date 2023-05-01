@@ -38,7 +38,8 @@ public enum Commands{
     SHOW_FOOD_RATE("food rate show", GameMenu.class, "showFoodRate"),
     SHOW_TAX_RATE("tax rate show", GameMenu.class, "showTaxRate"),
     SHOW_FEAR_RATE("fear rate show", GameMenu.class, "showFoodRate"),
-    SET_TEXTURE("set texture -x (?<x>\\d+) -y (?<y>\\d+) -t (?<type>\\w+)|set texture -x1 (?<x1>\\d+) -x2 (?<x2>\\d+) -y1 (?<y1>\\d+) -y2 (?<y2>\\d+) -t (?<type>\\w+)", GameMenu.class,"setTexture");
+    SET_TEXTURE("set texture -x (?<x>\\d+) -y (?<y>\\d+) -t (?<type>\\w+)|set texture -x1 (?<x1>\\d+) -x2 (?<x2>\\d+) -y1 (?<y1>\\d+) -y2 (?<y2>\\d+) -t (?<type>\\w+)", GameMenu.class,"setTexture"),
+    DROP_ROCK("drop rock -x (?<x>\\d+) -y (?<y>\\d+) -d (?<direction>\\w+)", GameMenu.class,"dropRock");
     private final String regex;
     private final String methodName;
     private final Class<?> menuClass;

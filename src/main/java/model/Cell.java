@@ -8,6 +8,7 @@ public class Cell {
     private boolean isAvailable = true,isPassable = true;
     private Building building = null;
     private Tree tree;
+    private Rock rock;
     private Texture texture;
     private ArrayList<Troop> troops = new ArrayList<>();
 
@@ -37,5 +38,17 @@ public class Cell {
 
     public Texture getTexture() {
         return texture;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    public void setPassable(boolean passable) {
+        isPassable = passable;
+    }
+
+    public void setRock(Rock rock) {
+        this.rock = rock;
     }
 }

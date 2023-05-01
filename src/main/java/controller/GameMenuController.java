@@ -1,15 +1,13 @@
 package controller;
 
-import model.Food;
-import model.Government;
-import model.Map;
-import model.Texture;
-import model.Unit;
+import model.*;
 import model.buildings.Building;
 import model.buildings.Buildings;
 import model.buildings.Storage;
+import org.apache.commons.text.RandomStringGenerator;
 
 import java.io.IOException;
+import java.util.Random;
 
 enum Direction {
 
@@ -57,8 +55,8 @@ public class GameMenuController {
         int numOfFood1 = 0, numOfFood2 = 0, numOfFood3 = 0, numOfFood4 = 0, index = 0;
         for (Storage<Food> foodStorage : currentGovernment.getFoodStorages()) {
             for (Food value : Food.values()) {
-                if(index == 4) break;
-                if(foodStorage.getProducts().get(value) != null)
+                if (index == 4) break;
+                if (foodStorage.getProducts().get(value) != null)
                     numOfFood1 += foodStorage.getProducts().get((value));
             }
             index++;
@@ -68,7 +66,7 @@ public class GameMenuController {
     }
 
     public static String setFoodRate(int rate) {
-        if(rate > 2 || rate < -2)
+        if (rate > 2 || rate < -2)
             return "rate-number is out of bound";
         currentGovernment.setFoodRate(rate);
         return "set rate-number is successful";
@@ -79,7 +77,7 @@ public class GameMenuController {
     }
 
     public static String setTaxRate(int rate) {
-        if(rate > 8 || rate < -3)
+        if (rate > 8 || rate < -3)
             return "rate-number is out of bound";
         currentGovernment.setTaxRate(rate);
         return "set rate-number is successful";
@@ -90,7 +88,7 @@ public class GameMenuController {
     }
 
     public static String setFearRate(int rate) {
-        if(rate > 5 || rate < -5)
+        if (rate > 5 || rate < -5)
             return "rate-number is out of bound";
         currentGovernment.setFearRate(rate);
         return "set rate-number is successful";
@@ -100,7 +98,7 @@ public class GameMenuController {
         return "your government feat rate is: " + currentGovernment.getFearRate();
     }
 
-    private static boolean isCoordinateValid(int coordinate){
+    private static boolean isCoordinateValid(int coordinate) {
         return coordinate > 0 && coordinate <= map.getSize();
     }
 
@@ -112,9 +110,10 @@ public class GameMenuController {
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
         if (targetBuilding == null)
             return "your building type is incorrect!";
-        if(targetBuilding.checkTexture(map.getMap()[x][y].getTexture()))
+        if (targetBuilding.checkTexture(map.getMap()[x][y].getTexture()))
             return "you can not drop building to target cell!";
         map.getMap()[x][y].setBuilding(targetBuilding);
+        map.getMap()[x][y].setAvailable(false);
         return "building dropped to the target cell!";
     }
 
@@ -172,50 +171,59 @@ public class GameMenuController {
         return null;
     }
 
-    public static String setTexture(int x, int y, Texture type) {
+    public static String setTexture(int x, int y, String type) {
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
         if (map.getMap()[x][y].getBuilding() != null)
             return "There is already a building in your coordinates!";
-        map.getMap()[x][y].setTexture(type);
+        map.getMap()[x][y].setTexture(Texture.getTextureByName(type));
         return "texture successfully changed";
     }
 
-    public static String setTexture(int x1, int y1,int x2,int y2,Texture type) {
+    public static String setTexture(int x1, int y1, int x2, int y2, String type) {
         if (!isCoordinateValid(x1) || !isCoordinateValid(x2) || !isCoordinateValid(y1) || !isCoordinateValid(y2))
             return "your coordinates is incorrect!";
-        for (int i = x1; i < x2 ; i++)
-            for (int j = y1; j < y2; j++){
+        for (int i = x1; i < x2; i++)
+            for (int j = y1; j < y2; j++) {
                 if (map.getMap()[i][j].getBuilding() != null)
                     return "There is already a building in your coordinates!";
-                map.getMap()[i][j].setTexture(type);
+                map.getMap()[i][j].setTexture(Texture.getTextureByName(type));
             }
         return "texture successfully changed";
     }
 
-    public static String clearBlock(int x,int y){
+    public static String clearBlock(int x, int y) {
         return null;
     }
 
-    public static String dropBlock(int x,int y,String direction){
+    public static String dropRock(int x, int y, String direction) {
+        if (!direction.equals("n") && !direction.equals("e") && !direction.equals("s") &&
+                !direction.equals("w") && !direction.equals("r"))
+            return "your direction is incorrect!";
+        if (direction.equals("r")) {
+            RandomStringGenerator generator = new RandomStringGenerator.Builder().selectFrom("swen".toCharArray()).build();
+            direction = generator.generate(1);
+        }
+        map.getMap()[x][y].setRock(new Rock(direction));
+        return "rock successfully dropped";
+    }
+
+    public static String dropTree(int x, int y, String type) {
         return null;
     }
 
-    public static String dropTree(int x,int y,String type){
+    public static String dropUnit(int x, int y, String type, int count) {
         return null;
     }
 
-    public static String dropUnit(int x,int y,String type,int count){
+    public static String enterTrade() {
         return null;
     }
 
-    public static String enterTrade(){
+    public static String nextTurn() {
         return null;
     }
 
-    public static String nextTurn(){
-        return null;
-    }
     public static Government getCurrentGovernment() {
         return currentGovernment;
     }

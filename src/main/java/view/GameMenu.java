@@ -2,8 +2,6 @@ package view;
 
 import controller.GameMenuController;
 import controller.MainController;
-import model.Game;
-import model.Texture;
 import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
 import java.io.IOException;
@@ -146,7 +144,7 @@ public class GameMenu {
     }
 
     public static String setTexture(Matcher matcher) {
-        Texture type = Texture.getTextureByName(matcher.group("type"));
+        String type = matcher.group("type");
         if (matcher.group("x") != null) {
             int x = Integer.parseInt(matcher.group("x"));
             int y = Integer.parseInt(matcher.group("y"));
@@ -162,11 +160,16 @@ public class GameMenu {
     }
 
     public static String clearBlock(Matcher matcher){
+        //clear tropp ?????
         return null;
     }
 
-    public static String dropBlock(Matcher matcher){
-        return null;
+    public static String dropRock(Matcher matcher){
+        //which shape ??
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        String direction = matcher.group("direction");
+        return GameMenuController.dropRock(x,y,direction);
     }
 
     public static String dropTree(Matcher matcher){
