@@ -2,6 +2,7 @@ package view;
 
 import controller.GameMenuController;
 import controller.MainController;
+import model.Game;
 import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
 
@@ -51,39 +52,42 @@ public class GameMenu {
     }
 
     public static String showPopularityFactors(Matcher matcher) {
-        return null;
+        return GameMenuController.showPopularityFactors();
     }
 
-    public static String showPopulation(Matcher matcher) {
-        return null;
+    public static String showPopularity(Matcher matcher) {
+        return GameMenuController.showPopularity();
     }
 
     public static String showFoodList(Matcher matcher) {
-        return null;
+        return GameMenuController.showFoodList();
     }
 
     public static String setFoodRate(Matcher matcher) {
-        return null;
+        int rateNumber = Integer.parseInt(matcher.group("rateNumber"));
+        return GameMenuController.setFoodRate(rateNumber);
     }
 
     public static String showFoodRate(Matcher matcher) {
-        return null;
+        return GameMenuController.showFoodRate();
     }
 
     public static String setTaxRate(Matcher matcher) {
-        return null;
+        int rateNumber = Integer.parseInt(matcher.group("rateNumber"));
+        return GameMenuController.setTaxRate(rateNumber);
     }
 
     public static String showTaxRate(Matcher matcher) {
-        return null;
+        return GameMenuController.showTaxRate();
     }
 
     public static String setFearRate(Matcher matcher) {
-        return null;
+        int rateNumber = Integer.parseInt(matcher.group("rateNumber"));
+        return GameMenuController.setFearRate(rateNumber);
     }
 
     public static String showFearRate(Matcher matcher) {
-        return null;
+        return GameMenuController.showFearRate();
     }
 
     public static String dropBuilding(Matcher matcher) {

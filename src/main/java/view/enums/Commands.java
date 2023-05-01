@@ -28,7 +28,16 @@ public enum Commands{
     SHOW_MAP("show map -x (?<x>\\d+) -y (?<y>\\d+)", GameMenu.class,"showMap"),
     CHANGE_SIGHT_AREA("map (?<left>left(\\s(?<leftNumber>\\d+))?)|(?<top>top(\\s(?<topNumber>\\d+))?)|(?<right>right(\\s(?<rightNumber>\\d+))?)|(?<down>down(\\s(?<downNumber>\\d+))?)", GameMenu.class,"changeSightArea"),
     DROP_BUILDING("drop building -x (?<x>\\d+) -y (?<y>\\d+) -type (?<type>\\w+)", GameMenu.class,"dropBuilding"),
-    SELECT_BUILDING("select building -x (?<x>\\d+) -y (?<y>\\d+)", GameMenu.class,"selectBuilding");
+    SELECT_BUILDING("select building -x (?<x>\\d+) -y (?<y>\\d+)", GameMenu.class,"selectBuilding"),
+    SHOW_POPULARITY_FACTORS("show popularity factors", GameMenu.class, "showPopularityFactors"),
+    SHOW_POPULARITY("show popularity", GameMenu.class, "showPopularity"),
+    SHOW_FOOD_LIST("show food list", GameMenu.class, "showFoodList"),
+    SET_FOOD_RATE("food rate -r (?<rateNumber>\\d+)", GameMenu.class, "setFoodRate"),
+    SET_TAX_RATE("tax rate -r (?<rateNumber>\\d+)", GameMenu.class, "setTaxRate"),
+    SET_FEAR_RATE("fear rate -r (?<rateNumber>\\d+)", GameMenu.class, "fearTaxRate"),
+    SHOW_FOOD_RATE("food rate show", GameMenu.class, "showFoodRate"),
+    SHOW_TAX_RATE("tax rate show", GameMenu.class, "showTaxRate"),
+    SHOW_FEAR_RATE("fear rate show", GameMenu.class, "showFoodRate");
     private final String regex;
     private final String methodName;
     private final Class<?> menuClass;

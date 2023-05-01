@@ -1,10 +1,12 @@
 package controller;
 
+import model.Food;
 import model.Government;
 import model.Map;
 import model.Unit;
 import model.buildings.Building;
 import model.buildings.Buildings;
+import model.buildings.Storage;
 
 import java.io.IOException;
 
@@ -43,39 +45,58 @@ public class GameMenuController {
     }
 
     public static String showPopularityFactors() {
-        return null;
+        return "Popularity Factors: \n 1.food \n 2.tax \n 3.religion \n 4.fear";
     }
 
-    public static String showPopulation() {
-        return null;
+    public static String showPopularity() {
+        return "rate of your government popularity is " + currentGovernment.getPopularity();
     }
 
     public static String showFoodList() {
-        return null;
+        int numOfFood1 = 0, numOfFood2 = 0, numOfFood3 = 0, numOfFood4 = 0, index = 0;
+        for (Storage<Food> foodStorage : currentGovernment.getFoodStorages()) {
+            for (Food value : Food.values()) {
+                if(index == 4) break;
+                if(foodStorage.getProducts().get(value) != null)
+                    numOfFood1 += foodStorage.getProducts().get((value));
+            }
+            index++;
+        }
+        return "Food List: \n food1: " + numOfFood1 + "\n food2: " + numOfFood2 +
+                "\n food3: " + numOfFood3 + "\n food4: " + numOfFood4;
     }
 
     public static String setFoodRate(int rate) {
-        return null;
+        if(rate > 2 || rate < -2)
+            return "rate-number is out of bound";
+        currentGovernment.setFoodRate(rate);
+        return "set rate-number is successful";
     }
 
     public static String showFoodRate() {
-        return null;
+        return "your government food rate is: " + currentGovernment.getFoodRate();
     }
 
     public static String setTaxRate(int rate) {
-        return null;
+        if(rate > 8 || rate < -3)
+            return "rate-number is out of bound";
+        currentGovernment.setTaxRate(rate);
+        return "set rate-number is successful";
     }
 
     public static String showTaxRate() {
-        return null;
+        return "your government tax rate is: " + currentGovernment.getTaxRate();
     }
 
     public static String setFearRate(int rate) {
-        return null;
+        if(rate > 5 || rate < -5)
+            return "rate-number is out of bound";
+        currentGovernment.setFearRate(rate);
+        return "set rate-number is successful";
     }
 
     public static String showFearRate() {
-        return null;
+        return "your government feat rate is: " + currentGovernment.getFearRate();
     }
 
     private static boolean isCoordinateValid(int coordinate){
@@ -179,6 +200,9 @@ public class GameMenuController {
 
     public static String nextTurn(){
         return null;
+    }
+    public static Government getCurrentGovernment() {
+        return currentGovernment;
     }
 
     public static void setCurrentGovernment(Government currentGovernment) {
