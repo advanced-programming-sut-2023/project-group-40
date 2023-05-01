@@ -3,12 +3,10 @@ package view;
 import controller.GameMenuController;
 import controller.MainController;
 import model.Game;
+import model.Texture;
 import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
-
 import java.io.IOException;
-import java.util.Optional;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class GameMenu {
@@ -148,7 +146,19 @@ public class GameMenu {
     }
 
     public static String setTexture(Matcher matcher) {
-        return null;
+        Texture type = Texture.getTextureByName(matcher.group("type"));
+        if (matcher.group("x") != null) {
+            int x = Integer.parseInt(matcher.group("x"));
+            int y = Integer.parseInt(matcher.group("y"));
+            return GameMenuController.setTexture(x,y,type);
+        }
+        else {
+            int x1 = Integer.parseInt(matcher.group("x1"));
+            int x2 = Integer.parseInt(matcher.group("x2"));
+            int y1 = Integer.parseInt(matcher.group("y1"));
+            int y2 = Integer.parseInt(matcher.group("y2"));
+            return GameMenuController.setTexture(x1,x2,y1,y2,type);
+        }
     }
 
     public static String clearBlock(Matcher matcher){

@@ -3,6 +3,7 @@ package controller;
 import model.Food;
 import model.Government;
 import model.Map;
+import model.Texture;
 import model.Unit;
 import model.buildings.Building;
 import model.buildings.Buildings;
@@ -118,6 +119,7 @@ public class GameMenuController {
     }
 
     public static String selectBuilding(int x, int y) {
+        //do work after select
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
         if (map.getMap()[x][y].getBuilding() == null)
@@ -170,12 +172,16 @@ public class GameMenuController {
         return null;
     }
 
-    public static String setTexture(int x, int y) {
-        return null;
+    public static String setTexture(int x, int y, Texture type) {
+        map.getMap()[x][y].setTexture(type);
+        return "texture successfully changed";
     }
 
-    public static String setTexture(int x1, int y1,int x2,int y2) {
-        return null;
+    public static String setTexture(int x1, int y1,int x2,int y2,Texture type) {
+        for (int i = x1; i < x2 ; i++)
+            for (int j = y1; j < y2; j++)
+                map.getMap()[i][j].setTexture(type);
+        return "texture successfully changed";
     }
 
     public static String clearBlock(int x,int y){
