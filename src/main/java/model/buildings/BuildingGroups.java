@@ -1,4 +1,4 @@
-package model;
+package model.buildings;
 
 public enum BuildingGroups {
     CASTLE,
