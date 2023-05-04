@@ -1,14 +1,20 @@
 package model;
 
+import model.buildings.Storage;
 import view.TradeMenu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
+import java.util.regex.MatchResult;
 import java.util.stream.Stream;
 
 public class Government {
     private static ArrayList<Government> governments = new ArrayList<>();
     private ArrayList<TradeRequest> requests =  new ArrayList<>();
+    private final ArrayList<Storage<Material>> materialStorages = new ArrayList<>();
+    private final ArrayList<Storage<Food>> foodStorages = new ArrayList<>();
+    private final ArrayList<Storage<Weapon>> weaponStorages = new ArrayList<>();
     private User owner;
     private int foodRate;
     private int taxRate;
@@ -53,6 +59,24 @@ public class Government {
 
     public void setPopularity(int popularity) {
         this.popularity = popularity;
+    }
+    public void addFoodStorage(Storage storage) {
+        foodStorages.add(storage);
+    }
+    public void addWeaponStorage(Storage storage) {
+        weaponStorages.add(storage);
+    }
+    public void addMaterialStorage(Storage storage) {
+        materialStorages.add(storage);
+    }
+    public ArrayList<Storage<Food>> getFoodStorages() {
+        return foodStorages;
+    }
+    public ArrayList<Storage<Weapon>> getWeaponStorages() {
+        return weaponStorages;
+    }
+    public ArrayList<Storage<Material>> getMaterialStorages() {
+        return materialStorages;
     }
 
     public static Government getGovernmentByUser(User user) {

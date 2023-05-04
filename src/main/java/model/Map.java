@@ -12,6 +12,10 @@ private Cell[][] map;
                 map[i][j] = new Cell(Texture.LAND);
     }
 
+    public int getSize() {
+        return size;
+    }
+
     public Cell[][] getMap() {
         return map;
     }
