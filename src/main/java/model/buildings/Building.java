@@ -1,13 +1,12 @@
 package model.buildings;
-
-import model.BuildingGroups;
 import model.Texture;
 import model.User;
 
 import java.io.Serializable;
 import java.util.HashSet;
 
-public class Building implements Serializable {
+public class Building implements BuildingAction {
+    int x,y;
     private boolean isIllegal;
     protected BuildingGroups group;
     private final HashSet<Texture> textures;
@@ -16,7 +15,6 @@ public class Building implements Serializable {
     // index 0 -> gold 1 -> wood 2 -> stone 3 -> iron 4 -> pitch
     protected int[] cost;
     protected int height,width;
-    protected int centerY,centerX;
     protected User owner;
     protected int workersRequired = 0, engineersRequired = 0;
 
@@ -55,12 +53,7 @@ public class Building implements Serializable {
         this.isIllegal = isIllegal;
         this.group = group;
     }
-
-    public void setCenter(int centerX,int centerY){
-        this.centerX = centerX;
-        this.centerY = centerY;
-    }
-
+    
     public void setOwner(User owner) {
         this.owner = owner;
     }
@@ -72,5 +65,22 @@ public class Building implements Serializable {
     public boolean checkTexture(Texture texture){
         if (isIllegal && textures.contains(texture))  return false;
         else return isIllegal || textures.contains(texture);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setCoordinates(int x , int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }

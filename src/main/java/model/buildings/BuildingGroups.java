@@ -7,5 +7,4 @@ public enum BuildingGroups {
     WEAPON,
     TOWN_BUILDING,
     FARM;
-
 }

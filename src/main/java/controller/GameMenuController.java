@@ -17,7 +17,6 @@ public class GameMenuController {
     private static Government currentGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;
-    private static Map map;
     private static int x;
     private static int y;
 
@@ -30,7 +29,7 @@ public class GameMenuController {
     }
 
     public static void setMapSize(int size) {
-        map = new Map(size);
+        Map.initMap(size);
     }
 
     public static String showMap(int x, int y) throws IOException {
@@ -77,6 +76,8 @@ public class GameMenuController {
     }
 
     public static String setTaxRate(int rate) {
+        if (!selectedBuilding.getName().equals("Small stone gatehouse"))
+            return "you don't select Small stone gatehouse";
         if (rate > 8 || rate < -3)
             return "rate-number is out of bound";
         currentGovernment.setTaxRate(rate);
@@ -99,21 +100,23 @@ public class GameMenuController {
     }
 
     private static boolean isCoordinateValid(int coordinate) {
-        return coordinate > 0 && coordinate <= map.getSize();
+        return coordinate > 0 && coordinate <= Map.getSize();
     }
 
     public static String dropBuilding(int x, int y, String type) {
+        if (Map.getMap()[x][y].getRock() != null)
+            return "you can not drop building because there is a rock in this cell!";
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
-        if (map.getMap()[x][y].getBuilding() != null)
+        if (Map.getMap()[x][y].getBuilding() != null)
             return "There is already a building in your coordinates!";
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
         if (targetBuilding == null)
             return "your building type is incorrect!";
-        if (targetBuilding.checkTexture(map.getMap()[x][y].getTexture()))
+        if (targetBuilding.checkTexture(Map.getMap()[x][y].getTexture()))
             return "you can not drop building to target cell!";
-        map.getMap()[x][y].setBuilding(targetBuilding);
-        map.getMap()[x][y].setAvailable(false);
+        Map.getMap()[x][y].setBuilding(targetBuilding);
+        Map.getMap()[x][y].setAvailable(false);
         return "building dropped to the target cell!";
     }
 
@@ -121,9 +124,9 @@ public class GameMenuController {
         //do work after select
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
-        if (map.getMap()[x][y].getBuilding() == null)
+        if (Map.getMap()[x][y].getBuilding() == null)
             return "There is no existing building in your coordinates!";
-        selectedBuilding = map.getMap()[x][y].getBuilding();
+        selectedBuilding = Map.getMap()[x][y].getBuilding();
         return "target building selected";
     }
 
@@ -174,9 +177,9 @@ public class GameMenuController {
     public static String setTexture(int x, int y, String type) {
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
-        if (map.getMap()[x][y].getBuilding() != null)
+        if (Map.getMap()[x][y].getBuilding() != null)
             return "There is already a building in your coordinates!";
-        map.getMap()[x][y].setTexture(Texture.getTextureByName(type));
+        Map.getMap()[x][y].setTexture(Texture.getTextureByName(type));
         return "texture successfully changed";
     }
 
@@ -185,9 +188,9 @@ public class GameMenuController {
             return "your coordinates is incorrect!";
         for (int i = x1; i < x2; i++)
             for (int j = y1; j < y2; j++) {
-                if (map.getMap()[i][j].getBuilding() != null)
+                if (Map.getMap()[i][j].getBuilding() != null)
                     return "There is already a building in your coordinates!";
-                map.getMap()[i][j].setTexture(Texture.getTextureByName(type));
+                Map.getMap()[i][j].setTexture(Texture.getTextureByName(type));
             }
         return "texture successfully changed";
     }
@@ -204,7 +207,7 @@ public class GameMenuController {
             RandomStringGenerator generator = new RandomStringGenerator.Builder().selectFrom("swen".toCharArray()).build();
             direction = generator.generate(1);
         }
-        map.getMap()[x][y].setRock(new Rock(direction));
+        Map.getMap()[x][y].setRock(new Rock(direction));
         return "rock successfully dropped";
     }
 

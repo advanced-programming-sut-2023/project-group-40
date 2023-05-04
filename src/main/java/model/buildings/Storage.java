@@ -2,8 +2,8 @@ package model.buildings;
 
 import controller.GameMenuController;
 import model.*;
-import model.BuildingGroups;
 
+import javax.print.DocFlavor;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -11,7 +11,7 @@ public class Storage<T> extends Building {
     private final HashMap<T, Integer> products = new HashMap<>();
     private Class<T> clazz;
 
-    private int capacity;
+    private final int capacity;
 
     public Storage(String name, int height, int width, int hp, int[] cost, int capacity, HashSet<Texture> textures, boolean isIllegal, Class<T> clazz, BuildingGroups group) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
@@ -36,5 +36,12 @@ public class Storage<T> extends Building {
 
     public int getCapacity() {
         return capacity;
+    }
+
+    public int getSumOfProducts(T key){
+        int count = 0;
+        for (int i = 0 ; i < products.size() ; i ++)
+            count += products.get(key);
+        return count;
     }
 }
