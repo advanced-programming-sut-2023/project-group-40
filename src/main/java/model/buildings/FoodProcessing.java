@@ -1,18 +1,19 @@
 package model.buildings;
 
 
+import model.BuildingGroups;
 import model.Food;
 import model.Texture;
 
 import java.util.HashSet;
 
-public class FoodProcessing extends Building{
+public class FoodProcessing extends Building {
     private Food material;
     private Food product;
     private Integer productRate;
 
-    public FoodProcessing(String name, int height, int width, int hp, int[] cost, int workersRequired, Food material, Food product, Integer productRate, HashSet<Texture> textures,boolean isIllegal) {
-        super(name,height,width, hp, cost, workersRequired,textures,isIllegal);
+    public FoodProcessing(String name, int height, int width, int hp, int[] cost, int workersRequired, Food material, Food product, Integer productRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+        super(name, height, width, hp, cost, workersRequired, textures, isIllegal, group);
         this.material = material;
         this.product = product;
         this.productRate = productRate;

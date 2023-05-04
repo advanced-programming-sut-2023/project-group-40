@@ -1,5 +1,6 @@
 package model.buildings;
 
+import model.BuildingGroups;
 import model.Texture;
 import model.Troop;
 
@@ -10,8 +11,8 @@ public class Barrack extends Building{
     private int costOfTroop;
     private ArrayList<Troop>  troopsList = new ArrayList<>();
 
-    public Barrack(String name, int height, int width, int hp, int[] cost, int costOfTroop, HashSet<Texture> textures,boolean isIllegal) {
-        super(name,height ,width , hp, cost,textures,isIllegal);
+    public Barrack(String name, int height, int width, int hp, int[] cost, int costOfTroop, HashSet<Texture> textures,boolean isIllegal, BuildingGroups group) {
+        super(name,height ,width , hp, cost,textures,isIllegal, group);
         this.costOfTroop = costOfTroop;
     }
 

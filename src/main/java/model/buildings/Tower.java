@@ -1,15 +1,16 @@
 package model.buildings;
 
+import model.BuildingGroups;
 import model.Texture;
 
 import java.util.HashSet;
 
-public class Tower extends Building{
+public class Tower extends Building {
     private boolean canHoldEquipments;
-    private final int defenceRange,attackRange;
+    private final int defenceRange, attackRange;
 
-    public Tower(String name, int height, int width, int hp, int[] cost, boolean canHoldEquipments, int defenceRange, int attackRange, HashSet<Texture> textures,boolean isIllegal) {
-        super(name,height , width, hp, cost,textures,isIllegal);
+    public Tower(String name, int height, int width, int hp, int[] cost, boolean canHoldEquipments, int defenceRange, int attackRange, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+        super(name, height, width, hp, cost, textures, isIllegal, group);
         this.canHoldEquipments = canHoldEquipments;
         this.defenceRange = defenceRange;
         this.attackRange = attackRange;
