@@ -1,13 +1,17 @@
 package model.buildings;
 
+import model.BuildingGroups;
 import model.Material;
+import model.Texture;
 
-public class Mine extends Building{
+import java.util.HashSet;
+
+public class Mine extends Building {
     private Material material;
     private int productRate;
 
-    public Mine(String name, int height, int width, int hp, int[] cost, int workersRequired, Material material, int productRate) {
-        super(name,height,width, hp, cost, workersRequired);
+    public Mine(String name, int height, int width, int hp, int[] cost, int workersRequired, Material material, int productRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+        super(name, height, width, hp, cost, workersRequired, textures, isIllegal, group);
         this.material = material;
         this.productRate = productRate;
     }
