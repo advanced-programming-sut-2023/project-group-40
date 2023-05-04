@@ -1,5 +1,6 @@
 package model.buildings;
 
+import model.Map;
 import model.Texture;
 
 import java.util.HashSet;

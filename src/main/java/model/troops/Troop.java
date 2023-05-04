@@ -1,6 +1,11 @@
-package model;
+package model.troops;
 
 
+import model.Government;
+import model.People;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class Troop extends People {
     private Government owner;
@@ -11,6 +16,17 @@ public class Troop extends People {
     private int value;
     private boolean hasArmor, canPushLadder, canDigMoat, isHidden, canClimb;
     private int shootingRange;
+
+    public Troop(String region, int velocity, int powerOfAttack, int powerOfDefence, int value, boolean hasArmor, boolean canDigMoat, int shootingRange) {
+        this.region = region;
+        this.velocity = velocity;
+        this.powerOfAttack = powerOfAttack;
+        this.powerOfDefence = powerOfDefence;
+        this.value = value;
+        this.hasArmor = hasArmor;
+        this.canDigMoat = canDigMoat;
+        this.shootingRange = shootingRange;
+    }
 
     public String getRegion() {
         return region;
@@ -92,7 +108,11 @@ public class Troop extends People {
         this.owner = owner;
     }
 
-    public void decreaseVelocity(int percent){
+    public void changeVelocity(int percent){
         velocity *= percent;
+    }
+
+    public void action(){
+
     }
 }

@@ -1,6 +1,5 @@
 package model.buildings;
 
-import model.BuildingGroups;
 import model.Material;
 import model.Texture;
 

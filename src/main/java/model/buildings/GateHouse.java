@@ -1,6 +1,5 @@
 package model.buildings;
 
-import model.BuildingGroups;
 import model.Texture;
 import view.GameMenu;
 

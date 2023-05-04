@@ -1,8 +1,7 @@
 package model.buildings;
 
-import model.BuildingGroups;
 import model.Texture;
-import model.Troop;
+import model.troops.Troop;
 
 import java.util.ArrayList;
 import java.util.HashSet;
