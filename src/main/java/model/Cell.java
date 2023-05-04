@@ -51,4 +51,13 @@ public class Cell {
     public void setRock(Rock rock) {
         this.rock = rock;
     }
+
+    public Rock getRock() {
+        return rock;
+    }
+
+    public void decreaseTroopsVelocity(int percent) {
+        for (Troop troop : troops)
+            troop.decreaseVelocity(percent);
+    }
 }

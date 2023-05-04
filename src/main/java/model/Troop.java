@@ -1,15 +1,13 @@
 package model;
 
-enum Level {
 
-}
 
 public class Troop extends People {
     private Government owner;
     private String region;
-    private Level velocity;
-    private Level powerOfAttack;
-    private Level powerOfDefence;
+    private int velocity;
+    private int powerOfAttack;
+    private int powerOfDefence;
     private int value;
     private boolean hasArmor, canPushLadder, canDigMoat, isHidden, canClimb;
     private int shootingRange;
@@ -18,15 +16,15 @@ public class Troop extends People {
         return region;
     }
 
-    public Level getVelocity() {
+    public int getVelocity() {
         return velocity;
     }
 
-    public Level getPowerOfAttack() {
+    public int getPowerOfAttack() {
         return powerOfAttack;
     }
 
-    public Level getPowerOfDefence() {
+    public int getPowerOfDefence() {
         return powerOfDefence;
     }
 
@@ -92,5 +90,9 @@ public class Troop extends People {
 
     public void setOwner(Government owner) {
         this.owner = owner;
+    }
+
+    public void decreaseVelocity(int percent){
+        velocity *= percent;
     }
 }
