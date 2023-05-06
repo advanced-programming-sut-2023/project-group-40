@@ -10,8 +10,8 @@ import java.util.regex.MatchResult;
 import java.util.stream.Stream;
 
 public class Government {
-    private static ArrayList<Government> governments = new ArrayList<>();
-    private ArrayList<TradeRequest> requests =  new ArrayList<>();
+    private static final ArrayList<Government> governments = new ArrayList<>();
+    private final ArrayList<TradeRequest> requests =  new ArrayList<>();
     private final ArrayList<Storage<Material>> materialStorages = new ArrayList<>();
     private final ArrayList<Storage<Food>> foodStorages = new ArrayList<>();
     private final ArrayList<Storage<Weapon>> weaponStorages = new ArrayList<>();
@@ -83,5 +83,21 @@ public class Government {
         Stream<Government> stream = governments.stream().filter(government -> government.owner == user);
         Optional<Government> government = stream.findAny();
         return government.orElse(null);
+    }
+    public static ArrayList<Government> getGovernments() {
+        return governments;
+    }
+    public <T> void addRequest(TradeRequest<T> tradeRequest) {
+        requests.add(tradeRequest);
+    }
+    public ArrayList<TradeRequest> getRequests() {
+        return requests;
+    }
+    public TradeRequest getRequestById(Integer id) {
+        for (TradeRequest request : requests) {
+            if(request.getId().equals(id))
+                return request;
+        }
+        return null;
     }
 }
