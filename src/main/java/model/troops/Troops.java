@@ -1,7 +1,8 @@
 package model.troops;
 
 public enum Troops {
-    ARCHER("archer", new Troop("european", 9, 4, 5, 12, false, true, 20)),
+    ARCHER("archer", new rangedTroop("european", 9, 4, 5, 120, false, true, 20)),
+    ARABIAN_ARCHER("Archer Bow",new rangedTroop("arabian",9,5,5,75,false,true,20))
 
     ;
     String fullName;

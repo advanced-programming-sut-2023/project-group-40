@@ -20,6 +20,12 @@ public class Government {
     private int taxRate;
     private int popularity;
     private int fearRate;
+    private int population;
+    private Color color = null;
+
+    public Government(User owner) {
+        this.owner = owner;
+    }
 
     public void setOwner(User owner) {
         this.owner = owner;
@@ -60,6 +66,22 @@ public class Government {
     public void setPopularity(int popularity) {
         this.popularity = popularity;
     }
+    public static ArrayList<Government> getGovernments() {
+        return governments;
+    }
+    public <T> void addRequest(TradeRequest<T> tradeRequest) {
+        requests.add(tradeRequest);
+    }
+    public ArrayList<TradeRequest> getRequests() {
+        return requests;
+    }
+    public TradeRequest getRequestById(Integer id) {
+        for (TradeRequest request : requests) {
+            if(request.getId().equals(id))
+                return request;
+        }
+        return null;
+    }
     public void addFoodStorage(Storage storage) {
         foodStorages.add(storage);
     }
@@ -84,20 +106,25 @@ public class Government {
         Optional<Government> government = stream.findAny();
         return government.orElse(null);
     }
-    public static ArrayList<Government> getGovernments() {
-        return governments;
+
+    public static boolean checkAllGovernmentsChooseColor() {
+        return governments.stream().anyMatch(government -> government.getColor() == null);
     }
-    public <T> void addRequest(TradeRequest<T> tradeRequest) {
-        requests.add(tradeRequest);
+
+    public static void addGovernment(String username) {
+        Government government = new Government(User.getUserByUsername(username));
+        governments.add(government);
     }
-    public ArrayList<TradeRequest> getRequests() {
-        return requests;
+
+    public static int getGovernmentsSize() {
+        return governments.size();
     }
-    public TradeRequest getRequestById(Integer id) {
-        for (TradeRequest request : requests) {
-            if(request.getId().equals(id))
-                return request;
-        }
-        return null;
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public Color getColor() {
+        return color;
     }
 }

@@ -15,6 +15,13 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+enum DefaultSlogans {
+    ;
+    DefaultSlogans(String slogan) {
+        this.slogan = slogan;
+    }
+    private String slogan;
+}
 
 public class User {
     private int highScore;
@@ -113,7 +120,8 @@ public class User {
     public static void fetchDatabase() {
         if(!new File(PATH).exists()) return;
         try (FileReader reader = new FileReader(PATH)) {
-            users = new Gson().fromJson(reader, new TypeToken<List<User>>() {}.getType());
+            ArrayList<User> copy = new Gson().fromJson(reader, new TypeToken<List<User>>() {}.getType());
+            if (copy != null) users = copy;
         }
         catch (IOException e) {
             e.printStackTrace();

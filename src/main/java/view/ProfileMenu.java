@@ -10,7 +10,6 @@ import java.util.regex.Matcher;
 public class ProfileMenu {
     public static void run() throws ReflectiveOperationException {
         while (true) {
-            System.out.println("you are in profile menu");
             String command = MainController.scanner.nextLine();
             String result = Commands.regexFinder(command, ProfileMenu.class);
             if (command != null) System.out.println(result);

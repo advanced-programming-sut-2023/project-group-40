@@ -6,8 +6,16 @@ import model.buildings.Buildings;
 import model.buildings.Storage;
 import org.apache.commons.text.RandomStringGenerator;
 import view.TradeMenu;
+import model.buildings.Buildings;
+import model.buildings.Storage;
+import org.apache.commons.text.RandomStringGenerator;
+import view.GameMenu;
 
 import java.io.IOException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
+import java.util.Scanner;
 
 enum Direction {
 
@@ -15,6 +23,7 @@ enum Direction {
 
 public class GameMenuController {
     private static Government currentGovernment;
+    private static Government onGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;
     private static int x;
@@ -235,7 +244,20 @@ public class GameMenuController {
         return currentGovernment;
     }
 
-    public static void setCurrentGovernment(User currentUser) {
-       currentGovernment = Government.getGovernmentByUser(currentUser);
+    public static void setCurrentGovernment(User user) {
+        currentGovernment = new Government(user);
+    }
+
+    public static void chooseColor() {
+        System.out.println("type your color :");
+        while (true) {
+            for (Color color : Color.values())
+                if (color.getGovernment() == null)
+                    System.out.println(color.getColorName());
+            String selectedColorName = MainController.scanner.nextLine();
+            String message = Color.setOwnerOfColor(selectedColorName,currentGovernment);
+            System.out.println(message);
+            if (message.startsWith("you successfully")) return;
+        }
     }
 }
