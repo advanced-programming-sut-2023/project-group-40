@@ -5,9 +5,9 @@ import model.buildings.Building;
 import model.buildings.Buildings;
 import model.buildings.Storage;
 import org.apache.commons.text.RandomStringGenerator;
+import view.TradeMenu;
 
 import java.io.IOException;
-import java.util.Random;
 
 enum Direction {
 
@@ -36,6 +36,10 @@ public class GameMenuController {
         GameMenuController.x = x;
         GameMenuController.y = y;
         return null;
+    }
+    public static void trade() throws ReflectiveOperationException {
+        TradeMenuController.setCurrentGovernment(currentGovernment);
+        TradeMenu.run();
     }
 
     public static String showDetails(int x, int y) {
@@ -231,7 +235,7 @@ public class GameMenuController {
         return currentGovernment;
     }
 
-    public static void setCurrentGovernment(Government currentGovernment) {
-        GameMenuController.currentGovernment = currentGovernment;
+    public static void setCurrentGovernment(User currentUser) {
+       currentGovernment = Government.getGovernmentByUser(currentUser);
     }
 }

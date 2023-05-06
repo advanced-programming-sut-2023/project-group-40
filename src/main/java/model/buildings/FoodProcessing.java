@@ -1,6 +1,5 @@
 package model.buildings;
 
-
 import model.Food;
 import model.Texture;
 

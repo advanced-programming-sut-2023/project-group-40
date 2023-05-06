@@ -1,25 +1,31 @@
 package model;
 
+import javax.swing.*;
+
 public class TradeRequest<T> {
     private static int lastId = 1000;
-    private Government sender,receiver;
-    private T type;
-    private int price,count;
-    private String message;
-    private int id = lastId++;
-    private boolean isAccepted = false,hasSeen = false;
+    private final Government sender, receiver;
+    private final T commodity;
+    private final int price, count;
+    private final String senderMessage;
+    private String receiverMessage;
+    private final Integer id = lastId++;
+    private boolean isAccepted = false, hasSeen = false;
 
-    public TradeRequest(Government sender, Government receiver, T type, int price, int count, String message) {
+    public TradeRequest(Government sender, Government receiver, T commodity, int price, int count, String message) {
         this.sender = sender;
         this.receiver = receiver;
-        this.type = type;
+        this.commodity = commodity;
         this.price = price;
         this.count = count;
-        this.message = message;
+        this.senderMessage = message;
     }
 
     public void setAccepted(boolean accepted) {
         isAccepted = accepted;
+    }
+    public boolean getAccepted() {
+        return isAccepted;
     }
 
     public static int getLastId() {
@@ -27,7 +33,7 @@ public class TradeRequest<T> {
     }
 
     public T getType() {
-        return type;
+        return commodity;
     }
 
     public int getPrice() {
@@ -38,11 +44,17 @@ public class TradeRequest<T> {
         return count;
     }
 
-    public String getMessage() {
-        return message;
+    public String getSenderMessage() {
+        return senderMessage;
+    }
+    public String getReceiverMessage() {
+        return receiverMessage;
+    }
+    public void setReceiverMessage(String message) {
+        this.receiverMessage = message;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -60,5 +72,11 @@ public class TradeRequest<T> {
 
     public void setHasSeen(boolean hasSeen) {
         this.hasSeen = hasSeen;
+    }
+    public boolean getHasSeen() {
+        return this.hasSeen;
+    }
+    public T getCommodity() {
+        return commodity;
     }
 }

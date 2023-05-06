@@ -7,6 +7,7 @@ public enum Weapon {
     SPEAR("spear",0,0),
     ARMOR("armor",0,0);
     final String name;
+    enum type{};
     final int priceSell,priceBuy;
 
     Weapon(String name, int priceSell, int priceBuy) {

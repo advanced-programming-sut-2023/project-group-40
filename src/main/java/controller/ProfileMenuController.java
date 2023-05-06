@@ -68,7 +68,7 @@ public class ProfileMenuController {
 
     public static String removeSlogan(){
         currentUser.setSlogan(null);
-        return "remove slogan";
+        return "slogan deleted";
     }
 
     public static void setCurrentUser(User currentUser) {
