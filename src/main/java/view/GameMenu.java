@@ -5,13 +5,14 @@ import controller.MainController;
 import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
 import java.io.IOException;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 public class GameMenu {
+    private static boolean gameStarted = false;
     public static void run() throws ReflectiveOperationException {
+        if (!gameStarted) System.out.println(MapMenu.run());
         System.out.println("you are in game menu!");
-        System.out.println("choose your size for map: ");
-        GameMenuController.setMapSize(Integer.parseInt(MainController.scanner.nextLine()));
         while (true) {
             String command = MainController.scanner.nextLine();
             System.out.println(Commands.regexFinder(command, GameMenu.class));
@@ -100,6 +101,9 @@ public class GameMenu {
     }
 
     public static String createUnit(Matcher matcher) {
+        String type = matcher.group("type");
+        int count = Integer.parseInt(matcher.group("count"));
+        GameMenuController.createUnit(type,count);
         return null;
     }
 
@@ -143,39 +147,6 @@ public class GameMenu {
         return null;
     }
 
-    public static String setTexture(Matcher matcher) {
-        String type = matcher.group("type");
-        if (matcher.group("x") != null) {
-            int x = Integer.parseInt(matcher.group("x"));
-            int y = Integer.parseInt(matcher.group("y"));
-            return GameMenuController.setTexture(x,y,type);
-        }
-        else {
-            int x1 = Integer.parseInt(matcher.group("x1"));
-            int x2 = Integer.parseInt(matcher.group("x2"));
-            int y1 = Integer.parseInt(matcher.group("y1"));
-            int y2 = Integer.parseInt(matcher.group("y2"));
-            return GameMenuController.setTexture(x1,x2,y1,y2,type);
-        }
-    }
-
-    public static String clearBlock(Matcher matcher){
-        //clear tropp ?????
-        return null;
-    }
-
-    public static String dropRock(Matcher matcher){
-        //which shape ??
-        int x = Integer.parseInt(matcher.group("x"));
-        int y = Integer.parseInt(matcher.group("y"));
-        String direction = matcher.group("direction");
-        return GameMenuController.dropRock(x,y,direction);
-    }
-
-    public static String dropTree(Matcher matcher){
-        return null;
-    }
-
     public static String dropUnit(Matcher matcher){
         return null;
     }
@@ -186,5 +157,9 @@ public class GameMenu {
 
     public static String nextTurn(Matcher matcher){
         return null;
+    }
+
+    public static void setGameStarted(boolean gameStarted) {
+        GameMenu.gameStarted = gameStarted;
     }
 }

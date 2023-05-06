@@ -1,6 +1,7 @@
 package model;
 
 import model.buildings.Storage;
+import view.GameMenu;
 import view.TradeMenu;
 
 import java.util.ArrayList;
@@ -20,6 +21,12 @@ public class Government {
     private int taxRate;
     private int popularity;
     private int fearRate;
+    private int population;
+    private Color color = null;
+
+    public Government(User owner) {
+        this.owner = owner;
+    }
 
     public void setOwner(User owner) {
         this.owner = owner;
@@ -83,5 +90,26 @@ public class Government {
         Stream<Government> stream = governments.stream().filter(government -> government.owner == user);
         Optional<Government> government = stream.findAny();
         return government.orElse(null);
+    }
+
+    public static boolean checkAllGovernmentsChooseColor() {
+        return governments.stream().anyMatch(government -> government.getColor() == null);
+    }
+
+    public static void addGovernment(String username) {
+        Government government = new Government(User.getUserByUsername(username));
+        governments.add(government);
+    }
+
+    public static int getGovernmentsSize() {
+        return governments.size();
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public Color getColor() {
+        return color;
     }
 }

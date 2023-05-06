@@ -4,7 +4,7 @@ import controller.MainController;
 import controller.RegisterMenuController;
 import view.enums.Commands;
 
-import java.util.Scanner;
+import java.io.IOException;
 import java.util.regex.Matcher;
 
 public class RegisterMenu {
@@ -16,7 +16,7 @@ public class RegisterMenu {
             if (result != null) System.out.println(result);
         }
     }
-    public static String register (Matcher matcher) {
+    public static String register (Matcher matcher) throws IOException {
         String username = matcher.group("username");
         String password = matcher.group("password");
         String passwordConfirmation = matcher.group("passwordConfirmation");

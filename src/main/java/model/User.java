@@ -113,7 +113,8 @@ public class User {
     public static void fetchDatabase() {
         if(!new File(PATH).exists()) return;
         try (FileReader reader = new FileReader(PATH)) {
-            users = new Gson().fromJson(reader, new TypeToken<List<User>>() {}.getType());
+            ArrayList<User> copy = new Gson().fromJson(reader, new TypeToken<List<User>>() {}.getType());
+            if (copy != null) users = copy;
         }
         catch (IOException e) {
             e.printStackTrace();

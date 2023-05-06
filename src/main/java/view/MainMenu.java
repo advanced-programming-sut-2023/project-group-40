@@ -25,9 +25,7 @@ public class MainMenu {
         return null;
     }
     public static String enterGameMenu(Matcher matcher) throws ReflectiveOperationException {
-        System.out.println("you are in game menu!");
-        GameMenuController.setCurrentGovernment(
-                Government.getGovernmentByUser(MainMenuController.getCurrentUser()));
+        GameMenuController.setCurrentGovernment(MainMenuController.getCurrentUser());
         GameMenu.run();
         return null;
     }
