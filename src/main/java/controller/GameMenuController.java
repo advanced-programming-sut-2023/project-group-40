@@ -5,6 +5,7 @@ import model.buildings.Building;
 import model.buildings.Buildings;
 import model.buildings.Storage;
 import org.apache.commons.text.RandomStringGenerator;
+import view.ShopMenu;
 import view.TradeMenu;
 import model.buildings.Buildings;
 import model.buildings.Storage;
@@ -49,6 +50,10 @@ public class GameMenuController {
     public static void trade() throws ReflectiveOperationException {
         TradeMenuController.setCurrentGovernment(currentGovernment);
         TradeMenu.run();
+    }
+    public static void shop() throws ReflectiveOperationException {
+        ShopMenuController.setCurrentGovernment(currentGovernment);
+        ShopMenu.run();
     }
 
     public static String showDetails(int x, int y) {

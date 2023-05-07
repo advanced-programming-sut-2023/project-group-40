@@ -29,6 +29,10 @@ public class GameMenu {
         GameMenuController.trade();
         return null;
     }
+    public static String shop() throws ReflectiveOperationException {
+        GameMenuController.shop();
+        return null;
+    }
 
     public static String changeSightArea(Matcher matcher) {
         //left in another first

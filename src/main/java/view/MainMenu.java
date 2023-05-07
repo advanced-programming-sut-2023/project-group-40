@@ -19,7 +19,6 @@ public class MainMenu {
         }
     }
     public static String enterProfileMenu(Matcher matcher) throws ReflectiveOperationException {
-        System.out.println("you are in profile menu!");
         ProfileMenuController.setCurrentUser(MainMenuController.getCurrentUser());
         ProfileMenu.run();
         return null;

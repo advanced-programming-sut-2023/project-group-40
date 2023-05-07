@@ -15,4 +15,10 @@ public enum Weapon {
         this.priceSell = priceSell;
         this.priceBuy = priceBuy;
     }
+    public int getPriceSell() {
+        return priceSell;
+    }
+    public int getPriceBuy() {
+        return priceBuy;
+    }
 }

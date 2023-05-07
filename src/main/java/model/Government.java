@@ -1,5 +1,6 @@
 package model;
 
+import model.buildings.Building;
 import model.buildings.Storage;
 import view.TradeMenu;
 
@@ -15,6 +16,7 @@ public class Government {
     private final ArrayList<Storage<Material>> materialStorages = new ArrayList<>();
     private final ArrayList<Storage<Food>> foodStorages = new ArrayList<>();
     private final ArrayList<Storage<Weapon>> weaponStorages = new ArrayList<>();
+    private Building shop;
     private User owner;
     private int foodRate;
     private int taxRate;
