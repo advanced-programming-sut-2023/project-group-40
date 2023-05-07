@@ -1,15 +1,15 @@
 package model;
 
 import model.buildings.Building;
-
-import java.util.ArrayList;
+import model.troops.Troop;
 
 public class Cell {
     private boolean isAvailable = true,isPassable = true;
-    private Building building;
+    private Building building = null;
     private Tree tree;
+    private Rock rock;
     private Texture texture;
-    private ArrayList<Troop> troops = new ArrayList<>();
+    private Unit unit;
 
     public Cell(Texture texture) {
         this.texture = texture;
@@ -19,15 +19,41 @@ public class Cell {
         this.building = building;
     }
 
+    public Building getBuilding() {
+        return building;
+    }
+
     public void setTexture(Texture texture) {
         this.texture = texture;
     }
 
-    public void addTroop(Troop troop){
-        troops.add(troop);
+    public Texture getTexture() {
+        return texture;
     }
 
-    public void removeTroop(Troop troop){
-        troops.remove(troop);
+    public void setAvailable(boolean available) {
+        isAvailable = available;
     }
+
+    public void setPassable(boolean passable) {
+        isPassable = passable;
+    }
+
+    public void setRock(Rock rock) {
+        this.rock = rock;
+    }
+
+    public Rock getRock() {
+        return rock;
+    }
+
+    public void changeTroopsVelocity(int percent) {
+        for (Troop troop : unit.getTroops())
+            troop.changeVelocity(percent);
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
 }

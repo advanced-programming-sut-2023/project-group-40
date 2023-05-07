@@ -1,16 +1,16 @@
 package model.buildings;
 
-import model.Troop;
+import model.Texture;
+import model.troops.Troop;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Barrack extends Building{
-    private int costOfTroop;
-    private ArrayList<Troop>  troopsList = new ArrayList<>();
+    private final ArrayList<Troop>  troopsList = new ArrayList<>();
 
-    public Barrack(String name, int height, int width, int hp, int[] cost, int costOfTroop) {
-        super(name,height ,width , hp, cost);
-        this.costOfTroop = costOfTroop;
+    public Barrack(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures,boolean isIllegal, BuildingGroups group) {
+        super(name,height ,width , hp, cost,textures,isIllegal, group);
     }
 
     public void addTroop(Troop troop){
