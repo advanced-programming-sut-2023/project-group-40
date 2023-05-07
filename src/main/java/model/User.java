@@ -15,12 +15,19 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+enum DefaultSlogans {
+    ;
+    DefaultSlogans(String slogan) {
+        this.slogan = slogan;
+    }
+    private String slogan;
+}
 
 public class User {
     private int highScore;
     private int rank;
     private String username;
-    private final String passwordHash;
+    private String passwordHash;
     private String nickname;
     private String email;
     private String slogan;
@@ -69,6 +76,10 @@ public class User {
         return true;
     }
 
+    public void setPasswordHash(String password) {
+        this.passwordHash = generatePasswordHash(password);
+    }
+
     public static boolean isUsernameExists(String username){
         return users.stream().anyMatch(user -> user.username.equals(username));
     }
@@ -96,6 +107,11 @@ public class User {
         return user.orElse(null);
     }
 
+
+    public String getSecurityAnswer() {
+        return securityAnswer;
+    }
+
     public static User getStayedLoginUser(){
         Stream<User> stream = users.stream().filter(user -> user.isStayLoggedIn = true);
         Optional<User> user = stream.findAny();
@@ -104,7 +120,8 @@ public class User {
     public static void fetchDatabase() {
         if(!new File(PATH).exists()) return;
         try (FileReader reader = new FileReader(PATH)) {
-            users = new Gson().fromJson(reader, new TypeToken<List<User>>() {}.getType());
+            ArrayList<User> copy = new Gson().fromJson(reader, new TypeToken<List<User>>() {}.getType());
+            if (copy != null) users = copy;
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -143,6 +160,10 @@ public class User {
         this.rank = rank;
     }
 
+    public void setSlogan(String slogan) {
+        this.slogan = slogan;
+    }
+
     public int getHighScore() {
         return highScore;
     }
@@ -173,5 +194,13 @@ public class User {
 
     public static String generatePasswordHash(String password){
         return new DigestUtils("SHA3-256").digestAsHex(password);
+    }
+
+    public void setStayLoggedIn(boolean stayLoggedIn) {
+        isStayLoggedIn = stayLoggedIn;
+    }
+
+    public boolean checkPassword(String password) {
+        return generatePasswordHash(password).equals(this.passwordHash);
     }
 }

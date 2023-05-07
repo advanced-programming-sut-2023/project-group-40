@@ -2,6 +2,8 @@ package controller;
 
 import model.User;
 
+import java.io.IOException;
+
 public class RegisterMenuController {
     public static String register(String username , String password ,String confirmPassword ,
                                   String email, String nickname ,
