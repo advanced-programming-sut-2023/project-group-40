@@ -12,4 +12,12 @@ public class Castle {
         this.cornerDownRight = cornerDownRight;
         this.population = population;
     }
+
+    public int getPopulation() {
+        return population;
+    }
+
+    public void changePopulation(int amount){
+        population += amount;
+    }
 }

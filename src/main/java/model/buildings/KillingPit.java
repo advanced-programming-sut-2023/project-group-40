@@ -1,9 +1,13 @@
 package model.buildings;
+import model.Government;
+import model.Map;
 import model.Texture;
+import model.Unit;
 
 import java.util.HashSet;
 
 public class KillingPit extends Building {
+    //don't see
     private final int damage;
 
     public KillingPit(String name, int height, int width, int hp, int[] cost, int damage, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
@@ -13,5 +17,16 @@ public class KillingPit extends Building {
 
     public int getDamage() {
         return damage;
+    }
+
+    @Override
+    public String action(Government government) {
+        for (int i = x - 1; i < x + 1; i++)
+            for (int j = y - 1; j < y + 1; j++) {
+                Unit unit = Map.getMap()[i][j].getUnit();
+                if (unit.getGovernment() == government)
+                    unit.decreaseHpOfUnit(damage);
+            }
+        return null;
     }
 }

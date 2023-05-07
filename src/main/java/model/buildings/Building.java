@@ -1,4 +1,5 @@
 package model.buildings;
+import model.Government;
 import model.Texture;
 import model.User;
 
@@ -82,5 +83,9 @@ public class Building implements BuildingAction {
 
     public int getY() {
         return y;
+    }
+
+    public int[] getCost() {
+        return cost;
     }
 }

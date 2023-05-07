@@ -1,21 +1,18 @@
 package model;
 
+import model.buildings.FoodProcessing;
 import model.buildings.Storage;
-import view.GameMenu;
-import view.TradeMenu;
 
+import java.lang.ref.PhantomReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
-import java.util.regex.MatchResult;
+import java.util.SortedSet;
 import java.util.stream.Stream;
 
 public class Government {
     private static ArrayList<Government> governments = new ArrayList<>();
-    private ArrayList<TradeRequest> requests =  new ArrayList<>();
-    private final ArrayList<Storage<Material>> materialStorages = new ArrayList<>();
-    private final ArrayList<Storage<Food>> foodStorages = new ArrayList<>();
-    private final ArrayList<Storage<Weapon>> weaponStorages = new ArrayList<>();
+    private final ArrayList<TradeRequest> requests = new ArrayList<>();
+    private final ArrayList<Storage> storages = new ArrayList<>();
     private User owner;
     private int foodRate;
     private int taxRate;
@@ -23,7 +20,7 @@ public class Government {
     private int fearRate;
     private int population;
     private Color color = null;
-
+    private Castle castle;
     public Government(User owner) {
         this.owner = owner;
     }
@@ -67,23 +64,13 @@ public class Government {
     public void setPopularity(int popularity) {
         this.popularity = popularity;
     }
-    public void addFoodStorage(Storage storage) {
-        foodStorages.add(storage);
+
+    public void addStorage(Storage storage) {
+        storages.add(storage);
     }
-    public void addWeaponStorage(Storage storage) {
-        weaponStorages.add(storage);
-    }
-    public void addMaterialStorage(Storage storage) {
-        materialStorages.add(storage);
-    }
-    public ArrayList<Storage<Food>> getFoodStorages() {
-        return foodStorages;
-    }
-    public ArrayList<Storage<Weapon>> getWeaponStorages() {
-        return weaponStorages;
-    }
-    public ArrayList<Storage<Material>> getMaterialStorages() {
-        return materialStorages;
+
+    public ArrayList<Storage> getMaterialStorages() {
+        return storages;
     }
 
     public static Government getGovernmentByUser(User user) {
@@ -111,5 +98,58 @@ public class Government {
 
     public Color getColor() {
         return color;
+    }
+
+    public int getAmountOfGood(Good good) {
+        int amount = 0;
+        for (Storage storage : storages)
+            amount += storage.getSumOfProducts(good);
+        return amount;
+    }
+    public Castle getCastle() {
+        return castle;
+    }
+
+    public String decreaseAmountOfGood(Good good ,int count) {
+        int deletedMaterials = count;
+        int sumOfInventories = 0;
+        for (Storage storage : storages)
+            sumOfInventories += storage.getSumOfProducts(good);
+        if (count > sumOfInventories) return "you haven't enough" + good.name().toLowerCase();
+        for (Storage storage : storages){
+            if (deletedMaterials == 0) break;
+            if (deletedMaterials < storage.getSumOfProducts(good)) {
+                storage.decreaseAmountOfProduct(good, count);
+                break;
+            }
+            else {
+                deletedMaterials -= storage.getSumOfProducts(good);
+                storage.removeProduct(good);
+            }
+        }
+        return "you moved " + good.name().toLowerCase() + "successfully";
+    }
+
+    public String increaseAmountOfGood(Good good , int count) {
+        int addedFoods = count;
+        int sumOfEmptyCapacities = 0;
+        for (Storage storage : storages) {
+            sumOfEmptyCapacities += storage.getCapacity() - storage.getSumOfProducts(good);
+        }
+        if (addedFoods > sumOfEmptyCapacities)
+            return "you can't produce" + good.name().toLowerCase();
+        for (Storage storage : storages){
+            if (addedFoods == 0) break;
+            int emptyCapacity = storage.getCapacity() - storage.getSumOfProducts(good);
+            if (addedFoods < emptyCapacity) {
+                storage.addProduct(good, addedFoods);
+                break;
+            }
+            else {
+                addedFoods -= emptyCapacity;
+                storage.addProduct(good,emptyCapacity);
+            }
+        }
+        return "you successfully produce" + good.name().toLowerCase();
     }
 }

@@ -55,4 +55,8 @@ public class Cell {
     public Unit getUnit() {
         return unit;
     }
+
+    public void setUnit(Unit unit) {
+        this.unit = unit;
+    }
 }

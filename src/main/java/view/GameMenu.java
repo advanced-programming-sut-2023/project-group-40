@@ -103,8 +103,7 @@ public class GameMenu {
     public static String createUnit(Matcher matcher) {
         String type = matcher.group("type");
         int count = Integer.parseInt(matcher.group("count"));
-        GameMenuController.createUnit(type,count);
-        return null;
+        return GameMenuController.createUnit(type,count);
     }
 
     public static String repair(Matcher matcher) {

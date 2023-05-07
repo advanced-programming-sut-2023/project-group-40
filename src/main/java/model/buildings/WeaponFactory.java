@@ -1,10 +1,7 @@
 package model.buildings;
 
 import controller.GameMenuController;
-import model.Government;
-import model.Material;
 import model.Texture;
-import model.Weapon;
 
 import java.util.HashSet;
 

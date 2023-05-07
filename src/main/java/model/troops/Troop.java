@@ -1,13 +1,13 @@
 package model.troops;
 
 
+import model.Good;
 import model.Government;
 import model.People;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 public class Troop extends People {
+    private Good weapon;
+    private int hp;
     private Government owner;
     private String region;
     private int velocity;
@@ -112,7 +112,11 @@ public class Troop extends People {
         velocity *= percent;
     }
 
-    public void action(){
+    public Good getWeapon() {
+        return weapon;
+    }
 
+    public int getHp() {
+        return hp;
     }
 }

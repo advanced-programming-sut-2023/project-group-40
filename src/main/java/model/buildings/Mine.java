@@ -1,6 +1,5 @@
 package model.buildings;
 
-import model.Material;
 import model.Texture;
 
 import java.util.HashSet;
@@ -29,5 +28,10 @@ public class Mine extends Building {
 
     public void setProductRate(int productRate) {
         this.productRate = productRate;
+    }
+
+    @Override
+    public String action() {
+        return super.action();
     }
 }
