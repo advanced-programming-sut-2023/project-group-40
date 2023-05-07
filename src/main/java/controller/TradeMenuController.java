@@ -3,6 +3,7 @@ package controller;
 
 import com.google.gson.internal.bind.util.ISO8601Utils;
 import model.*;
+import model.buildings.Storage;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -25,27 +26,26 @@ public class TradeMenuController {
     }
 
     public static String sendRequest(String type, String name, int amount, int price, String message, String username) {
-        Optional<Government> result = Government.getGovernments().stream().filter(government -> government.getOwner().getUsername().equals(username)).findFirst();
-        if (result.isPresent()) {
-            targetGovernment = result.get();
-        } else {
-            return "username is not exist";
-        }
+        if(Government.getGovernmentByUser(User.getUserByUsername(username)) == null)
+            return "username in not exist!";
         try {
-            Class.forName("model." + type);
-        } catch (ClassNotFoundException e) {
+            Class c = Class.forName("model." + type);
+        }
+        catch (ClassNotFoundException e) {
             return "invalid resource type!";
         }
 
         switch (type) {
             case "Food":
-                if (Food.valueOf(name.toUpperCase()) == null) return "";
+                if (Food.getMaterialByName(name.toUpperCase()) == null) return "invalid resource name!";
                 targetGovernment.addRequest(new TradeRequest<>(currentGovernment, targetGovernment, Food.valueOf(name.toUpperCase()), price, amount, message));
                 break;
             case "Material":
+                if (Material.getMaterialByName(name.toUpperCase()) == null) return "invalid resource name!";
                 targetGovernment.addRequest(new TradeRequest<>(currentGovernment, targetGovernment, Material.valueOf(name.toUpperCase()), price, amount, message));
                 break;
             case "Weapon":
+                if (Weapon.getMaterialByName(name.toUpperCase()) == null) return "invalid resource name!";
                 targetGovernment.addRequest(new TradeRequest<>(currentGovernment, targetGovernment, Weapon.valueOf(name.toUpperCase()), price, amount, message));
                 break;
             default:
@@ -71,7 +71,14 @@ public class TradeMenuController {
         if (request == null)
             return "invalid id!";
         targetGovernment = request.getSender();
-        // TODO: ۰۶/۰۵/۲۰۲۳  
+
+        if(request.getCommodity().getClass().equals(Food.class)) {
+            for (Storage<Food> foodStorage : currentGovernment.getFoodStorages()) {
+                if()
+            }
+        }
+
+
 
         request.setReceiverMessage(message);
         request.setAccepted(true);

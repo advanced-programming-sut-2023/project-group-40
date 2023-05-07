@@ -1,11 +1,24 @@
 package model;
 
 public enum Material {
-    ;
-    private final int priceSell,priceBuy;
+    MATERIAL1(0,0);
+    private final int sellPrice,buyPrice;
 
-    Material(int priceSell, int priceBuy) {
-        this.priceSell = priceSell;
-        this.priceBuy = priceBuy;
+    Material(int sellPrice, int buyPrice) {
+        this.sellPrice = sellPrice;
+        this.buyPrice = buyPrice;
+    }
+    public int getSellPrice() {
+        return sellPrice;
+    }
+    public int getBuyPrice() {
+        return buyPrice;
+    }
+    public static Material getMaterialByName(String name) {
+        for (Material value : Material.values()) {
+            if(value.name().toLowerCase().equals(name))
+                return value;
+        }
+        return null;
     }
 }

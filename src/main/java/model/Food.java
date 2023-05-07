@@ -5,10 +5,23 @@ public enum Food {
     FOOD2(0,0),
     FOOD3(0,0),
     FOOD4(0,0);
-    private final int priceSell,priceBuy;
+    private final int sellPrice,buyPrice;
 
-    Food(int priceSell, int priceBuy) {
-        this.priceSell = priceSell;
-        this.priceBuy = priceBuy;
+    Food(int sellPrice, int buyPrice) {
+        this.sellPrice = sellPrice;
+        this.buyPrice = buyPrice;
+    }
+    public int getSellPrice() {
+        return sellPrice;
+    }
+    public int getBuyPrice() {
+        return buyPrice;
+    }
+    public static Food getMaterialByName(String name) {
+        for (Food value : Food.values()) {
+            if(value.name().toLowerCase().equals(name))
+                return value;
+        }
+        return null;
     }
 }
