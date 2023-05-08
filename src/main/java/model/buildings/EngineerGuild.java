@@ -1,14 +1,22 @@
 package model.buildings;
 
-import model.BuildingGroups;
 import model.Texture;
 
 import java.util.HashSet;
 
 public class EngineerGuild extends Building {
-    private final int CostOfLadderMan = 0, CostOfEngineer = 0;
+    private final int costOfLadderMan = 0, costOfEngineer = 0;
+    private int numberOfEngineer, numberOfLadderMan;
 
     public EngineerGuild(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
+    }
+
+    public void increaseNumberOfEngineer(int amount) {
+        this.numberOfEngineer += amount;
+    }
+
+    public void increaseNumberOfLadderMan(int amount) {
+        this.numberOfLadderMan += amount;
     }
 }

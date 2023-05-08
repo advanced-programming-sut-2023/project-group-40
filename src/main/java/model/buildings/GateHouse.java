@@ -1,7 +1,7 @@
 package model.buildings;
 
-import model.BuildingGroups;
 import model.Texture;
+import view.GameMenu;
 
 import java.util.HashSet;
 
@@ -25,4 +25,5 @@ public class GateHouse extends Building {
     public int getMaxCapacity() {
         return maxCapacity;
     }
+
 }

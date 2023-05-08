@@ -1,37 +1,49 @@
 package model;
 
+import model.troops.Troop;
+
 import java.util.ArrayList;
 
-enum UnitState {
-}
-
-enum Speed {
-}
 
 public class Unit {
-    private ArrayList<Troop> troops = new ArrayList<>();
-    private UnitState state;
-    private int range;
-    private Speed speed;
+    private Government government;
+    boolean canDamage = true;
+    private final ArrayList<Troop> troops = new ArrayList<>();
+    private final String state;
+    private int hp;
 
-    public Unit( UnitState state, int range, Speed speed) {
+    public Unit(Government government, String state, int hp) {
+        this.government = government;
         this.state = state;
-        this.range = range;
-        this.speed = speed;
+        this.hp = hp;
     }
 
-    public void addTroop(Troop troop){
+    public void addTroop(Troop troop, int count) {
+        for (int i = 0; i < count; i++)
+            troops.add(troop);
     }
 
-    public UnitState getState() {
+    public String getState() {
         return state;
     }
 
-    public int getRange() {
-        return range;
+    public ArrayList<Troop> getTroops() {
+        return troops;
     }
 
-    public Speed getSpeed() {
-        return speed;
+    public void setCanDamage(boolean canDamage) {
+        this.canDamage = canDamage;
+    }
+
+    public void decreaseHpOfUnit(int amount) {
+        hp -= amount * troops.size();
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public Government getGovernment() {
+        return government;
     }
 }

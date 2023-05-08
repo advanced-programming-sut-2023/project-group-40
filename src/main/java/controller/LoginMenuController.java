@@ -7,14 +7,12 @@ import view.MainMenu;
 public class LoginMenuController {
     private static int countOfTry = 0;
 
-    public static String login(String username, String password, boolean isStayLoggedIn) throws InterruptedException,
-            ReflectiveOperationException {
+    public static String login(String username, String password, boolean isStayLoggedIn) throws InterruptedException, ReflectiveOperationException {
         countOfTry++;
         User user = User.getStayedLoginUser();
         if (user == null) {
             user = User.getUserByUsername(username);
-            if (user == null)
-                return "Username and password didn't match!";
+            if (user == null) return "Username and password didn't match!";
             if (!user.getPasswordHash().equals(password)) {
                 int time = 5 * countOfTry;
                 System.out.println("Username and password didn't match!\n" + "you banned for " + time + " seconds");
@@ -28,11 +26,11 @@ public class LoginMenuController {
         MainMenu.run();
         return null;
     }
+
     public static String forgetPassword(String username) {
         User user = User.getUserByUsername(username);
-        if (user == null)
-            return "username not exist!";
-        for (SecurityQuestions securityQuestion: SecurityQuestions.values())
+        if (user == null) return "username not exist!";
+        for (SecurityQuestions securityQuestion : SecurityQuestions.values())
             System.out.println(securityQuestion.getQuestion());
         String answer = MainController.scanner.nextLine();
         if (answer.equals(user.getSecurityAnswer())) {

@@ -44,7 +44,9 @@ public enum Commands{
     SEND_REQUEST("trade -t (?<resourceType>\\S+) -n (?<resourceName>\\S+) -a (?<resourceAmount>\\S+) -p (?<price>\\d+) -m (?<message>\\S+)", TradeMenu.class, "sendRequest"),
     SHOW_TRADE_LIST("trade list", TradeMenu.class, "showTradeList"),
     ACCEPT_TRADE("trade accept -i (?<id>\\d+) -m (?<message>\\S+)", TradeMenu.class, "acceptTrade"),
-    SHOW_TRADE_HISTORY("trade history", TradeMenu.class, "showTradeHistory");
+    SHOW_TRADE_HISTORY("trade history", TradeMenu.class, "showTradeHistory"),
+    CREATE_UNIT("create unit -t (?<type>\\w+) -c (?<count>\\d)", GameMenu.class,"createUnit"),
+    NEXT_TURN("next turn", MapMenu.class,"nextTurn");
     private final String regex;
     private final String methodName;
     private final Class<?> menuClass;
@@ -55,13 +57,12 @@ public enum Commands{
         this.methodName = methodName;
     }
 
-    public static String regexFinder (String inputCommand, Class<?> currentClass) throws ReflectiveOperationException{
+    public static String regexFinder(String inputCommand, Class<?> currentClass) throws ReflectiveOperationException {
         for (Commands command : values()) {
             Matcher matcher = Pattern.compile(command.regex).matcher(inputCommand);
             if (currentClass != command.menuClass) continue;
             if (matcher.matches())
-                return (String) command.menuClass.getMethod(command.methodName,Matcher.class).
-                        invoke(null,matcher);
+                return (String) command.menuClass.getMethod(command.methodName, Matcher.class).invoke(null, matcher);
         }
         return "invalid command!";
     }
