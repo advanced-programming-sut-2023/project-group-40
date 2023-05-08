@@ -17,7 +17,7 @@ public class Castle {
         return population;
     }
 
-    public void changePopulation(int amount){
+    public void changePopulation(int amount) {
         population += amount;
     }
 }

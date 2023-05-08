@@ -3,7 +3,6 @@ package model.buildings;
 import controller.GameMenuController;
 import model.*;
 
-import javax.print.DocFlavor;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -25,7 +24,8 @@ public class Storage extends Building {
     public void removeProduct(Good product) {
         products.remove(product);
     }
-    public void decreaseAmountOfProduct(Good product,int amount) {
+
+    public void decreaseAmountOfProduct(Good product, int amount) {
         int size = products.get(product);
         products.remove(product);
         products.put(product, size - amount);
@@ -39,9 +39,9 @@ public class Storage extends Building {
         return capacity;
     }
 
-    public int getSumOfProducts(Good key){
+    public int getSumOfProducts(Good key) {
         int count = 0;
-        for (int i = 0 ; i < products.size() ; i ++)
+        for (int i = 0; i < products.size(); i++)
             count += products.get(key);
         return count;
     }

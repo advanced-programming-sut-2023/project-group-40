@@ -5,6 +5,9 @@ import model.Good;
 import model.Government;
 import model.People;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Troop extends People {
     private Good weapon;
     private int hp;

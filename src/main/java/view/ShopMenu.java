@@ -4,18 +4,18 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class ShopMenu {
-    public static void run(){
+    public static void run() {
     }
 
-    public static String showPriceList(Matcher matcher){
+    public static String showPriceList(Matcher matcher) {
         return null;
     }
 
-    public static String buy(Matcher matcher){
+    public static String buy(Matcher matcher) {
         return null;
     }
 
-    public static String sell(Matcher matcher){
+    public static String sell(Matcher matcher) {
         return null;
     }
 }
