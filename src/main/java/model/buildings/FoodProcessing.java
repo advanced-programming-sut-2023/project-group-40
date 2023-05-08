@@ -1,7 +1,9 @@
 package model.buildings;
 
 
+import controller.GameMenuController;
 import model.*;
+import view.GameMenu;
 
 import java.util.HashSet;
 
@@ -42,10 +44,9 @@ public class FoodProcessing extends Building {
     }
 
     @Override
-    public String action(Government government) {
+    public void action() {
+        Government government = GameMenuController.getCurrentGovernment();
         String message = government.decreaseAmountOfGood(material,productRate);
-        if (message.equals(""))
-        government.increaseAmountOfGood(product,productRate);
-        return null;
+        if (message.endsWith("successfully")) government.increaseAmountOfGood(product,productRate);
     }
 }

@@ -1,16 +1,18 @@
 package model.buildings;
 
 import controller.GameMenuController;
+import model.Good;
+import model.Government;
 import model.Texture;
 
 import java.util.HashSet;
 
 public class WeaponFactory extends Building {
-    private final Material material;
-    private final Weapon weapon;
+    private final Good material;
+    private final Good weapon;
     private int produceRate;
 
-    public WeaponFactory(String name, int height, int width, int hp, int[] cost, int workersRequired, Material material, Weapon weapon,
+    public WeaponFactory(String name, int height, int width, int hp, int[] cost, int workersRequired, Good material, Good weapon,
                          int produceRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
         super(name, height, width, hp, cost, workersRequired, textures, isIllegal, group);
         this.material = material;
@@ -27,43 +29,23 @@ public class WeaponFactory extends Building {
     }
 
     @Override
-    public String action() {
+    public void action() {
+        Government government = GameMenuController.getCurrentGovernment();
         int gold = 0,wood = 0;
-        for (Storage<Material> storage :GameMenuController.getCurrentGovernment().
-                getMaterialStorages()) {
-            gold += storage.getProducts().get(Material.GOLD);
-            wood += storage.getProducts().get(Material.WOOD);
-        }
-        if (gold < cost[0]) return "you don't have enough gold";
-        if (wood < cost[1]) return "you don't have enough wood";
+        gold = government.getAmountOfGood(Good.GOLD);
+        wood = government.getAmountOfGood(Good.WOOD);
+        if (gold < cost[0]) return;
+//            return "you don't have enough gold";
+        if (wood < cost[1]) return;
+//            return "you don't have enough wood";
         switch (name){
-            case "armourer" -> addWeapon(Weapon.ARMOR);
+            case "armourer" -> government.increaseAmountOfGood(Good.ARMOR,produceRate);
             case "blacksmith" -> {
-                addWeapon(Weapon.SWORD);
-                addWeapon(Weapon.MACE);
+                government.increaseAmountOfGood(Good.SWORD,produceRate);
+                government.increaseAmountOfGood(Good.MACE,produceRate);
             }
-            case "Fletcher" -> addWeapon(Weapon.BOW);
-            case "Poleturner" -> addWeapon(Weapon.SPEAR);
-        }
-        return null;
-    }
-    public void addWeapon(Weapon weapon){
-        int sumOfCapacities = 0;
-        int makeWeapons = produceRate;
-        for (Storage<Weapon> storage :GameMenuController.getCurrentGovernment().getWeaponStorages())
-            sumOfCapacities += storage.getCapacity() - storage.getSumOfProducts(weapon);
-        if (produceRate > sumOfCapacities) makeWeapons = sumOfCapacities;
-        for (Storage<Weapon> storage :GameMenuController.getCurrentGovernment().getWeaponStorages()) {
-            int capacity =  storage.getCapacity() - storage.getSumOfProducts(weapon);
-            if (makeWeapons == 0) break;
-            if (makeWeapons > capacity) {
-                storage.addProduct(weapon, capacity);
-                makeWeapons -= capacity;
-            }
-            else {
-                storage.addProduct(weapon,makeWeapons);
-                break;
-            }
+            case "Fletcher" -> government.increaseAmountOfGood(Good.BOW,produceRate);
+            case "Poleturner" -> government.increaseAmountOfGood(Good.SPEAR,produceRate);
         }
     }
 }

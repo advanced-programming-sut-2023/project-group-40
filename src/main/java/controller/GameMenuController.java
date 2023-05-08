@@ -9,6 +9,7 @@ import model.troops.Troop;
 import model.troops.Troops;
 import org.apache.commons.text.RandomStringGenerator;
 import view.GameMenu;
+import view.ShopMenu;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -140,6 +141,8 @@ public class GameMenuController {
         if (Map.getMap()[x][y].getBuilding() == null)
             return "There is no existing building in your coordinates!";
         selectedBuilding = Map.getMap()[x][y].getBuilding();
+        if (selectedBuilding.getName().equals("shop"))
+            ShopMenu.run();
         return "target building selected";
     }
 

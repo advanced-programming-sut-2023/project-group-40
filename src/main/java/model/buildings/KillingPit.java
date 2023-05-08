@@ -1,8 +1,10 @@
 package model.buildings;
+import controller.GameMenuController;
 import model.Government;
 import model.Map;
 import model.Texture;
 import model.Unit;
+import view.GameMenu;
 
 import java.util.HashSet;
 
@@ -20,13 +22,13 @@ public class KillingPit extends Building {
     }
 
     @Override
-    public String action(Government government) {
+    public void action() {
+        Government government = GameMenuController.getCurrentGovernment();
         for (int i = x - 1; i < x + 1; i++)
             for (int j = y - 1; j < y + 1; j++) {
                 Unit unit = Map.getMap()[i][j].getUnit();
                 if (unit.getGovernment() == government)
                     unit.decreaseHpOfUnit(damage);
             }
-        return null;
     }
 }
