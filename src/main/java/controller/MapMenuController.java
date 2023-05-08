@@ -28,10 +28,10 @@ public class MapMenuController {
     }
 
     public static boolean isPlayerAdded(String username) {
-        return Government.getGovernmentByUser(User.getUserByUsername(username)) != null;
+        return Government.getGovernmentByUser(UserController.getUserByUsername(username)) != null;
     }
 
     public static boolean isPlayerValid(String username) {
-        return User.isUsernameExists(username);
+        return UserController.isUsernameExists(username);
     }
 }

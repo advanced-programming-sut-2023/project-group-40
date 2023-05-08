@@ -1,47 +1,42 @@
 package controller;
 
-import model.SecurityQuestions;
 import model.User;
-import view.MainMenu;
+
+import java.time.Clock;
 
 public class LoginMenuController {
     private static int countOfTry = 0;
+    private static long endOfBanTime = 0;
 
-    public static String login(String username, String password, boolean isStayLoggedIn) throws InterruptedException,
-            ReflectiveOperationException {
-        countOfTry++;
-        User user = User.getStayedLoginUser();
-        if (user == null) {
-            user = User.getUserByUsername(username);
-            if (user == null)
-                return "Username and password didn't match!";
-            if (!user.getPasswordHash().equals(password)) {
-                int time = 5 * countOfTry;
-                System.out.println("Username and password didn't match!\n" + "you banned for " + time + " seconds");
-                Thread.sleep(time * 1000L);
-                return null;
-            }
+    public static String login(String username, String password, boolean isStayLoggedIn) {
+        long millis = Clock.systemDefaultZone().millis();
+        if (millis < endOfBanTime)
+            throw new RuntimeException("you are ban for " + (endOfBanTime - millis) / 1000 + "seconds");
+        User user = UserController.getUserByUsername(username);
+        if (user == null) throw new RuntimeException("username or password is wrong!");
+        if (!user.getPasswordHash().equals(UserController.generatePasswordHash(password))) {
+            countOfTry++;
+            endOfBanTime = millis + countOfTry * 5 * 1000L;
+            throw new RuntimeException("username or password didn't match!\n" + "you banned for " + countOfTry * 5 + " seconds");
         }
         MainMenuController.setCurrentUser(user);
         if (isStayLoggedIn) user.setStayLoggedIn(true);
-        System.out.println("user logged in successfully!");
-        MainMenu.run();
-        return null;
+        countOfTry = 0;
+        endOfBanTime = 0;
+        return "user logged in successfully!";
     }
-    public static String forgetPassword(String username) {
-        User user = User.getUserByUsername(username);
-        if (user == null)
-            return "username not exist!";
-        for (SecurityQuestions securityQuestion: SecurityQuestions.values())
-            System.out.println(securityQuestion.getQuestion());
-        String answer = MainController.scanner.nextLine();
-        if (answer.equals(user.getSecurityAnswer())) {
-            System.out.println("please enter your new password :");
-            String newPassword = MainController.scanner.nextLine();
-            user.setPasswordHash(newPassword);
-            System.out.println("your password successfully changed!");
-            return null;
-        }
-        return "your answer is not correct!";
+
+    public static String checkSecurityQuestion(String username, String answer) {
+        User user = UserController.getUserByUsername(username);
+        if (user.getSecurityAnswer().equals(answer)) return "enter your new password: ";
+        else throw new RuntimeException("wrong answer!");
+    }
+
+    public static String changePassword(String username, String newPassword) {
+        User user = UserController.getUserByUsername(username);
+        if (!UserController.checkPasswordFormat(newPassword))
+            throw new RuntimeException("password is weak!");
+        user.setPasswordHash(newPassword);
+        return "your password will change after verify!";
     }
 }

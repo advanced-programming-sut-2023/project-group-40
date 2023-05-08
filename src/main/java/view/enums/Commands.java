@@ -2,12 +2,14 @@ package view.enums;
 
 import view.*;
 
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum Commands{
-    REGISTER("^user create (?=.*-u( (?<username>\\S*))?)(?=.*-p( (?<password>\\S*))? (?<passwordConfirmation>\\S*))(?=.*--email( (?<email>\\S*))?)(?=.*-n( (?<nickname>(\"[^\"]*\")|([^\"\\s]*)))?)(?=.*(?<sloganExist>-s) (?<slogan>(\"[^\"]*\")|([^\"\\s]*)))?.*$", RegisterMenu.class,"register"),
-    LOGIN("user login (?=.*-u( (?<username>\\S*))?)(?=.*-p( (?<password>\\S*))?)(?=.*(?<stayLoggedIn>--stay-logged-in))?.*|user login",LoginMenu.class,"login"),
+    REGISTER("^user create (?=.*-u( (?<username>\\S*))?)(?=.*-p( (?<password>\\S*))? (?<passwordConfirmation>\\S*))(?=.*--email( (?<email>\\S*))?)(?=.*-n( (?<nickname>(\"[^\"]*\")|([^\"\\s]*)))?)(?=.*(?<sloganExist>-s) (?<slogan>(\"[^\"]*\")|([^\"\\s]*))?).*$", RegisterMenu.class,"register"),
+    PICK_SECURITY_QUESTION("^question pick (?=.*-q( (?<securityQuestionNo>\\d)))(?=.*-a( (?<answer>(\"[^\"]*\")|([^\"\\s]*))))(?=.*-c( (?<answerConfirm>(\"[^\"]*\")|([^\"\\s]*)))).*$"),
+    LOGIN("user login (?=.*-u( (?<username>\\S*))?)(?=.*-p( (?<password>\\S*))?)(?=.*(?<stayLoggedIn>--stay-logged-in)?).*",LoginMenu.class,"login"),
     FORGET_PASSWORD("forget my password -u (?<username>\\S+)",LoginMenu.class,"forgetPassword"),
     LOGOUT("user logout", MainMenu.class,"logout"),
     ENTER_REGISTER("enter register menu",LoginMenu.class,"register"),
@@ -43,13 +45,18 @@ public enum Commands{
     DROP_ROCK("drop rock -x (?<x>\\d+) -y (?<y>\\d+) -d (?<direction>\\w+)", GameMenu.class,"dropRock"),
     NEXT_TURN("next turn", MapMenu.class,"nextTurn");
     private final String regex;
-    private final String methodName;
-    private final Class<?> menuClass;
+    private String methodName;
+    private Class<?> menuClass;
+    public final static Scanner scanner = new Scanner(System.in);
 
     Commands(String regex, Class<?> menuClass, String methodName) {
         this.regex = regex;
         this.menuClass = menuClass;
         this.methodName = methodName;
+    }
+
+    Commands(String regex) {
+        this.regex = regex;
     }
 
     public static String regexFinder (String inputCommand, Class<?> currentClass) throws ReflectiveOperationException{
@@ -61,6 +68,14 @@ public enum Commands{
                         invoke(null,matcher);
         }
         return "invalid command!";
+    }
+
+    public boolean canMatch(String input){
+        return Pattern.compile(regex).matcher(input).matches();
+    }
+
+    public Matcher getMatcher(String input){
+        return Pattern.compile(regex).matcher(input);
     }
 
     public String getRegex() {

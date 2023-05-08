@@ -1,5 +1,6 @@
 package model;
 
+import controller.UserController;
 import model.buildings.Storage;
 import view.TradeMenu;
 
@@ -112,7 +113,7 @@ public class Government {
     }
 
     public static void addGovernment(String username) {
-        Government government = new Government(User.getUserByUsername(username));
+        Government government = new Government(UserController.getUserByUsername(username));
         governments.add(government);
     }
 
