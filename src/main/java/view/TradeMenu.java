@@ -26,13 +26,11 @@ public class TradeMenu {
         String message = matcher.group("message");
 
         String output = TradeMenuController.showGovernment();
-        if(output.equals("no government exist except you"))
-            return "no government exist except you";
+        if (output.equals("no government exist except you")) return "no government exist except you";
         System.out.println(output);
         System.out.print("select the username you want to exchange with: ");
         String username = MainController.scanner.nextLine();
-        return TradeMenuController.sendRequest(resourceType, resourceName, resourceAmount, price,
-                message, username);
+        return TradeMenuController.sendRequest(resourceType, resourceName, resourceAmount, price, message, username);
     }
 
     public static String showTradeList(Matcher matcher) {

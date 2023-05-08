@@ -72,22 +72,11 @@ public class GameMenuController {
     }
 
     public static String showFoodList() {
-        int numOfFood1 = 0, numOfFood2 = 0, numOfFood3 = 0, numOfFood4 = 0, index = 0;
-        for (Storage<Food> foodStorage : currentGovernment.getFoodStorages()) {
-            for (Food value : Food.values()) {
-                if (index == 4) break;
-                if (foodStorage.getProducts().get(value) != null)
-                    numOfFood1 += foodStorage.getProducts().get((value));
-            }
-            index++;
-        }
-        return "Food List: \n food1: " + numOfFood1 + "\n food2: " + numOfFood2 +
-                "\n food3: " + numOfFood3 + "\n food4: " + numOfFood4;
+        return null;
     }
 
     public static String setFoodRate(int rate) {
-        if (rate > 2 || rate < -2)
-            return "rate-number is out of bound";
+        if (rate > 2 || rate < -2) return "rate-number is out of bound";
         currentGovernment.setFoodRate(rate);
         return "set rate-number is successful";
     }
@@ -99,8 +88,7 @@ public class GameMenuController {
     public static String setTaxRate(int rate) {
         if (!selectedBuilding.getName().equals("Small stone gatehouse"))
             return "you don't select Small stone gatehouse";
-        if (rate > 8 || rate < -3)
-            return "rate-number is out of bound";
+        if (rate > 8 || rate < -3) return "rate-number is out of bound";
         currentGovernment.setTaxRate(rate);
         return "set rate-number is successful";
     }
@@ -110,8 +98,7 @@ public class GameMenuController {
     }
 
     public static String setFearRate(int rate) {
-        if (rate > 5 || rate < -5)
-            return "rate-number is out of bound";
+        if (rate > 5 || rate < -5) return "rate-number is out of bound";
         currentGovernment.setFearRate(rate);
         return "set rate-number is successful";
     }
@@ -129,18 +116,15 @@ public class GameMenuController {
         //کم کردن پول
         if (Map.getMap()[x][y].getRock() != null)
             return "you can not drop building because there is a rock in this cell!";
-        if (!isCoordinateValid(x) || !isCoordinateValid(y))
-            return "your coordinates is incorrect!";
-        if (Map.getMap()[x][y].getBuilding() != null)
-            return "There is already a building in your coordinates!";
+        if (!isCoordinateValid(x) || !isCoordinateValid(y)) return "your coordinates is incorrect!";
+        if (Map.getMap()[x][y].getBuilding() != null) return "There is already a building in your coordinates!";
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
-        if (targetBuilding == null)
-            return "your building type is incorrect!";
+        if (targetBuilding == null) return "your building type is incorrect!";
         if (targetBuilding.checkTexture(Map.getMap()[x][y].getTexture()))
             return "you can not drop building to target cell!";
-        currentGovernment.decreaseAmountOfGood(Good.GOLD,targetBuilding.getCost()[0]);
-        currentGovernment.decreaseAmountOfGood(Good.WOOD,targetBuilding.getCost()[1]);
-        currentGovernment.decreaseAmountOfGood(Good.STONE,targetBuilding.getCost()[2]);
+        currentGovernment.decreaseAmountOfGood(Good.GOLD, targetBuilding.getCost()[0]);
+        currentGovernment.decreaseAmountOfGood(Good.WOOD, targetBuilding.getCost()[1]);
+        currentGovernment.decreaseAmountOfGood(Good.STONE, targetBuilding.getCost()[2]);
         Map.getMap()[x][y].setBuilding(targetBuilding);
         Map.getMap()[x][y].setAvailable(false);
         return "building dropped to the target cell!";
@@ -154,25 +138,21 @@ public class GameMenuController {
         //میتونن دو تا اسلحه داشته باشن
         //castle
         //what do??
-        if (count < 0)
-            return "count is invalid";
-        if (type.equals("engineer")){
-            if (selectedBuilding.getName().equals("engineer guild")){
-                EngineerGuild engineerGuild  = (EngineerGuild) selectedBuilding;
+        if (count < 0) return "count is invalid";
+        if (type.equals("engineer")) {
+            if (selectedBuilding.getName().equals("engineer guild")) {
+                EngineerGuild engineerGuild = (EngineerGuild) selectedBuilding;
                 engineerGuild.increaseNumberOfEngineer(count);
-            }
-            else return "you can't create engineer in this building";
+            } else return "you can't create engineer in this building";
         }
-        if (type.equals("LadderMan")){
-            if (selectedBuilding.getName().equals("engineer guild")){
-                EngineerGuild engineerGuild  = (EngineerGuild) selectedBuilding;
+        if (type.equals("LadderMan")) {
+            if (selectedBuilding.getName().equals("engineer guild")) {
+                EngineerGuild engineerGuild = (EngineerGuild) selectedBuilding;
                 engineerGuild.increaseNumberOfLadderMan(count);
-            }
-            else return "you can't create LadderMan in this building";
+            } else return "you can't create LadderMan in this building";
         }
         Troop troop = Troops.getTroopObjectByType(type);
-        if (troop == null)
-            return "unit type is invalid";
+        if (troop == null) return "unit type is invalid";
         int goldForUnit = troop.getValue() * count;
         if (currentGovernment.getAmountOfGood(Good.GOLD) != goldForUnit)
             return "you don't have enough gold for create this unit";
@@ -185,12 +165,12 @@ public class GameMenuController {
         if (type.equals("arabian") && selectedBuilding.getName().equals("barrack"))
             return "you can't create arabian in barrack";
         currentGovernment.getCastle().changePopulation(-1 * count);
-        currentGovernment.decreaseAmountOfGood(Good.GOLD,count);
-        currentGovernment.decreaseAmountOfGood(troop.getWeapon(),count);
+        currentGovernment.decreaseAmountOfGood(Good.GOLD, count);
+        currentGovernment.decreaseAmountOfGood(troop.getWeapon(), count);
         int x = selectedBuilding.getX();
         int y = selectedBuilding.getY();
-        Unit unit = new Unit(currentGovernment,"standing",troop.getHp() * count);
-        unit.addTroop(troop,count);
+        Unit unit = new Unit(currentGovernment, "standing", troop.getHp() * count);
+        unit.addTroop(troop, count);
         Map.getMap()[x][y].setUnit(unit);
         return "you successfully create unit";
     }
@@ -236,10 +216,8 @@ public class GameMenuController {
     }
 
     public static String setTexture(int x, int y, String type) {
-        if (!isCoordinateValid(x) || !isCoordinateValid(y))
-            return "your coordinates is incorrect!";
-        if (Map.getMap()[x][y].getBuilding() != null)
-            return "There is already a building in your coordinates!";
+        if (!isCoordinateValid(x) || !isCoordinateValid(y)) return "your coordinates is incorrect!";
+        if (Map.getMap()[x][y].getBuilding() != null) return "There is already a building in your coordinates!";
         Map.getMap()[x][y].setTexture(Texture.getTextureByName(type));
         return "texture successfully changed";
     }
@@ -249,8 +227,7 @@ public class GameMenuController {
             return "your coordinates is incorrect!";
         for (int i = x1; i < x2; i++)
             for (int j = y1; j < y2; j++) {
-                if (Map.getMap()[i][j].getBuilding() != null)
-                    return "There is already a building in your coordinates!";
+                if (Map.getMap()[i][j].getBuilding() != null) return "There is already a building in your coordinates!";
                 Map.getMap()[i][j].setTexture(Texture.getTextureByName(type));
             }
         return "texture successfully changed";
@@ -261,8 +238,7 @@ public class GameMenuController {
     }
 
     public static String dropRock(int x, int y, String direction) {
-        if (!direction.equals("n") && !direction.equals("e") && !direction.equals("s") &&
-                !direction.equals("w") && !direction.equals("r"))
+        if (!direction.equals("n") && !direction.equals("e") && !direction.equals("s") && !direction.equals("w") && !direction.equals("r"))
             return "your direction is incorrect!";
         if (direction.equals("r")) {
             RandomStringGenerator generator = new RandomStringGenerator.Builder().selectFrom("swen".toCharArray()).build();
@@ -300,10 +276,9 @@ public class GameMenuController {
         System.out.println("type your color :");
         while (true) {
             for (Color color : Color.values())
-                if (color.getGovernment() == null)
-                    System.out.println(color.getColorName());
+                if (color.getGovernment() == null) System.out.println(color.getColorName());
             String selectedColorName = MainController.scanner.nextLine();
-            String message = Color.setOwnerOfColor(selectedColorName,currentGovernment);
+            String message = Color.setOwnerOfColor(selectedColorName, currentGovernment);
             System.out.println(message);
             if (message.startsWith("you successfully")) return;
         }

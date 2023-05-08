@@ -16,8 +16,7 @@ public class TradeMenuController {
         for (TradeRequest request : currentGovernment.getRequests()) {
             if (!request.getHasSeen()) {
                 String username = request.getSender().getOwner().getUsername();
-                output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() +
-                        "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
+                output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
                 request.setHasSeen(true);
             }
         }
@@ -36,21 +35,6 @@ public class TradeMenuController {
         } catch (ClassNotFoundException e) {
             return "invalid resource type!";
         }
-
-        switch (type) {
-            case "Food":
-                if (Food.valueOf(name.toUpperCase()) == null) return "";
-                targetGovernment.addRequest(new TradeRequest<>(currentGovernment, targetGovernment, Food.valueOf(name.toUpperCase()), price, amount, message));
-                break;
-            case "Material":
-                targetGovernment.addRequest(new TradeRequest<>(currentGovernment, targetGovernment, Material.valueOf(name.toUpperCase()), price, amount, message));
-                break;
-            case "Weapon":
-                targetGovernment.addRequest(new TradeRequest<>(currentGovernment, targetGovernment, Weapon.valueOf(name.toUpperCase()), price, amount, message));
-                break;
-            default:
-                return "resource type is invalid";
-        }
         return "request sent";
     }
 
@@ -59,8 +43,7 @@ public class TradeMenuController {
         for (TradeRequest request : currentGovernment.getRequests()) {
             if (!request.getAccepted()) {
                 String username = request.getSender().getOwner().getUsername();
-                output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() +
-                        "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
+                output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
             }
         }
         return output;
@@ -68,8 +51,7 @@ public class TradeMenuController {
 
     public static String acceptTrade(int id, String message) {
         TradeRequest request = currentGovernment.getRequestById(id);
-        if (request == null)
-            return "invalid id!";
+        if (request == null) return "invalid id!";
         targetGovernment = request.getSender();
         // TODO: ۰۶/۰۵/۲۰۲۳  
 
@@ -82,10 +64,8 @@ public class TradeMenuController {
         String output = "All Request: \n";
         for (TradeRequest request : currentGovernment.getRequests()) {
             String username = request.getSender().getOwner().getUsername();
-            output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() +
-                    "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
-            if (request.getReceiverMessage() != null)
-                output += "\n   your message: " + request.getReceiverMessage();
+            output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
+            if (request.getReceiverMessage() != null) output += "\n   your message: " + request.getReceiverMessage();
         }
         return output;
     }
@@ -99,8 +79,7 @@ public class TradeMenuController {
     }
 
     public static String showGovernment() {
-        if (Government.getGovernments().size() == 1)
-            return "no government exist except you";
+        if (Government.getGovernments().size() == 1) return "no government exist except you";
         String output = "Governments : \n";
         for (Government government : Government.getGovernments()) {
             if (!government.equals(currentGovernment)) {

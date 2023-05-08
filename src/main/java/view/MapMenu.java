@@ -11,12 +11,11 @@ import java.util.regex.Matcher;
 public class MapMenu {
     public static String run() throws ReflectiveOperationException {
         System.out.println("you are in map menu!");
-        if(MapMenuController.isFirstPlayer()) {
+        if (MapMenuController.isFirstPlayer()) {
             chooseMapSize();
             setPlayers();
             GameMenuController.chooseColor();
-        }
-        else {
+        } else {
             if (!MapMenuController.isUserInGame(GameMenuController.getCurrentGovernment().getOwner()))
                 return "you are not in game";
             if (MapMenuController.isCurrentGovernmentChooseColor(GameMenuController.getCurrentGovernment().getOwner()))
@@ -29,36 +28,36 @@ public class MapMenu {
             System.out.println(Commands.regexFinder(command, MapMenu.class));
         }
     }
+
     public static String setTexture(Matcher matcher) {
         String type = matcher.group("type");
         if (matcher.group("x") != null) {
             int x = Integer.parseInt(matcher.group("x"));
             int y = Integer.parseInt(matcher.group("y"));
-            return GameMenuController.setTexture(x,y,type);
-        }
-        else {
+            return GameMenuController.setTexture(x, y, type);
+        } else {
             int x1 = Integer.parseInt(matcher.group("x1"));
             int x2 = Integer.parseInt(matcher.group("x2"));
             int y1 = Integer.parseInt(matcher.group("y1"));
             int y2 = Integer.parseInt(matcher.group("y2"));
-            return GameMenuController.setTexture(x1,x2,y1,y2,type);
+            return GameMenuController.setTexture(x1, x2, y1, y2, type);
         }
     }
 
-    public static String clearBlock(Matcher matcher){
+    public static String clearBlock(Matcher matcher) {
         //clear tropp ?????
         return null;
     }
 
-    public static String dropRock(Matcher matcher){
+    public static String dropRock(Matcher matcher) {
         //which shape ??
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
         String direction = matcher.group("direction");
-        return GameMenuController.dropRock(x,y,direction);
+        return GameMenuController.dropRock(x, y, direction);
     }
 
-    public static String dropTree(Matcher matcher){
+    public static String dropTree(Matcher matcher) {
         return null;
     }
 
@@ -67,35 +66,33 @@ public class MapMenu {
         GameMenuController.setMapSize(Integer.parseInt(MainController.scanner.nextLine()));
     }
 
-    public static void setPlayers(){
+    public static void setPlayers() {
         int countOfPlayers = setNumberOfPlayers();
         MapMenuController.addPlayer(GameMenuController.getCurrentGovernment().getOwner().getUsername());
         System.out.println("choose your opponents : (write usernames)");
         int selectedPlayer = 0;
-        while (true){
+        while (true) {
             String username = MainController.scanner.nextLine();
             if (MapMenuController.isPlayerValid(username)) {
-                if (MapMenuController.isPlayerAdded(username)){
+                if (MapMenuController.isPlayerAdded(username)) {
                     System.out.println("this player already added");
                     continue;
                 }
                 MapMenuController.addPlayer(username);
-                System.out.println("player " + username+ " added");
+                System.out.println("player " + username + " added");
                 selectedPlayer++;
                 if (selectedPlayer == countOfPlayers - 1) break;
-            }
-            else System.out.println("username not exist!");
+            } else System.out.println("username not exist!");
         }
         System.out.println("players successfully added");
     }
 
-    public static int setNumberOfPlayers(){
+    public static int setNumberOfPlayers() {
         int countOfPlayers = 0;
-        while (true){
+        while (true) {
             System.out.println("choose number of players of game :");
             countOfPlayers = Integer.parseInt(MainController.scanner.nextLine());
-            if (countOfPlayers < 2 || countOfPlayers > 8)
-                System.out.println("you enter invalid count number!");
+            if (countOfPlayers < 2 || countOfPlayers > 8) System.out.println("you enter invalid count number!");
             else break;
         }
         return countOfPlayers;

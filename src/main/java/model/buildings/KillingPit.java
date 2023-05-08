@@ -1,7 +1,9 @@
 package model.buildings;
+
 import model.Texture;
 
 import java.util.HashSet;
+
 import controller.GameMenuController;
 import model.Government;
 import model.Map;
@@ -30,8 +32,7 @@ public class KillingPit extends Building {
         for (int i = x - 1; i < x + 1; i++)
             for (int j = y - 1; j < y + 1; j++) {
                 Unit unit = Map.getMap()[i][j].getUnit();
-                if (unit.getGovernment() == government)
-                    unit.decreaseHpOfUnit(damage);
+                if (unit.getGovernment() == government) unit.decreaseHpOfUnit(damage);
             }
     }
 }

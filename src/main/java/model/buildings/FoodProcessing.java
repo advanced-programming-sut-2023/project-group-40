@@ -1,15 +1,9 @@
 package model.buildings;
 
-
-import controller.GameMenuController;
-import model.*;
-import view.GameMenu;
-
 import java.util.HashSet;
-import model.Food;
+
+import model.Good;
 import model.Texture;
-
-import java.util.HashSet;
 
 public class FoodProcessing extends Building {
     private Good material;
@@ -27,15 +21,15 @@ public class FoodProcessing extends Building {
         return material;
     }
 
-    public void setMaterial(Food material) {
+    public void setMaterial(Good material) {
         this.material = material;
     }
 
-    public Food getProduct() {
+    public Good getProduct() {
         return product;
     }
 
-    public void setProduct(Food product) {
+    public void setProduct(Good product) {
         this.product = product;
     }
 

@@ -24,6 +24,7 @@ public class TradeRequest<T> {
     public void setAccepted(boolean accepted) {
         isAccepted = accepted;
     }
+
     public boolean getAccepted() {
         return isAccepted;
     }
@@ -47,9 +48,11 @@ public class TradeRequest<T> {
     public String getSenderMessage() {
         return senderMessage;
     }
+
     public String getReceiverMessage() {
         return receiverMessage;
     }
+
     public void setReceiverMessage(String message) {
         this.receiverMessage = message;
     }
@@ -73,9 +76,11 @@ public class TradeRequest<T> {
     public void setHasSeen(boolean hasSeen) {
         this.hasSeen = hasSeen;
     }
+
     public boolean getHasSeen() {
         return this.hasSeen;
     }
+
     public T getCommodity() {
         return commodity;
     }

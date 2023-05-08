@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 
 public class Unit {
-    private Government  government;
+    private Government government;
     boolean canDamage = true;
     private final ArrayList<Troop> troops = new ArrayList<>();
     private final String state;
@@ -20,7 +20,7 @@ public class Unit {
 
     public void addTroop(Troop troop, int count) {
         for (int i = 0; i < count; i++)
-            troops.add(troop) ;
+            troops.add(troop);
     }
 
     public String getState() {
@@ -35,7 +35,7 @@ public class Unit {
         this.canDamage = canDamage;
     }
 
-    public void decreaseHpOfUnit(int amount){
+    public void decreaseHpOfUnit(int amount) {
         hp -= amount * troops.size();
     }
 

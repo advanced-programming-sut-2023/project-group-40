@@ -45,7 +45,6 @@ public class Mine extends Building {
         if (name.equals("Ox tether")) {
             government.increaseAmountOfGood(material, productRate);
             storage -= productRate;
-        }
-        else government.increaseAmountOfGood(material,productRate);
+        } else government.increaseAmountOfGood(material, productRate);
     }
 }

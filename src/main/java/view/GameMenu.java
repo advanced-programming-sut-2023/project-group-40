@@ -4,8 +4,10 @@ import controller.GameMenuController;
 import controller.MainController;
 import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
+
 import java.io.IOException;
 import java.util.Map;
+
 import controller.GameMenuController;
 import controller.MainController;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +18,7 @@ import java.util.regex.Matcher;
 
 public class GameMenu {
     private static boolean gameStarted = false;
+
     public static void run() throws ReflectiveOperationException {
         if (!gameStarted) System.out.println(MapMenu.run());
         System.out.println("you are in game menu!");
@@ -28,7 +31,7 @@ public class GameMenu {
     public static String showMap(Matcher matcher) throws IOException {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.showMap(x,y);
+        return GameMenuController.showMap(x, y);
     }
 
     public static String changeSightArea(Matcher matcher) {
@@ -38,14 +41,10 @@ public class GameMenu {
             int topNumber = StringUtils.isNotBlank(matcher.group("topNumber")) ? Integer.parseInt(matcher.group("topNumber")) : 1;
             int rightNumber = StringUtils.isNotBlank(matcher.group("rightNumber")) ? Integer.parseInt(matcher.group("rightNumber")) : 1;
             int downNumber = StringUtils.isNotBlank(matcher.group("downNumber")) ? Integer.parseInt(matcher.group("downNumber")) : 1;
-            if (matcher.group("left") != null)
-                GameMenuController.increaseX(-1 * leftNumber);
-            if (matcher.group("top") != null)
-                GameMenuController.increaseY(topNumber);
-            if (matcher.group("right") != null)
-                GameMenuController.increaseX(rightNumber);
-            if (matcher.group("down") != null)
-                GameMenuController.increaseY(-1 * downNumber);
+            if (matcher.group("left") != null) GameMenuController.increaseX(-1 * leftNumber);
+            if (matcher.group("top") != null) GameMenuController.increaseY(topNumber);
+            if (matcher.group("right") != null) GameMenuController.increaseX(rightNumber);
+            if (matcher.group("down") != null) GameMenuController.increaseY(-1 * downNumber);
         }
         return "sight area changed!";
     }
@@ -97,19 +96,19 @@ public class GameMenu {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
         String type = matcher.group("type");
-        return GameMenuController.dropBuilding(x,y,type);
+        return GameMenuController.dropBuilding(x, y, type);
     }
 
     public static String selectBuilding(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.selectBuilding(x,y);
+        return GameMenuController.selectBuilding(x, y);
     }
 
     public static String createUnit(Matcher matcher) {
         String type = matcher.group("type");
         int count = Integer.parseInt(matcher.group("count"));
-        return GameMenuController.createUnit(type,count);
+        return GameMenuController.createUnit(type, count);
     }
 
     public static String repair(Matcher matcher) {
@@ -156,27 +155,31 @@ public class GameMenu {
         return null;
     }
 
-    public static String clearBlock(Matcher matcher){
+    public static String clearBlock(Matcher matcher) {
         return null;
     }
 
-    public static String dropBlock(Matcher matcher){
+    public static String dropBlock(Matcher matcher) {
         return null;
     }
 
-    public static String dropTree(Matcher matcher){
+    public static String dropTree(Matcher matcher) {
         return null;
     }
 
-    public static String dropUnit(Matcher matcher){
+    public static String dropUnit(Matcher matcher) {
         return null;
     }
 
-    public static String enterTrade(Matcher matcher){
+    public static String enterTrade(Matcher matcher) {
         return null;
     }
 
-    public static String nextTurn(Matcher matcher){
+    public static String nextTurn(Matcher matcher) {
         return null;
+    }
+
+    public static void setGameStarted(boolean b) {
+        GameMenu.gameStarted = b;
     }
 }

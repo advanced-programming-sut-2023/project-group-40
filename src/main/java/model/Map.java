@@ -3,8 +3,9 @@ package model;
 import com.google.gson.internal.bind.SerializationDelegatingTypeAdapter;
 
 public class Map {
-private static int size;
-private static Cell[][] map;
+    private static int size;
+    private static Cell[][] map;
+
     public static int getSize() {
         return Map.size;
     }

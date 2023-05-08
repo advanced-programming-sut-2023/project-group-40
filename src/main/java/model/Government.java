@@ -27,6 +27,7 @@ public class Government {
     private int population;
     private Color color = null;
     private Castle castle;
+
     public Government(User owner) {
         this.owner = owner;
     }
@@ -112,23 +113,23 @@ public class Government {
             amount += storage.getSumOfProducts(good);
         return amount;
     }
+
     public Castle getCastle() {
         return castle;
     }
 
-    public String decreaseAmountOfGood(Good good ,int count) {
+    public String decreaseAmountOfGood(Good good, int count) {
         int deletedMaterials = count;
         int sumOfInventories = 0;
         for (Storage storage : storages)
             sumOfInventories += storage.getSumOfProducts(good);
         if (count > sumOfInventories) return "you haven't enough" + good.name().toLowerCase();
-        for (Storage storage : storages){
+        for (Storage storage : storages) {
             if (deletedMaterials == 0) break;
             if (deletedMaterials < storage.getSumOfProducts(good)) {
                 storage.decreaseAmountOfProduct(good, count);
                 break;
-            }
-            else {
+            } else {
                 deletedMaterials -= storage.getSumOfProducts(good);
                 storage.removeProduct(good);
             }
@@ -136,87 +137,43 @@ public class Government {
         return "you moved " + good.name().toLowerCase() + "successfully";
     }
 
-    public String increaseAmountOfGood(Good good , int count) {
+    public String increaseAmountOfGood(Good good, int count) {
         int addedFoods = count;
         int sumOfEmptyCapacities = 0;
         for (Storage storage : storages) {
             sumOfEmptyCapacities += storage.getCapacity() - storage.getSumOfProducts(good);
         }
-        if (addedFoods > sumOfEmptyCapacities)
-            return "you can't produce" + good.name().toLowerCase();
-        for (Storage storage : storages){
+        if (addedFoods > sumOfEmptyCapacities) return "you can't produce" + good.name().toLowerCase();
+        for (Storage storage : storages) {
             if (addedFoods == 0) break;
             int emptyCapacity = storage.getCapacity() - storage.getSumOfProducts(good);
             if (addedFoods < emptyCapacity) {
                 storage.addProduct(good, addedFoods);
                 break;
-            }
-            else {
+            } else {
                 addedFoods -= emptyCapacity;
-                storage.addProduct(good,emptyCapacity);
+                storage.addProduct(good, emptyCapacity);
             }
         }
         return "you successfully produce" + good.name().toLowerCase();
     }
+
     public static ArrayList<Government> getGovernments() {
         return governments;
     }
+
     public <T> void addRequest(TradeRequest<T> tradeRequest) {
         requests.add(tradeRequest);
     }
+
     public ArrayList<TradeRequest> getRequests() {
         return requests;
     }
+
     public TradeRequest getRequestById(Integer id) {
         for (TradeRequest request : requests) {
-            if(request.getId().equals(id))
-                return request;
+            if (request.getId().equals(id)) return request;
         }
         return null;
-    }
-    public void addFoodStorage(Storage storage) {
-        foodStorages.add(storage);
-    }
-    public void addWeaponStorage(Storage storage) {
-        weaponStorages.add(storage);
-    }
-    public void addMaterialStorage(Storage storage) {
-        materialStorages.add(storage);
-    }
-    public ArrayList<Storage<Food>> getFoodStorages() {
-        return foodStorages;
-    }
-    public ArrayList<Storage<Weapon>> getWeaponStorages() {
-        return weaponStorages;
-    }
-    public ArrayList<Storage<Material>> getMaterialStorages() {
-        return materialStorages;
-    }
-
-    public static Government getGovernmentByUser(User user) {
-        Stream<Government> stream = governments.stream().filter(government -> government.owner == user);
-        Optional<Government> government = stream.findAny();
-        return government.orElse(null);
-    }
-
-    public static boolean checkAllGovernmentsChooseColor() {
-        return governments.stream().anyMatch(government -> government.getColor() == null);
-    }
-
-    public static void addGovernment(String username) {
-        Government government = new Government(User.getUserByUsername(username));
-        governments.add(government);
-    }
-
-    public static int getGovernmentsSize() {
-        return governments.size();
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public Color getColor() {
-        return color;
     }
 }

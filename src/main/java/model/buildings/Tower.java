@@ -30,16 +30,13 @@ public class Tower extends Building {
     }
 
     @Override
-    public String action() {
+    public void action() {
         if (name.equals("lookout tower")) {
             for (int i = x - 1; i < x + 2; i++)
                 for (int j = y - 1; j < y + 2; j++) {
                     Unit unit = Map.getMap()[x][y].getUnit();
-                    if (unit != null && unit.getTroops().get(0).getName().equals("archer"))
-                        unit.setCanDamage(false);
+                    if (unit != null && unit.getTroops().get(0).getName().equals("archer")) unit.setCanDamage(false);
                 }
         }
-        return null;
-
     }
 }
