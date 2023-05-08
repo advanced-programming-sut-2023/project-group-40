@@ -4,6 +4,12 @@ import controller.GameMenuController;
 import controller.MainController;
 import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
+import java.io.IOException;
+import java.util.Map;
+import controller.GameMenuController;
+import controller.MainController;
+import org.apache.commons.lang3.StringUtils;
+import view.enums.Commands;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -22,12 +28,7 @@ public class GameMenu {
     public static String showMap(Matcher matcher) throws IOException {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.showMap(x, y);
-    }
-
-    public static String trade() throws ReflectiveOperationException {
-        GameMenuController.trade();
-        return null;
+        return GameMenuController.showMap(x,y);
     }
 
     public static String changeSightArea(Matcher matcher) {
@@ -96,20 +97,19 @@ public class GameMenu {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
         String type = matcher.group("type");
-        return GameMenuController.dropBuilding(x, y, type);
+        return GameMenuController.dropBuilding(x,y,type);
     }
 
     public static String selectBuilding(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.selectBuilding(x, y);
+        return GameMenuController.selectBuilding(x,y);
     }
 
     public static String createUnit(Matcher matcher) {
         String type = matcher.group("type");
         int count = Integer.parseInt(matcher.group("count"));
-        GameMenuController.createUnit(type,count);
-        return null;
+        return GameMenuController.createUnit(type,count);
     }
 
     public static String repair(Matcher matcher) {
@@ -152,20 +152,31 @@ public class GameMenu {
         return null;
     }
 
+    public static String setTexture(Matcher matcher) {
+        return null;
+    }
+
+    public static String clearBlock(Matcher matcher){
+        return null;
+    }
+
+    public static String dropBlock(Matcher matcher){
+        return null;
+    }
+
+    public static String dropTree(Matcher matcher){
+        return null;
+    }
+
     public static String dropUnit(Matcher matcher){
         return null;
     }
 
-    public static String enterTrade(Matcher matcher) {
+    public static String enterTrade(Matcher matcher){
         return null;
     }
 
-    public static String nextTurn(Matcher matcher) {
+    public static String nextTurn(Matcher matcher){
         return null;
-    }
-
-    public static void setGameStarted(boolean gameStarted) {
-        GameMenu.gameStarted = gameStarted;
     }
 }
-

@@ -1,5 +1,7 @@
 package model.buildings;
 import model.Texture;
+import model.Government;
+import model.Texture;
 import model.User;
 
 import java.io.Serializable;
@@ -53,7 +55,7 @@ public class Building implements BuildingAction {
         this.isIllegal = isIllegal;
         this.group = group;
     }
-    
+
     public void setOwner(User owner) {
         this.owner = owner;
     }
@@ -82,5 +84,9 @@ public class Building implements BuildingAction {
 
     public int getY() {
         return y;
+    }
+
+    public int[] getCost() {
+        return cost;
     }
 }

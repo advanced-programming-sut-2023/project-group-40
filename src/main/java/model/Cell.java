@@ -56,4 +56,7 @@ public class Cell {
         return unit;
     }
 
+    public void setUnit(Unit unit) {
+        this.unit = unit;
+    }
 }

@@ -1,5 +1,6 @@
 package model.buildings;
 
+public enum Buildings{
 import model.Food;
 import model.Texture;
 import model.Weapon;

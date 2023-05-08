@@ -7,7 +7,7 @@ import java.io.IOException;
 public class RegisterMenuController {
     public static String register(String username , String password ,String confirmPassword ,
                                   String email, String nickname ,
-                                  String sloganExist ,String slogan) {
+                                  String sloganExist ,String slogan) throws IOException {
         if (username == null || username.equals("")) return "username is empty!";
         if (password == null || password.equals("")) return "password is empty!";
         if (email == null || email.equals("")) return "email is empty!";
@@ -28,6 +28,7 @@ public class RegisterMenuController {
         if (!User.checkEmailFormat(email)) return "email is invalid!";
         if (slogan != null && slogan.equals("random")) slogan = User.generateRandomSlogan();
         User.addUser(new User(username,password,nickname,email,slogan));
+        User.updateDatabase();
         return "register successful!";
     }
     public String pickSecurityQuestion(String questionNumber , String answer , String answerConfirmation){
