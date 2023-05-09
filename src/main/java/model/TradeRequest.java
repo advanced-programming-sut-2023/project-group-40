@@ -1,18 +1,16 @@
 package model;
 
-import javax.swing.*;
-
-public class TradeRequest<T> {
+public class TradeRequest {
     private static int lastId = 1000;
     private final Government sender, receiver;
-    private final T commodity;
+    private final Good commodity;
     private final int price, count;
     private final String senderMessage;
     private String receiverMessage;
     private final Integer id = lastId++;
     private boolean isAccepted = false, hasSeen = false;
 
-    public TradeRequest(Government sender, Government receiver, T commodity, int price, int count, String message) {
+    public TradeRequest(Government sender, Government receiver, Good commodity, int price, int count, String message) {
         this.sender = sender;
         this.receiver = receiver;
         this.commodity = commodity;
@@ -33,7 +31,7 @@ public class TradeRequest<T> {
         return lastId;
     }
 
-    public T getType() {
+    public Good getCommodity() {
         return commodity;
     }
 
@@ -79,9 +77,5 @@ public class TradeRequest<T> {
 
     public boolean getHasSeen() {
         return this.hasSeen;
-    }
-
-    public T getCommodity() {
-        return commodity;
     }
 }

@@ -58,6 +58,10 @@ public class GameMenuController {
         GameMenuController.y = y;
         return null;
     }
+    public static void trade() throws ReflectiveOperationException {
+        TradeMenuController.setCurrentGovernment(currentGovernment);
+        TradeMenu.run();
+    }
 
     public static String showDetails(int x, int y) {
         return null;
@@ -255,11 +259,6 @@ public class GameMenuController {
     public static String dropUnit(int x, int y, String type, int count) {
         return null;
     }
-
-    public static String enterTrade() {
-        return null;
-    }
-
     public static String nextTurn() {
         return null;
     }

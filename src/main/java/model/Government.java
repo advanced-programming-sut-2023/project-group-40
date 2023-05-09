@@ -1,7 +1,6 @@
 package model;
 
-import model.buildings.FoodProcessing;
-import model.buildings.Storage;
+import model.buildings.*;
 import model.buildings.Storage;
 import view.TradeMenu;
 
@@ -19,6 +18,7 @@ public class Government {
     private static ArrayList<Government> governments = new ArrayList<>();
     private final ArrayList<TradeRequest> requests = new ArrayList<>();
     private final ArrayList<Storage> storages = new ArrayList<>();
+    private Building shop = Buildings.getBuildingObjectByType("shop");
     private User owner;
     private int foodRate;
     private int taxRate;
@@ -75,6 +75,9 @@ public class Government {
     public void addStorage(Storage storage) {
         storages.add(storage);
     }
+    public ArrayList<Storage> getStorages() {
+        return storages;
+    }
 
     public ArrayList<Storage> getMaterialStorages() {
         return storages;
@@ -118,12 +121,12 @@ public class Government {
         return castle;
     }
 
-    public String decreaseAmountOfGood(Good good, int count) {
+    public void decreaseAmountOfGood(Good good, int count) {
         int deletedMaterials = count;
         int sumOfInventories = 0;
         for (Storage storage : storages)
             sumOfInventories += storage.getSumOfProducts(good);
-        if (count > sumOfInventories) return "you haven't enough" + good.name().toLowerCase();
+        if (count > sumOfInventories) return ;
         for (Storage storage : storages) {
             if (deletedMaterials == 0) break;
             if (deletedMaterials < storage.getSumOfProducts(good)) {
@@ -134,16 +137,15 @@ public class Government {
                 storage.removeProduct(good);
             }
         }
-        return "you moved " + good.name().toLowerCase() + "successfully";
     }
 
-    public String increaseAmountOfGood(Good good, int count) {
+    public void increaseAmountOfGood(Good good, int count) {
         int addedFoods = count;
         int sumOfEmptyCapacities = 0;
         for (Storage storage : storages) {
             sumOfEmptyCapacities += storage.getCapacity() - storage.getSumOfProducts(good);
         }
-        if (addedFoods > sumOfEmptyCapacities) return "you can't produce" + good.name().toLowerCase();
+        if (addedFoods > sumOfEmptyCapacities) return;
         for (Storage storage : storages) {
             if (addedFoods == 0) break;
             int emptyCapacity = storage.getCapacity() - storage.getSumOfProducts(good);
@@ -155,14 +157,13 @@ public class Government {
                 storage.addProduct(good, emptyCapacity);
             }
         }
-        return "you successfully produce" + good.name().toLowerCase();
     }
 
     public static ArrayList<Government> getGovernments() {
         return governments;
     }
 
-    public <T> void addRequest(TradeRequest<T> tradeRequest) {
+    public void addRequest(TradeRequest tradeRequest) {
         requests.add(tradeRequest);
     }
 
