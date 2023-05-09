@@ -5,9 +5,7 @@ import model.User;
 import java.io.IOException;
 
 public class RegisterMenuController {
-    public static String register(String username , String password ,String confirmPassword ,
-                                  String email, String nickname ,
-                                  String sloganExist ,String slogan) {
+    public static String register(String username, String password, String confirmPassword, String email, String nickname, String sloganExist, String slogan) throws IOException {
         if (username == null || username.equals("")) return "username is empty!";
         if (password == null || password.equals("")) return "password is empty!";
         if (email == null || email.equals("")) return "email is empty!";
@@ -17,7 +15,7 @@ public class RegisterMenuController {
         if (User.isUsernameExists(username)) {
             String result = "username is exists!\n";
             while (User.isUsernameExists(username)) username += username.charAt(username.length() - 1);
-            result+= "suggested username: " + username + "\n confirm [Y/N]: ";
+            result += "suggested username: " + username + "\n confirm [Y/N]: ";
             System.out.print(result);
             if (MainController.scanner.nextLine().equalsIgnoreCase("N")) return "register failed";
         }
@@ -27,10 +25,12 @@ public class RegisterMenuController {
         if (User.isEmailExists(email)) return "email is exists!";
         if (!User.checkEmailFormat(email)) return "email is invalid!";
         if (slogan != null && slogan.equals("random")) slogan = User.generateRandomSlogan();
-        User.addUser(new User(username,password,nickname,email,slogan));
+        User.addUser(new User(username, password, nickname, email, slogan));
+        User.updateDatabase();
         return "register successful!";
     }
-    public String pickSecurityQuestion(String questionNumber , String answer , String answerConfirmation){
+
+    public String pickSecurityQuestion(String questionNumber, String answer, String answerConfirmation) {
         return null;
     }
 }

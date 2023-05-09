@@ -4,7 +4,7 @@ import model.buildings.Building;
 import model.troops.Troop;
 
 public class Cell {
-    private boolean isAvailable = true,isPassable = true;
+    private boolean isAvailable = true, isPassable = true;
     private Building building = null;
     private Tree tree;
     private Rock rock;
@@ -56,4 +56,7 @@ public class Cell {
         return unit;
     }
 
+    public void setUnit(Unit unit) {
+        this.unit = unit;
+    }
 }

@@ -19,8 +19,7 @@ public class MapMenuController {
     }
 
     public static void checkGameStarted() {
-        if (Government.checkAllGovernmentsChooseColor())
-            GameMenu.setGameStarted(true);
+        if (Government.checkAllGovernmentsChooseColor()) GameMenu.setGameStarted(true);
     }
 
     public static void addPlayer(String username) {

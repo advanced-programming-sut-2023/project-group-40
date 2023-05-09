@@ -1,35 +1,35 @@
 package model.buildings;
 
-import model.Food;
-import model.Texture;
-
 import java.util.HashSet;
 
+import model.Good;
+import model.Texture;
+
 public class FoodProcessing extends Building {
-    private Food material;
-    private Food product;
+    private Good material;
+    private Good product;
     private Integer productRate;
 
-    public FoodProcessing(String name, int height, int width, int hp, int[] cost, int workersRequired, Food material, Food product, Integer productRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public FoodProcessing(String name, int height, int width, int hp, int[] cost, int workersRequired, Good material, Good product, Integer productRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
         super(name, height, width, hp, cost, workersRequired, textures, isIllegal, group);
         this.material = material;
         this.product = product;
         this.productRate = productRate;
     }
 
-    public Food getMaterial() {
+    public Good getMaterial() {
         return material;
     }
 
-    public void setMaterial(Food material) {
+    public void setMaterial(Good material) {
         this.material = material;
     }
 
-    public Food getProduct() {
+    public Good getProduct() {
         return product;
     }
 
-    public void setProduct(Food product) {
+    public void setProduct(Good product) {
         this.product = product;
     }
 

@@ -1,22 +1,25 @@
 package model;
 
-import model.buildings.Building;
+import model.buildings.FoodProcessing;
 import model.buildings.Storage;
-import view.TradeMenu;
+import model.buildings.Storage;
+import model.buildings.*;
 
+import java.lang.ref.PhantomReference;
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.stream.Stream;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.regex.MatchResult;
 import java.util.stream.Stream;
 
 public class Government {
-    private static final ArrayList<Government> governments = new ArrayList<>();
-    private final ArrayList<TradeRequest> requests =  new ArrayList<>();
-    private final ArrayList<Storage<Material>> materialStorages = new ArrayList<>();
-    private final ArrayList<Storage<Food>> foodStorages = new ArrayList<>();
-    private final ArrayList<Storage<Weapon>> weaponStorages = new ArrayList<>();
-    private Building shop;
+    private static ArrayList<Government> governments = new ArrayList<>();
+    private final ArrayList<TradeRequest> requests = new ArrayList<>();
+    private final ArrayList<Storage> storages = new ArrayList<>();
+    private Building shop = Buildings.getBuildingObjectByType("shop");
     private User owner;
     private int foodRate;
     private int taxRate;
@@ -24,6 +27,7 @@ public class Government {
     private int fearRate;
     private int population;
     private Color color = null;
+    private Castle castle;
 
     public Government(User owner) {
         this.owner = owner;
@@ -68,39 +72,16 @@ public class Government {
     public void setPopularity(int popularity) {
         this.popularity = popularity;
     }
-    public static ArrayList<Government> getGovernments() {
-        return governments;
+
+    public void addStorage(Storage storage) {
+        storages.add(storage);
     }
-    public <T> void addRequest(TradeRequest<T> tradeRequest) {
-        requests.add(tradeRequest);
+    public ArrayList<Storage> getStorages() {
+        return storages;
     }
-    public ArrayList<TradeRequest> getRequests() {
-        return requests;
-    }
-    public TradeRequest getRequestById(Integer id) {
-        for (TradeRequest request : requests) {
-            if(request.getId().equals(id))
-                return request;
-        }
-        return null;
-    }
-    public void addFoodStorage(Storage storage) {
-        foodStorages.add(storage);
-    }
-    public void addWeaponStorage(Storage storage) {
-        weaponStorages.add(storage);
-    }
-    public void addMaterialStorage(Storage storage) {
-        materialStorages.add(storage);
-    }
-    public ArrayList<Storage<Food>> getFoodStorages() {
-        return foodStorages;
-    }
-    public ArrayList<Storage<Weapon>> getWeaponStorages() {
-        return weaponStorages;
-    }
-    public ArrayList<Storage<Material>> getMaterialStorages() {
-        return materialStorages;
+
+    public ArrayList<Storage> getMaterialStorages() {
+        return storages;
     }
 
     public static Government getGovernmentByUser(User user) {
@@ -128,5 +109,73 @@ public class Government {
 
     public Color getColor() {
         return color;
+    }
+
+    public int getAmountOfGood(Good good) {
+        int amount = 0;
+        for (Storage storage : storages)
+            amount += storage.getSumOfProducts(good);
+        return amount;
+    }
+
+    public Castle getCastle() {
+        return castle;
+    }
+
+    public void decreaseAmountOfGood(Good good, int count) {
+        int deletedMaterials = count;
+        int sumOfInventories = 0;
+        for (Storage storage : storages)
+            sumOfInventories += storage.getSumOfProducts(good);
+        if (count > sumOfInventories) return ;
+        for (Storage storage : storages) {
+            if (deletedMaterials == 0) break;
+            if (deletedMaterials < storage.getSumOfProducts(good)) {
+                storage.decreaseAmountOfProduct(good, count);
+                break;
+            } else {
+                deletedMaterials -= storage.getSumOfProducts(good);
+                storage.removeProduct(good);
+            }
+        }
+    }
+
+    public void increaseAmountOfGood(Good good, int count) {
+        int addedFoods = count;
+        int sumOfEmptyCapacities = 0;
+        for (Storage storage : storages) {
+            sumOfEmptyCapacities += storage.getCapacity() - storage.getSumOfProducts(good);
+        }
+        if (addedFoods > sumOfEmptyCapacities) return;
+        for (Storage storage : storages) {
+            if (addedFoods == 0) break;
+            int emptyCapacity = storage.getCapacity() - storage.getSumOfProducts(good);
+            if (addedFoods < emptyCapacity) {
+                storage.addProduct(good, addedFoods);
+                break;
+            } else {
+                addedFoods -= emptyCapacity;
+                storage.addProduct(good, emptyCapacity);
+            }
+        }
+    }
+
+    public static ArrayList<Government> getGovernments() {
+        return governments;
+    }
+
+    public void addRequest(TradeRequest tradeRequest) {
+        requests.add(tradeRequest);
+    }
+
+    public ArrayList<TradeRequest> getRequests() {
+        return requests;
+    }
+
+    public TradeRequest getRequestById(Integer id) {
+        for (TradeRequest request : requests) {
+            if (request.getId().equals(id)) return request;
+        }
+        return null;
     }
 }

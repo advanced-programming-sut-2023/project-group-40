@@ -10,13 +10,14 @@ import java.util.regex.Matcher;
 public class RegisterMenu {
     public static void run() throws ReflectiveOperationException {
         System.out.println("you are in register menu");
-        while (true){
+        while (true) {
             String command = MainController.scanner.nextLine();
-            String result = Commands.regexFinder(command,RegisterMenu.class);
+            String result = Commands.regexFinder(command, RegisterMenu.class);
             if (result != null) System.out.println(result);
         }
     }
-    public static String register (Matcher matcher) throws IOException {
+
+    public static String register(Matcher matcher) throws IOException {
         String username = matcher.group("username");
         String password = matcher.group("password");
         String passwordConfirmation = matcher.group("passwordConfirmation");
@@ -24,14 +25,15 @@ public class RegisterMenu {
         String email = matcher.group("email");
         String slogan = matcher.group("slogan");
         String sloganExist = matcher.group("sloganExist");
-        return RegisterMenuController.register(username,password,passwordConfirmation,
-                email,nickname,sloganExist,slogan);
+        return RegisterMenuController.register(username, password, passwordConfirmation, email, nickname, sloganExist, slogan);
     }
+
     public static String login(Matcher matcher) throws ReflectiveOperationException {
         LoginMenu.run();
         return null;
     }
-    public static String pickSecurityQuestion(Matcher matcher){
+
+    public static String pickSecurityQuestion(Matcher matcher) {
         return null;
     }
 }

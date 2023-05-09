@@ -8,6 +8,10 @@ public class MainMenuController {
         return "log out!";
     }
 
+    public static String logout() {
+        return "log out!";
+    }
+
     public static void setCurrentUser(User currentUser) {
         MainMenuController.currentUser = currentUser;
     }

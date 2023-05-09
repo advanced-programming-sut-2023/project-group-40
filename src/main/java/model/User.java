@@ -15,11 +15,14 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
 enum DefaultSlogans {
     ;
+
     DefaultSlogans(String slogan) {
         this.slogan = slogan;
     }
+
     private String slogan;
 }
 
@@ -45,18 +48,19 @@ public class User {
         this.slogan = slogan;
     }
 
-    public static String generateRandomPassword(){
+    public static String generateRandomPassword() {
         String chars = "abcdefghijklmnopqrstuvwxyz";
         chars += chars.toUpperCase();
         chars += "0123456789!@#$%";
         RandomStringGenerator passwordGenerator = new RandomStringGenerator.Builder().selectFrom(chars.toCharArray()).build();
         String password;
-        while(true){
+        while (true) {
             password = passwordGenerator.generate(16);
-            if(checkPasswordFormat(password)) return password;
+            if (checkPasswordFormat(password)) return password;
         }
     }
-    public static String generateRandomSlogan(){
+
+    public static String generateRandomSlogan() {
         return null;
     }
 
@@ -68,9 +72,8 @@ public class User {
         return password.matches("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\\W)^.{6,}");
     }
 
-    public static boolean checkEmailFormat(String email){
-        Matcher matcher = Pattern
-                .compile("([0-9a-zA-Z_.]*)@([0-9a-zA-Z_.]*)\\.([0-9a-zA-Z_.]*)").matcher(email);
+    public static boolean checkEmailFormat(String email) {
+        Matcher matcher = Pattern.compile("([0-9a-zA-Z_.]*)@([0-9a-zA-Z_.]*)\\.([0-9a-zA-Z_.]*)").matcher(email);
         if (!matcher.matches()) return false;
         for (int i = 1; i <= 3; i++) if (matcher.group(i).equals("")) return false;
         return true;
@@ -80,13 +83,13 @@ public class User {
         this.passwordHash = generatePasswordHash(password);
     }
 
-    public static boolean isUsernameExists(String username){
+    public static boolean isUsernameExists(String username) {
         return users.stream().anyMatch(user -> user.username.equals(username));
     }
-    public static boolean isEmailExists(String email){
+
+    public static boolean isEmailExists(String email) {
         return users.stream().anyMatch(user -> user.email.equalsIgnoreCase(email));
     }
-
 
 
     public ArrayList<User> getUsers() {
@@ -112,29 +115,29 @@ public class User {
         return securityAnswer;
     }
 
-    public static User getStayedLoginUser(){
+    public static User getStayedLoginUser() {
         Stream<User> stream = users.stream().filter(user -> user.isStayLoggedIn = true);
         Optional<User> user = stream.findAny();
         return user.orElse(null);
     }
+
     public static void fetchDatabase() {
-        if(!new File(PATH).exists()) return;
+        if (!new File(PATH).exists()) return;
         try (FileReader reader = new FileReader(PATH)) {
-            ArrayList<User> copy = new Gson().fromJson(reader, new TypeToken<List<User>>() {}.getType());
+            ArrayList<User> copy = new Gson().fromJson(reader, new TypeToken<List<User>>() {
+            }.getType());
             if (copy != null) users = copy;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static void updateDatabase() throws IOException {
         File file = new File(PATH);
-        if(!file.exists()) file.createNewFile();
-        try (FileWriter writer = new FileWriter(PATH,false)) {
+        if (!file.exists()) file.createNewFile();
+        try (FileWriter writer = new FileWriter(PATH, false)) {
             writer.write(new Gson().toJson(users));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -192,7 +195,7 @@ public class User {
         return slogan;
     }
 
-    public static String generatePasswordHash(String password){
+    public static String generatePasswordHash(String password) {
         return new DigestUtils("SHA3-256").digestAsHex(password);
     }
 
