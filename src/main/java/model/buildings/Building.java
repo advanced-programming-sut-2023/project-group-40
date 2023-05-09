@@ -1,8 +1,6 @@
 package model.buildings;
 
 import model.Texture;
-import model.Government;
-import model.Texture;
 import model.User;
 
 import java.io.Serializable;
