@@ -21,6 +21,7 @@ public class Unit {
     public void addTroop(Troop troop, int count) {
         for (int i = 0; i < count; i++)
             troops.add(troop);
+
     }
 
     public String getState() {

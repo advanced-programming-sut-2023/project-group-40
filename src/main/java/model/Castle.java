@@ -4,7 +4,7 @@ public class Castle {
     int hp;
     int cornerUpLeft;
     int cornerDownRight;
-    int population;
+    private int population = 5;
 
     public Castle(int hp, int cornerUpLeft, int cornerDownRight, int population) {
         this.hp = hp;
@@ -17,7 +17,7 @@ public class Castle {
         return population;
     }
 
-    public void changePopulation(int amount) {
+    public void changePopulation(int amount){
         population += amount;
     }
 }

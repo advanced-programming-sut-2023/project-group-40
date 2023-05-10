@@ -26,7 +26,8 @@ public enum Commands{
     PROFILE_DISPLAY_SLOGAN("profile display slogan", ProfileMenu.class, "displaySlogan"),
     PROFILE_DISPLAY("profile display", ProfileMenu.class, "profileDisplay"),
     SHOW_MAP("show map -x (?<x>\\d+) -y (?<y>\\d+)", GameMenu.class,"showMap"),
-    CHANGE_SIGHT_AREA("map (?<left>left(\\s(?<leftNumber>\\d+))?)|(?<top>top(\\s(?<topNumber>\\d+))?)|(?<right>right(\\s(?<rightNumber>\\d+))?)|(?<down>down(\\s(?<downNumber>\\d+))?)", GameMenu.class,"changeSightArea"),
+    CHANGE_SIGHT_AREA("map (?<left>left(\\s(?<leftNumber>\\d+))?)|(?<top>top(\\s(?<topNumber>\\d+))?)|(?<right>right(\\s(?<rightNumber>\\d+))?)|(?<down>down(\\s(?<downNumber>\\d+))?)", MapMenu.class,"changeSightArea"),
+    SHOW_DETAILS("show details -x (?<x>\\d+) -y (?<y>\\d+)",MapMenu.class,"showDetails"),
     DROP_BUILDING("drop building -x (?<x>\\d+) -y (?<y>\\d+) -type (?<type>\\w+)", GameMenu.class,"dropBuilding"),
     SELECT_BUILDING("select building -x (?<x>\\d+) -y (?<y>\\d+)", GameMenu.class,"selectBuilding"),
     CREATE_UNIT("create unit -t (?<type>\\w+) -c (?<count>\\d)", GameMenu.class,"createUnit"),
@@ -39,9 +40,11 @@ public enum Commands{
     SHOW_FOOD_RATE("food rate show", GameMenu.class, "showFoodRate"),
     SHOW_TAX_RATE("tax rate show", GameMenu.class, "showTaxRate"),
     SHOW_FEAR_RATE("fear rate show", GameMenu.class, "showFoodRate"),
-//    SET_TEXTURE("set texture -x (?<x>\\d+) -y (?<y>\\d+) -t (?<type>\\w+)|set texture -x1 (?<x1>\\d+) -x2 (?<x2>\\d+) -y1 (?<y1>\\d+) -y2 (?<y2>\\d+) -t (?<type>\\w+)", GameMenu.class,"setTexture"),
-    DROP_ROCK("drop rock -x (?<x>\\d+) -y (?<y>\\d+) -d (?<direction>\\w+)", GameMenu.class,"dropRock"),
-    NEXT_TURN("next turn", MapMenu.class,"nextTurn");
+//    SET_TEXTURE("set texture -x (?<x>\\d+) -y (?<y>\\d+) -t (?<type>\\w+)|set texture -x1 (?<x1>\\d+) -x2 (?<x2>\\d+) -y1 (?<y1>\\d+) -y2 (?<y2>\\d+) -t (?<type>\\w+)", EnvironmentMenu.class,"setTexture"),
+    DROP_ROCK("drop rock -x (?<x>\\d+) -y (?<y>\\d+) -d (?<direction>\\w+)", EnvironmentMenu.class,"dropRock"),
+    NEXT_TURN("next turn", EnvironmentMenu.class,"nextTurn"),
+    DROP_TREE("drop tree -x (?<x>\\d+) -y (?<y>\\d+) -type (?<type>\\w+)", EnvironmentMenu.class,"dropTree"),
+    CLEAR_BLOCK("clear block -x (?<x>\\d+) -y (?<y>\\d+)",EnvironmentMenu.class,"clearBlock");
     private final String regex;
     private final String methodName;
     private final Class<?> menuClass;

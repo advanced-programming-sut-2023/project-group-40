@@ -1,32 +1,25 @@
 package model;
 
-import model.buildings.FoodProcessing;
+import model.buildings.*;
 import model.buildings.Storage;
-import model.buildings.Storage;
-import view.TradeMenu;
 
-import java.lang.ref.PhantomReference;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.SortedSet;
-import java.util.stream.Stream;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.regex.MatchResult;
 import java.util.stream.Stream;
 
 public class Government {
     private static ArrayList<Government> governments = new ArrayList<>();
     private final ArrayList<TradeRequest> requests = new ArrayList<>();
     private final ArrayList<Storage> storages = new ArrayList<>();
+    private final ArrayList<Building> buildings = new ArrayList<>();
     private User owner;
-    private int foodRate;
-    private int taxRate;
+    private int foodRate = -2;
+    private int taxRate = 0;
     private int popularity;
     private int fearRate;
-    private int population;
     private Color color = null;
     private Castle castle;
+    private int emptySpace = 0;
 
     public Government(User owner) {
         this.owner = owner;
@@ -68,8 +61,8 @@ public class Government {
         return popularity;
     }
 
-    public void setPopularity(int popularity) {
-        this.popularity = popularity;
+    public void changePopularity(int amount) {
+        this.popularity += amount;
     }
 
     public void addStorage(Storage storage) {
@@ -175,5 +168,96 @@ public class Government {
             if (request.getId().equals(id)) return request;
         }
         return null;
+    }
+
+    public int getPopulation() {
+        return castle.getPopulation();
+    }
+
+    public void decreaseAmountOfFood(int amount) {
+        int remainFromFood1 = decreaseAmountOfOneFood(amount,Good.FOOD1);
+        if (remainFromFood1 == 0) return;
+        int remainFromFood2 = decreaseAmountOfOneFood(remainFromFood1,Good.FOOD1);
+        if (remainFromFood2 == 0) return;
+        decreaseAmountOfOneFood(remainFromFood2,Good.FOOD1);
+    }
+
+    public int decreaseAmountOfOneFood(int amount ,Good food) {
+        if (amount < getAmountOfGood(food)) {
+            decreaseAmountOfGood(food, amount);
+            return 0;
+        }
+        else {
+            decreaseAmountOfGood(food, getAmountOfGood(food));
+            return amount - getAmountOfGood(food);
+        }
+    }
+
+    public int getNumberOfFoodVariety(){
+        int result = 0;
+        if (getAmountOfGood(Good.FOOD1) != 0) result ++;
+        if (getAmountOfGood(Good.FOOD2) != 0) result ++;
+        if (getAmountOfGood(Good.FOOD3) != 0) result ++;
+        if (getAmountOfGood(Good.FOOD4) != 0) result ++;
+        if (result == 0) result = 1;
+        return result;
+    }
+
+    public void setCastle(Castle castle) {
+        this.castle = castle;
+    }
+
+    public void addBuilding(Building building) {
+        buildings.add(building);
+    }
+
+    public int getEmptySpaces(){
+        for (Building building : buildings) {
+            if (building.getName().equals("Small stone gatehouse") || building.getName().equals("big stone gatehouse")) {
+                GateHouse gateHouse = (GateHouse) building;
+                emptySpace += gateHouse.getCapacity();
+            }
+            if (building.getName().equals("Hovel")) {
+                Hovel hovel = (Hovel) building;
+                emptySpace += hovel.getCapacity();
+            }
+        }
+        return emptySpace;
+    }
+
+    public void increasePopulation(int amount) {
+        int total = amount;
+        int emptySpace = 0;
+        for (Building building : buildings) {
+            if (total == 0) return;
+            if (building.getName().equals("Small stone gatehouse") || building.getName().equals("big stone gatehouse")){
+                GateHouse gateHouse = (GateHouse) building;
+                emptySpace = gateHouse.getMaxCapacity() - gateHouse.getCapacity();
+                if (total >= emptySpace) {
+                    gateHouse.setCapacity(gateHouse.getMaxCapacity());
+                    castle.changePopulation(emptySpace);
+                    total -= emptySpace;
+                }
+                else {
+                    gateHouse.setCapacity(gateHouse.getCapacity() + total);
+                    castle.changePopulation(total);
+                    total = 0;
+                }
+            }
+            else if (building.getName().equals("Hovel")) {
+                Hovel hovel = (Hovel) building;
+                emptySpace = hovel.getMaxCapacity() - hovel.getCapacity() ;
+                if (total >= emptySpace) {
+                    hovel.setCapacity(hovel.getMaxCapacity());
+                    castle.changePopulation(emptySpace);
+                    total -= emptySpace;
+                }
+                else {
+                    hovel.setCapacity(hovel.getCapacity() + total);
+                    castle.changePopulation(total);
+                    total = 0;
+                }
+            }
+        }
     }
 }

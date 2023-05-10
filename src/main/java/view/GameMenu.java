@@ -6,22 +6,19 @@ import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
 
 import java.io.IOException;
-import java.util.Map;
 
-import controller.GameMenuController;
-import controller.MainController;
-import org.apache.commons.lang3.StringUtils;
-import view.enums.Commands;
-
-import java.io.IOException;
 import java.util.regex.Matcher;
 
 public class GameMenu {
     private static boolean gameStarted = false;
 
     public static void run() throws ReflectiveOperationException {
-        if (!gameStarted) System.out.println(MapMenu.run());
+        if (!gameStarted) System.out.println(EnvironmentMenu.run());
         System.out.println("you are in game menu!");
+        if (GameMenuController.getCurrentGovernment() != GameMenuController.getOnGovernment()) {
+            System.out.println("It is not your turn");
+            return;
+        }
         while (true) {
             String command = MainController.scanner.nextLine();
             System.out.println(Commands.regexFinder(command, GameMenu.class));
@@ -31,25 +28,6 @@ public class GameMenu {
     public static String showMap(Matcher matcher) throws IOException {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.showMap(x, y);
-    }
-
-    public static String changeSightArea(Matcher matcher) {
-        //left in another first
-        while (matcher.find()) {
-            int leftNumber = StringUtils.isNotBlank(matcher.group("leftNumber")) ? Integer.parseInt(matcher.group("leftNumber")) : 1;
-            int topNumber = StringUtils.isNotBlank(matcher.group("topNumber")) ? Integer.parseInt(matcher.group("topNumber")) : 1;
-            int rightNumber = StringUtils.isNotBlank(matcher.group("rightNumber")) ? Integer.parseInt(matcher.group("rightNumber")) : 1;
-            int downNumber = StringUtils.isNotBlank(matcher.group("downNumber")) ? Integer.parseInt(matcher.group("downNumber")) : 1;
-            if (matcher.group("left") != null) GameMenuController.increaseX(-1 * leftNumber);
-            if (matcher.group("top") != null) GameMenuController.increaseY(topNumber);
-            if (matcher.group("right") != null) GameMenuController.increaseX(rightNumber);
-            if (matcher.group("down") != null) GameMenuController.increaseY(-1 * downNumber);
-        }
-        return "sight area changed!";
-    }
-
-    public static String showDetails(Matcher matcher) {
         return null;
     }
 
@@ -151,22 +129,6 @@ public class GameMenu {
         return null;
     }
 
-    public static String setTexture(Matcher matcher) {
-        return null;
-    }
-
-    public static String clearBlock(Matcher matcher) {
-        return null;
-    }
-
-    public static String dropBlock(Matcher matcher) {
-        return null;
-    }
-
-    public static String dropTree(Matcher matcher) {
-        return null;
-    }
-
     public static String dropUnit(Matcher matcher) {
         return null;
     }
@@ -176,6 +138,8 @@ public class GameMenu {
     }
 
     public static String nextTurn(Matcher matcher) {
+        GameMenuController.setOnGovernment();
+        GameMenuController.checkPopulation();
         return null;
     }
 

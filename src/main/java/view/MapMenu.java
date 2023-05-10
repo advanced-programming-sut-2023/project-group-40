@@ -3,102 +3,38 @@ package view;
 import controller.GameMenuController;
 import controller.MainController;
 import controller.MapMenuController;
+import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
 
-import java.util.Map;
 import java.util.regex.Matcher;
 
 public class MapMenu {
-    public static String run() throws ReflectiveOperationException {
+    public static void run() throws ReflectiveOperationException {
         System.out.println("you are in map menu!");
-        if (MapMenuController.isFirstPlayer()) {
-            chooseMapSize();
-            setPlayers();
-            GameMenuController.chooseColor();
-        } else {
-            if (!MapMenuController.isUserInGame(GameMenuController.getCurrentGovernment().getOwner()))
-                return "you are not in game";
-            if (MapMenuController.isCurrentGovernmentChooseColor(GameMenuController.getCurrentGovernment().getOwner()))
-                return "you choose your color wait for starting game!";
-            GameMenuController.chooseColor();
-            MapMenuController.checkGameStarted();
-        }
         while (true) {
             String command = MainController.scanner.nextLine();
             System.out.println(Commands.regexFinder(command, MapMenu.class));
         }
     }
-
-    public static String setTexture(Matcher matcher) {
-        String type = matcher.group("type");
-        if (matcher.group("x") != null) {
-            int x = Integer.parseInt(matcher.group("x"));
-            int y = Integer.parseInt(matcher.group("y"));
-            return GameMenuController.setTexture(x, y, type);
-        } else {
-            int x1 = Integer.parseInt(matcher.group("x1"));
-            int x2 = Integer.parseInt(matcher.group("x2"));
-            int y1 = Integer.parseInt(matcher.group("y1"));
-            int y2 = Integer.parseInt(matcher.group("y2"));
-            return GameMenuController.setTexture(x1, x2, y1, y2, type);
+    public static String changeSightArea(Matcher matcher) throws ReflectiveOperationException {
+        //left in another first
+        while (matcher.find()) {
+            int leftNumber = StringUtils.isNotBlank(matcher.group("leftNumber")) ? Integer.parseInt(matcher.group("leftNumber")) : 1;
+            int topNumber = StringUtils.isNotBlank(matcher.group("topNumber")) ? Integer.parseInt(matcher.group("topNumber")) : 1;
+            int rightNumber = StringUtils.isNotBlank(matcher.group("rightNumber")) ? Integer.parseInt(matcher.group("rightNumber")) : 1;
+            int downNumber = StringUtils.isNotBlank(matcher.group("downNumber")) ? Integer.parseInt(matcher.group("downNumber")) : 1;
+            if (matcher.group("left") != null) MapMenuController.increaseX(-1 * leftNumber);
+            if (matcher.group("top") != null) MapMenuController.increaseY(topNumber);
+            if (matcher.group("right") != null) MapMenuController.increaseX(rightNumber);
+            if (matcher.group("down") != null) MapMenuController.increaseY(-1 * downNumber);
         }
+        GameMenuController.showMap(MapMenuController.getX(),MapMenuController.getY());
+        return "sight area changed!";
     }
 
-    public static String clearBlock(Matcher matcher) {
-        //clear tropp ?????
-        return null;
-    }
-
-    public static String dropRock(Matcher matcher) {
-        //which shape ??
+    public static String showDetails(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        String direction = matcher.group("direction");
-        return GameMenuController.dropRock(x, y, direction);
-    }
-
-    public static String dropTree(Matcher matcher) {
-        return null;
-    }
-
-    public static void chooseMapSize() {
-        System.out.println("choose your size for map: ");
-        GameMenuController.setMapSize(Integer.parseInt(MainController.scanner.nextLine()));
-    }
-
-    public static void setPlayers() {
-        int countOfPlayers = setNumberOfPlayers();
-        MapMenuController.addPlayer(GameMenuController.getCurrentGovernment().getOwner().getUsername());
-        System.out.println("choose your opponents : (write usernames)");
-        int selectedPlayer = 0;
-        while (true) {
-            String username = MainController.scanner.nextLine();
-            if (MapMenuController.isPlayerValid(username)) {
-                if (MapMenuController.isPlayerAdded(username)) {
-                    System.out.println("this player already added");
-                    continue;
-                }
-                MapMenuController.addPlayer(username);
-                System.out.println("player " + username + " added");
-                selectedPlayer++;
-                if (selectedPlayer == countOfPlayers - 1) break;
-            } else System.out.println("username not exist!");
-        }
-        System.out.println("players successfully added");
-    }
-
-    public static int setNumberOfPlayers() {
-        int countOfPlayers = 0;
-        while (true) {
-            System.out.println("choose number of players of game :");
-            countOfPlayers = Integer.parseInt(MainController.scanner.nextLine());
-            if (countOfPlayers < 2 || countOfPlayers > 8) System.out.println("you enter invalid count number!");
-            else break;
-        }
-        return countOfPlayers;
-    }
-
-    public static void nextTurn(Matcher matcher) throws ReflectiveOperationException {
-        LoginMenu.run();
+        return GameMenuController.showDetails(x,y);
     }
 }

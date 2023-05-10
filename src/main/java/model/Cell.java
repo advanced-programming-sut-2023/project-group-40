@@ -59,4 +59,12 @@ public class Cell {
     public void setUnit(Unit unit) {
         this.unit = unit;
     }
+
+    public void setTree(Tree tree) {
+        this.tree = tree;
+    }
+
+    public Tree getTree() {
+        return tree;
+    }
 }
