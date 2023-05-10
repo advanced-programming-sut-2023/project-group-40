@@ -55,7 +55,18 @@ public class ShopMenuController {
     }
 
     public static String sell(String name, int count) {
-        return null;
+        try {
+            Good good = Good.valueOf(name.toUpperCase());
+            int price = good.getSellPrice() * count;
+            if (count > currentGovernment.getNumOfInStorages(good)) {
+                return "you haven't enough " + name;
+            }
+            currentGovernment.increaseAmountOfGood(Good.GOLD, price);
+            currentGovernment.decreaseAmountOfGood(good, count);
+            return "sell successful";
+        } catch (IllegalArgumentException e) {
+            return "invalid resource name";
+        }
     }
 
     public static void setCurrentGovernment(Government currentGovernment) {
