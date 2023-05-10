@@ -7,8 +7,6 @@ import model.Texture;
 
 import java.util.HashSet;
 
-import java.util.HashSet;
-
 public class WeaponFactory extends Building {
     private final Good material;
     private final Good weapon;
@@ -33,8 +31,8 @@ public class WeaponFactory extends Building {
     public void action() {
         Government government = GameMenuController.getCurrentGovernment();
         int gold = 0, wood = 0;
-        gold = government.getAmountOfGood(Good.GOLD);
-        wood = government.getAmountOfGood(Good.WOOD);
+        gold = government.getNumOfInStorages(Good.GOLD);
+        wood = government.getNumOfInStorages(Good.WOOD);
         if (gold < cost[0]) return;
 //            return "you don't have enough gold";
         if (wood < cost[1]) return;

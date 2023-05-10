@@ -4,22 +4,11 @@ import model.*;
 import model.buildings.Building;
 import model.buildings.Buildings;
 import model.buildings.EngineerGuild;
-import model.buildings.Storage;
 import model.troops.Troop;
 import model.troops.Troops;
 import org.apache.commons.text.RandomStringGenerator;
-import view.GameMenu;
 import view.ShopMenu;
-import model.buildings.Buildings;
-import model.buildings.Storage;
-import org.apache.commons.text.RandomStringGenerator;
 import view.TradeMenu;
-import model.buildings.Buildings;
-import model.buildings.Storage;
-import org.apache.commons.text.RandomStringGenerator;
-import view.GameMenu;
-
-import java.util.regex.Matcher;
 
 enum Direction {
 
@@ -154,9 +143,9 @@ public class GameMenuController {
         Troop troop = Troops.getTroopObjectByType(type);
         if (troop == null) return "unit type is invalid";
         int goldForUnit = troop.getValue() * count;
-        if (currentGovernment.getAmountOfGood(Good.GOLD) != goldForUnit)
+        if (currentGovernment.getNumOfInStorages(Good.GOLD) != goldForUnit)
             return "you don't have enough gold for create this unit";
-        if (currentGovernment.getAmountOfGood(troop.getWeapon()) != count)
+        if (currentGovernment.getNumOfInStorages(troop.getWeapon()) != count)
             return "you don't have enough weapon for create this unit";
         if (currentGovernment.getCastle().getPopulation() < count)
             return "you don't have enough population for create this unit";

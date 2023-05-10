@@ -21,10 +21,14 @@ public class ShopMenu {
     }
 
     public static String buy(Matcher matcher) {
-        return null;
+        String name = matcher.group("name");
+        int count = Integer.parseInt(matcher.group("amount"));
+        return ShopMenuController.buy(name, count);
     }
 
     public static String sell(Matcher matcher) {
-        return null;
+        String name = matcher.group("name");
+        int count = Integer.parseInt(matcher.group("amount"));
+        return ShopMenuController.sell(name, count);
     }
 }

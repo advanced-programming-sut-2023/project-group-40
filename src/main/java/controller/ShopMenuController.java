@@ -1,11 +1,9 @@
 package controller;
 
-import model.Food;
+import model.Good;
 import model.Government;
-import model.Material;
-import model.Weapon;
 
-import java.util.regex.Matcher;
+
 
 public class ShopMenuController {
     private static Government currentGovernment;
@@ -13,16 +11,28 @@ public class ShopMenuController {
     public static String showPriceList() {
         String output = "Items: \n";
         output += " -Food: \n";
-        for (Food value : Food.values()) {
-            output += "   " + value.name().toLowerCase() + " ->  by " + value.getPriceBuy() + "  sell " + value.getPriceSell() + "\n";
+        for (Good good : Good.values()) {
+            if (good.getType().equals("food")) {
+                String name = good.name().toLowerCase();
+                output += "   " + name + " ->  buy price: " + good.getBuyPrice() + "  sell price: " + good.getSellPrice() +
+                        "  number of " + name + " in storages: " + currentGovernment.getNumOfInStorages(good) + "\n";
+            }
         }
-        output += " -Material: \n";
-        for (Material value : Material.values()) {
-            output += "   " + value.name().toLowerCase() + " ->  by " + value.getPriceBuy() + "  sell " + value.getPriceSell() + "\n";
+        output += " -Materials: \n";
+        for (Good good : Good.values()) {
+            if (good.getType().equals("material")) {
+                String name = good.name().toLowerCase();
+                output += "   " + name + " ->  buy price: " + good.getBuyPrice() + "  sell price: " + good.getSellPrice() +
+                        "  number of " + name + " in storages: " + currentGovernment.getNumOfInStorages(good) + "\n";
+            }
         }
         output += " -Weapon: \n";
-        for (Weapon value : Weapon.values()) {
-            output += "   " + value.name().toLowerCase() + " ->  by " + value.getPriceBuy() + "  sell " + value.getPriceSell() + "\n";
+        for (Good good : Good.values()) {
+            if (good.getType().equals("weapon")) {
+                String name = good.name().toLowerCase();
+                output += "   " + name + " ->  buy price: " + good.getBuyPrice() + "  sell price: " + good.getSellPrice() +
+                        "  number of " + name + " in storages: " + currentGovernment.getNumOfInStorages(good) + "\n";
+            }
         }
         return output;
     }

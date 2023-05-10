@@ -1,19 +1,11 @@
 package model;
 
-import model.buildings.FoodProcessing;
-import model.buildings.Storage;
 import model.buildings.Storage;
 import model.buildings.*;
 
-import java.lang.ref.PhantomReference;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.stream.Stream;
-import java.util.HashMap;
 import java.util.Optional;
-import java.util.regex.MatchResult;
-import java.util.stream.Stream;
 
 public class Government {
     private static ArrayList<Government> governments = new ArrayList<>();
@@ -76,6 +68,7 @@ public class Government {
     public void addStorage(Storage storage) {
         storages.add(storage);
     }
+
     public ArrayList<Storage> getStorages() {
         return storages;
     }
@@ -111,50 +104,61 @@ public class Government {
         return color;
     }
 
-    public int getAmountOfGood(Good good) {
-        int amount = 0;
-        for (Storage storage : storages)
-            amount += storage.getSumOfProducts(good);
-        return amount;
-    }
 
     public Castle getCastle() {
         return castle;
+    }
+
+    public int getNumOfInStorages(Good good) {
+        int count = 0;
+        for (Storage storage : this.storages) {
+            if (storage.getProducts().get(good) != null) {
+                count += storage.getProducts().get(good);
+            }
+        }
+        return count;
+    }
+
+    public int getNumOfEmptySpace(String type) {
+        int count = 0;
+        List<Storage> filteredStorages = storages.stream().filter(storage -> storage.getProductType().equals(type)).toList();
+        for (Storage storage : filteredStorages) {
+            for (Integer value : storage.getProducts().values()) {
+                count += value;
+            }
+            count = storage.getCapacity() - count;
+        }
+        return count;
     }
 
     public void decreaseAmountOfGood(Good good, int count) {
         int deletedMaterials = count;
         int sumOfInventories = 0;
         for (Storage storage : storages)
-            sumOfInventories += storage.getSumOfProducts(good);
-        if (count > sumOfInventories) return ;
+            sumOfInventories += getNumOfInStorages(good);
+        if (count > sumOfInventories) return;
         for (Storage storage : storages) {
             if (deletedMaterials == 0) break;
-            if (deletedMaterials < storage.getSumOfProducts(good)) {
+            if (deletedMaterials < storage.getProducts().get(good)) {
                 storage.decreaseAmountOfProduct(good, count);
                 break;
             } else {
-                deletedMaterials -= storage.getSumOfProducts(good);
+                deletedMaterials -= storage.getProducts().get(good);
                 storage.removeProduct(good);
             }
         }
     }
 
     public void increaseAmountOfGood(Good good, int count) {
-        int addedFoods = count;
-        int sumOfEmptyCapacities = 0;
+        int addedGoods = count;
         for (Storage storage : storages) {
-            sumOfEmptyCapacities += storage.getCapacity() - storage.getSumOfProducts(good);
-        }
-        if (addedFoods > sumOfEmptyCapacities) return;
-        for (Storage storage : storages) {
-            if (addedFoods == 0) break;
-            int emptyCapacity = storage.getCapacity() - storage.getSumOfProducts(good);
-            if (addedFoods < emptyCapacity) {
-                storage.addProduct(good, addedFoods);
+            if (addedGoods == 0) break;
+            int emptyCapacity = storage.getCapacity() - storage.getProducts().get(good);
+            if (addedGoods < emptyCapacity) {
+                storage.addProduct(good, addedGoods);
                 break;
             } else {
-                addedFoods -= emptyCapacity;
+                addedGoods -= emptyCapacity;
                 storage.addProduct(good, emptyCapacity);
             }
         }

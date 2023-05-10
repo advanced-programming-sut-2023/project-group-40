@@ -58,18 +58,15 @@ public class TradeMenuController {
         TradeRequest request = currentGovernment.getRequestById(id);
         if (request == null) return "invalid id!";
         targetGovernment = request.getSender();
-        int numOfCommodity = 0;
-        for (Storage storage : currentGovernment.getStorages()) {
-            if (storage.getProducts().get(request.getCommodity()) != null)
-                numOfCommodity += storage.getProducts().get(request.getCommodity());
-        }
+
+        int numOfCommodity = currentGovernment.getNumOfInStorages(request.getCommodity());
         if (request.getCount() > numOfCommodity) return "you haven't enough " + request.getCommodity();
 
-        int numOfGold = 0;
-        for (Storage storage : targetGovernment.getStorages()) {
-            if (storage.getProducts().get(Good.GOLD) != null) numOfGold += storage.getProducts().get(Good.GOLD);
-        }
+        int numOfGold = targetGovernment.getNumOfInStorages(Good.GOLD);
         if (request.getPrice() > numOfGold) return targetGovernment.getOwner().getUsername() + " haven't enough gold";
+
+        int emptySpace = targetGovernment.getNumOfEmptySpace(request.getCommodity().getType());
+        if (request.getCount() > emptySpace) return targetGovernment.getOwner().getUsername() + " haven't enough space";
 
         currentGovernment.decreaseAmountOfGood(request.getCommodity(), request.getCount());
         targetGovernment.increaseAmountOfGood(request.getCommodity(), request.getCount());
