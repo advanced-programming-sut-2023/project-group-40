@@ -34,7 +34,7 @@ public class GameMenuController {
         Map.initMap(size);
     }
 
-    public static String showMap(int x, int y) throws IOException {
+    public static String showMap(int x, int y){
         GameMenuController.x = x;
         GameMenuController.y = y;
         return null;
