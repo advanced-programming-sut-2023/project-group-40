@@ -1,17 +1,15 @@
 package view;
 
-import controller.MainController;
 import controller.ShopMenuController;
 import view.enums.Commands;
 
-import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class ShopMenu {
     public static void run() throws ReflectiveOperationException {
         System.out.println("you are in shop menu!");
         while (true) {
-            String command = MainController.scanner.nextLine();
+            String command = Commands.scanner.nextLine();
             System.out.println(Commands.regexFinder(command, TradeMenu.class));
         }
     }

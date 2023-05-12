@@ -8,6 +8,7 @@ import model.troops.Troop;
 import model.troops.Troops;
 import view.*;
 import model.buildings.Buildings;
+import view.enums.Commands;
 
 enum Direction {
 
@@ -22,13 +23,6 @@ public class GameMenuController {
 
     public static void setMapSize(int size) {
         Map.initMap(size);
-    }
-
-    public static String showMap(int x, int y) throws ReflectiveOperationException {
-        MapMenuController.setX(x);
-        MapMenuController.setY(y);
-        MapMenu.run();
-        return null;
     }
 
 
@@ -217,9 +211,9 @@ public class GameMenuController {
             //فرض invalid troop name نمیده
             //سربازخونه مزدوران barrack??
             System.out.print("enter number of troops you want buy: ");
-            int count = MainController.scanner.nextInt();
+            int count = Commands.scanner.nextInt();
             System.out.print("enter type of troops you want buy: ");
-            String type = MainController.scanner.nextLine();
+            String type = Commands.scanner.nextLine();
             Troop troop = Troops.getTroopObjectByType(type);
             if (troop.getValue() * count > currentGovernment.getAmountOfGood(Good.GOLD))
                 return "you haven't enough gold";
@@ -377,20 +371,23 @@ public class GameMenuController {
         return currentGovernment;
     }
 
-    public static void setCurrentGovernment(User user) {
-        currentGovernment = new Government(user);
+    public static void setCurrentGovernment(Government government) {
+        currentGovernment = government;
     }
 
-    public static void chooseColor() {
-        System.out.println("type your color :");
-        while (true) {
-            for (Color color : Color.values())
-                if (color.getGovernment() == null) System.out.println(color.getColorName());
-            String selectedColorName = MainController.scanner.nextLine();
-            String message = Color.setOwnerOfColor(selectedColorName, currentGovernment);
-            System.out.println(message);
-            if (message.startsWith("you successfully")) return;
+    public static String chooseColor(String color) {
+        try {
+            return Color.setOwnerOfColor(color, currentGovernment);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    public static String getColorList() {
+        StringBuilder result = new StringBuilder();
+        for (Color c : Color.values())
+            if (c.getGovernment() == null) result.append(c.getColorName()).append("\n");
+        return result.toString();
     }
 
     public static void setOnGovernment() {

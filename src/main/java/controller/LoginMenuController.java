@@ -36,7 +36,7 @@ public class LoginMenuController {
         User user = UserController.getUserByUsername(username);
         if (!UserController.checkPasswordFormat(newPassword))
             throw new RuntimeException("password is weak!");
-        user.setPasswordHash(newPassword);
+        user.setPassword(newPassword);
         return "your password will change after verify!";
     }
 }

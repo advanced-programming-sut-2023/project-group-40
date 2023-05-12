@@ -3,24 +3,19 @@ package controller;
 import model.*;
 import org.apache.commons.text.RandomStringGenerator;
 import view.GameMenu;
-import view.MapMenu;
 
 public class EnvironmentMenuController {
 
     public static boolean isFirstPlayer() {
-        return Government.getGovernmentsSize() == 0;
+        return Government.getGovernmentsSize() == 1;
     }
 
-    public static boolean isUserInGame(User user) {
-        return Government.getGovernmentByUser(user) != null;
-    }
-
-    public static boolean isCurrentGovernmentChooseColor(User user) {
+    public static boolean isCurrentGovernmentChoseColor(User user) {
         return Government.getGovernmentByUser(user).getColor() != null;
     }
 
     public static void checkGameStarted() {
-        if (Government.checkAllGovernmentsChooseColor()) GameMenu.setGameStarted(true);
+        if (Government.checkAllGovernmentsChoseColor()) GameMenu.setGameStarted(true);
     }
 
     public static void addPlayer(String username) {
@@ -28,11 +23,7 @@ public class EnvironmentMenuController {
     }
 
     public static boolean isPlayerAdded(String username) {
-        return Government.getGovernmentByUser(User.getUserByUsername(username)) != null;
-    }
-
-    public static boolean isPlayerValid(String username) {
-        return User.isUsernameExists(username);
+        return Government.getGovernmentByUser(UserController.getUserByUsername(username)) != null;
     }
 
 

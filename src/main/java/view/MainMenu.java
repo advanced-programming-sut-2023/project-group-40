@@ -1,19 +1,17 @@
 package view;
 
 import controller.GameMenuController;
-import controller.MainController;
 import controller.MainMenuController;
 import controller.ProfileMenuController;
-import model.Government;
+import controller.UserController;
 import view.enums.Commands;
 
-import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class MainMenu {
     public static void run() throws ReflectiveOperationException {
         while (true) {
-            String command = MainController.scanner.nextLine();
+            String command = Commands.scanner.nextLine();
             String result = Commands.regexFinder(command, MainMenu.class);
             if (result != null) System.out.println(result);
         }
@@ -27,14 +25,19 @@ public class MainMenu {
     }
 
     public static String enterGameMenu(Matcher matcher) throws ReflectiveOperationException {
-        GameMenuController.setCurrentGovernment(MainMenuController.getCurrentUser());
-        GameMenu.run();
-        return null;
+        try {
+            System.out.println(MainMenuController.enterGameMenu());
+            GameMenu.run();
+            return null;
+        }catch (RuntimeException e){
+            return e.getMessage();
+        }
     }
 
     public static String logout(Matcher matcher) throws ReflectiveOperationException {
         System.out.println("user logged out successfully!");
         MainMenuController.setCurrentUser(null);
+        if(UserController.getStayedLoginUser() != null) UserController.getStayedLoginUser().setStayLoggedIn(false);
         LoginMenu.run();
         return null;
     }

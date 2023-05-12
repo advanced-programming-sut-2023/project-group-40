@@ -1,11 +1,6 @@
 package view;
 
 import controller.GameMenuController;
-import controller.MainController;
-import model.Good;
-import model.Map;
-import model.buildings.Building;
-import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
 
 import java.io.IOException;
@@ -16,21 +11,23 @@ public class GameMenu {
     private static boolean gameStarted = false;
 
     public static void run() throws ReflectiveOperationException {
-        if (!gameStarted) System.out.println(EnvironmentMenu.run());
         System.out.println("you are in game menu!");
+        if (!gameStarted) {
+            System.out.println(EnvironmentMenu.run());
+            return;
+        }
         if (GameMenuController.getCurrentGovernment() != GameMenuController.getOnGovernment()) {
             System.out.println("It is not your turn");
             return;
         }
         while (true) {
-            String command = MainController.scanner.nextLine();
+            String command = Commands.scanner.nextLine();
             System.out.println(Commands.regexFinder(command, GameMenu.class));
         }
     }
 
-    public static String showMap(Matcher matcher) throws IOException {
-        int x = Integer.parseInt(matcher.group("x"));
-        int y = Integer.parseInt(matcher.group("y"));
+    public static String enterMapMenu(Matcher matcher) throws ReflectiveOperationException {
+        MapMenu.run();
         return null;
     }
 

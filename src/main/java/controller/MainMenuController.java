@@ -1,5 +1,6 @@
 package controller;
 
+import model.Government;
 import model.User;
 
 public class MainMenuController {
@@ -15,5 +16,18 @@ public class MainMenuController {
 
     public static User getCurrentUser() {
         return currentUser;
+    }
+
+    public static String enterGameMenu(){
+        Government governmentByUser = Government.getGovernmentByUser(currentUser);
+        if(Government.getGovernments().size() == 0){
+            Government.addGovernment(currentUser.getUsername());
+            GameMenuController.setCurrentGovernment(governmentByUser);
+            return "you entered a new game!";
+        }
+        if(governmentByUser == null)
+            throw new RuntimeException("game in progress and you can't access game");
+        GameMenuController.setCurrentGovernment(governmentByUser);
+        return "you entered in progress game";
     }
 }

@@ -3,7 +3,14 @@ package model;
 import java.util.Arrays;
 
 public enum Color {
-    RED("red"), BLUE("blue"), GREEN("green"), YELLOW("yellow"), BLACK("black"), WHITE("white"), BROWN("brown"), GREY("grey");
+    RED("red"),
+    BLUE("blue"),
+    GREEN("green"),
+    YELLOW("yellow"),
+    BLACK("black"),
+    WHITE("white"),
+    BROWN("brown"),
+    GREY("grey");
 
     private String colorName;
     private Government government;
@@ -13,13 +20,13 @@ public enum Color {
     }
 
     public static String setOwnerOfColor(String colorName, Government government) {
-        boolean isColorValid = Arrays.stream(values()).anyMatch(color -> color.colorName.equals(colorName));
-        if (!isColorValid) return "your color is invalid!";
+        boolean isColorValid = Arrays.stream(values())
+                .anyMatch(color -> color.colorName.equals(colorName) && color.government == null);
+        if (!isColorValid)
+            throw new RuntimeException("your color isn't exists or used by another government!");
         for (Color c : values()) {
-            if (c.getGovernment() != null && c.getColorName().equals(colorName))
-                return "this color for another government";
-            else if (c.getColorName().equals(colorName)) {
-                c.setGovernment(government);
+            if (c.getColorName().equals(colorName)) {
+                c.government = government;
                 government.setColor(c);
             }
         }

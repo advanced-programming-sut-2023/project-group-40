@@ -1,16 +1,19 @@
 package view;
 
-import controller.MainController;
 import controller.ProfileMenuController;
 import view.enums.Commands;
 
-import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class ProfileMenu {
     public static void run() throws ReflectiveOperationException {
         while (true) {
-            String command = MainController.scanner.nextLine();
+            String command = Commands.scanner.nextLine();
+            if(command.equals("return")){
+                ProfileMenuController.setCurrentUser(null);
+                System.out.println("you are in main menu");
+                return;
+            }
             String result = Commands.regexFinder(command, ProfileMenu.class);
             if (command != null) System.out.println(result);
         }
@@ -42,6 +45,10 @@ public class ProfileMenu {
         return ProfileMenuController.changeSlogan(slogan);
     }
 
+    public static String removeSlogan(Matcher matcher) {
+        return ProfileMenuController.removeSlogan();
+    }
+
     public static String displayHighScore(Matcher matcher) {
         return ProfileMenuController.displayHighScore();
     }
@@ -58,7 +65,4 @@ public class ProfileMenu {
         return ProfileMenuController.displayProfile();
     }
 
-    public static String removeSlogan() {
-        return ProfileMenuController.removeSlogan();
-    }
 }

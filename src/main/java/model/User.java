@@ -26,7 +26,7 @@ public class User {
         this.slogan = slogan;
     }
 
-    public void setPasswordHash(String password) {
+    public void setPassword(String password) {
         this.passwordHash = UserController.generatePasswordHash(password);
     }
 

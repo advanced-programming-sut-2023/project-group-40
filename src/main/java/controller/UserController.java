@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import model.DefaultSlogans;
 import model.SecurityQuestions;
 import model.User;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     public static String generateRandomSlogan() {
-        return null;
+        return DefaultSlogans.values()[new Random().nextInt(0,DefaultSlogans.values().length)].getSlogan();
     }
 
     public static boolean checkUsernameFormat(String username) {

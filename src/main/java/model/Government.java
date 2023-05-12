@@ -1,5 +1,6 @@
 package model;
 
+import controller.UserController;
 import model.buildings.*;
 import model.buildings.Storage;
 
@@ -8,7 +9,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class Government {
-    private static ArrayList<Government> governments = new ArrayList<>();
+    private static final ArrayList<Government> governments = new ArrayList<>();
     private final ArrayList<TradeRequest> requests = new ArrayList<>();
     private final ArrayList<Storage> storages = new ArrayList<>();
     private final ArrayList<Building> buildings = new ArrayList<>();
@@ -81,12 +82,12 @@ public class Government {
         return government.orElse(null);
     }
 
-    public static boolean checkAllGovernmentsChooseColor() {
-        return governments.stream().anyMatch(government -> government.getColor() == null);
+    public static boolean checkAllGovernmentsChoseColor() {
+        return governments.stream().noneMatch(government -> government.getColor() == null);
     }
 
     public static void addGovernment(String username) {
-        Government government = new Government(User.getUserByUsername(username));
+        Government government = new Government(UserController.getUserByUsername(username));
         governments.add(government);
     }
 

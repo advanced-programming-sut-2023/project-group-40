@@ -1,7 +1,6 @@
 package view;
 
 import controller.LoginMenuController;
-import controller.MainController;
 import controller.UserController;
 import view.enums.Commands;
 
@@ -14,7 +13,7 @@ public class LoginMenu {
         UserController.autoLogin();
         System.out.println("you are in login menu");
         while (true) {
-            String command = MainController.scanner.nextLine();
+            String command = Commands.scanner.nextLine();
             String result = Commands.regexFinder(command, LoginMenu.class);
             if (result != null) System.out.println(result);
         }

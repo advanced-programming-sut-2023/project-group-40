@@ -1,6 +1,6 @@
 package model;
 
-enum DefaultSlogans {
+public enum DefaultSlogans {
     ;
 
     DefaultSlogans(String slogan) {
@@ -8,4 +8,8 @@ enum DefaultSlogans {
     }
 
     private String slogan;
+
+    public String getSlogan() {
+        return slogan;
+    }
 }

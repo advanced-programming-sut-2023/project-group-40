@@ -1,33 +1,43 @@
 package view;
 
 import controller.GameMenuController;
-import controller.MainController;
 import controller.EnvironmentMenuController;
+import controller.UserController;
 import view.enums.Commands;
 
 import java.util.regex.Matcher;
 
 public class EnvironmentMenu {
     public static String run() throws ReflectiveOperationException {
-        System.out.println("you are in map menu!");
+        System.out.println("you are in environment menu!");
         if (EnvironmentMenuController.isFirstPlayer()) {
             chooseMapSize();
             setPlayers();
-            GameMenuController.chooseColor();
+            chooseColor();
         } else {
-            if (!EnvironmentMenuController.isUserInGame(GameMenuController.getCurrentGovernment().getOwner()))
-                return "you are not in game";
-            if (EnvironmentMenuController.isCurrentGovernmentChooseColor(GameMenuController.getCurrentGovernment().getOwner()))
-                return "you choose your color wait for starting game!";
-            GameMenuController.chooseColor();
+            if (EnvironmentMenuController.isCurrentGovernmentChoseColor(GameMenuController.getCurrentGovernment().getOwner()))
+                return "you chose your color wait for starting game!";
+            chooseColor();
             EnvironmentMenuController.checkGameStarted();
         }
         while (true) {
-            String command = MainController.scanner.nextLine();
+            String command = Commands.scanner.nextLine();
             System.out.println(Commands.regexFinder(command, EnvironmentMenu.class));
         }
     }
 
+    public static void chooseColor() {
+        while (true) {
+            System.out.print("type your color: ");
+            System.out.print(GameMenuController.getColorList());
+            try {
+                System.out.println(GameMenuController.chooseColor(Commands.scanner.nextLine()));
+                break;
+            } catch (RuntimeException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
     public static String setTexture(Matcher matcher) {
         String type = matcher.group("type");
         if (matcher.group("x") != null) {
@@ -65,19 +75,26 @@ public class EnvironmentMenu {
     }
 
     public static void chooseMapSize() {
-        System.out.println("choose your size for map: ");
-        GameMenuController.setMapSize(Integer.parseInt(MainController.scanner.nextLine()));
+        System.out.print("choose your size for map (A: 200X200 B: 400X400): ");
+        while (true){
+            String response = Commands.scanner.nextLine();
+            int size = response.equalsIgnoreCase("A") ? 200 : response.equalsIgnoreCase("B") ? 400 : 0;
+            if(size != 0) {
+                GameMenuController.setMapSize(size);
+                break;
+            }
+            else System.out.println("enter valid value: ");
+        }
     }
 
     public static void setPlayers() {
         int countOfPlayers = setNumberOfPlayers();
         GameMenuController.setOnGovernment();
-        EnvironmentMenuController.addPlayer(GameMenuController.getCurrentGovernment().getOwner().getUsername());
-        System.out.println("choose your opponents : (write usernames)");
         int selectedPlayer = 0;
         while (true) {
-            String username = MainController.scanner.nextLine();
-            if (EnvironmentMenuController.isPlayerValid(username)) {
+            System.out.print("choose your opponents (write usernames): ");
+            String username = Commands.scanner.nextLine();
+            if (UserController.isUsernameExists(username)) {
                 if (EnvironmentMenuController.isPlayerAdded(username)) {
                     System.out.println("this player already added");
                     continue;
@@ -94,10 +111,15 @@ public class EnvironmentMenu {
     public static int setNumberOfPlayers() {
         int countOfPlayers = 0;
         while (true) {
-            System.out.println("choose number of players of game :");
-            countOfPlayers = Integer.parseInt(MainController.scanner.nextLine());
-            if (countOfPlayers < 2 || countOfPlayers > 8) System.out.println("you enter invalid count number!");
-            else break;
+            System.out.print("choose number of players of game: ");
+            try {
+                countOfPlayers = Integer.parseInt(Commands.scanner.nextLine());
+                if (countOfPlayers != 2 && countOfPlayers != 4 && countOfPlayers != 8)
+                    System.out.print("please enter invalid number (2 or 4 or 8): ");
+                else break;
+            } catch (NumberFormatException e) {
+                System.out.print("please enter a number: ");
+            }
         }
         return countOfPlayers;
     }
