@@ -6,14 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
 
 import java.io.IOException;
-import java.util.Map;
-
-import controller.GameMenuController;
-import controller.MainController;
-import org.apache.commons.lang3.StringUtils;
-import view.enums.Commands;
-
-import java.io.IOException;
 import java.util.regex.Matcher;
 
 public class GameMenu {
@@ -39,7 +31,10 @@ public class GameMenu {
         GameMenuController.trade();
         return null;
     }
-
+    public static String shop() throws ReflectiveOperationException {
+        GameMenuController.shop();
+        return null;
+    }
     public static String changeSightArea(Matcher matcher) {
         //left in another first
         while (matcher.find()) {

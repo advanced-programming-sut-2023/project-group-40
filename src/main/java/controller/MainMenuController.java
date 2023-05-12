@@ -4,6 +4,13 @@ import model.User;
 
 public class MainMenuController {
     private static User currentUser;
+    public static String logout(){
+        return "log out!";
+    }
+
+    public static String logout() {
+        return "log out!";
+    }
 
     public static String logout() {
         return "log out!";

@@ -1,33 +1,11 @@
 package controller;
 
 import model.*;
-import model.buildings.Building;
-import model.buildings.Buildings;
-import model.buildings.EngineerGuild;
-import model.buildings.Storage;
-import model.troops.Troop;
-import model.troops.Troops;
+import model.buildings.*;
+import model.troops.*;
 import org.apache.commons.text.RandomStringGenerator;
-import view.GameMenu;
 import view.ShopMenu;
-import model.buildings.Buildings;
-import model.buildings.Storage;
-import org.apache.commons.text.RandomStringGenerator;
 import view.TradeMenu;
-import model.buildings.Buildings;
-import model.buildings.Storage;
-import org.apache.commons.text.RandomStringGenerator;
-import view.GameMenu;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
-import java.util.Scanner;
-import java.io.IOException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
-import java.util.Scanner;
 
 enum Direction {
 
@@ -53,14 +31,20 @@ public class GameMenuController {
         Map.initMap(size);
     }
 
-    public static String showMap(int x, int y) throws IOException {
+    public static String showMap(int x, int y) {
         GameMenuController.x = x;
         GameMenuController.y = y;
         return null;
     }
+
     public static void trade() throws ReflectiveOperationException {
         TradeMenuController.setCurrentGovernment(currentGovernment);
         TradeMenu.run();
+    }
+
+    public static void shop() throws ReflectiveOperationException {
+        ShopMenuController.setCurrentGovernment(currentGovernment);
+        ShopMenu.run();
     }
 
     public static String showDetails(int x, int y) {
@@ -158,9 +142,9 @@ public class GameMenuController {
         Troop troop = Troops.getTroopObjectByType(type);
         if (troop == null) return "unit type is invalid";
         int goldForUnit = troop.getValue() * count;
-        if (currentGovernment.getAmountOfGood(Good.GOLD) != goldForUnit)
+        if (currentGovernment.getNumOfInStorages(Good.GOLD) != goldForUnit)
             return "you don't have enough gold for create this unit";
-        if (currentGovernment.getAmountOfGood(troop.getWeapon()) != count)
+        if (currentGovernment.getNumOfInStorages(troop.getWeapon()) != count)
             return "you don't have enough weapon for create this unit";
         if (currentGovernment.getCastle().getPopulation() < count)
             return "you don't have enough population for create this unit";
@@ -259,6 +243,7 @@ public class GameMenuController {
     public static String dropUnit(int x, int y, String type, int count) {
         return null;
     }
+
     public static String nextTurn() {
         return null;
     }

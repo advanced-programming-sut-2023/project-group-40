@@ -1,13 +1,7 @@
 package controller;
 
 
-import model.Good;
 import model.Government;
-import model.TradeRequest;
-import model.User;
-import model.buildings.Storage;
-import com.google.gson.internal.bind.util.ISO8601Utils;
-import model.*;
 
 import java.util.Optional;
 import java.util.Locale;
@@ -32,8 +26,7 @@ public class TradeMenuController {
     public static String sendRequest(String type, String name, int amount, int price, String message, String username) {
         if ((targetGovernment = Government.getGovernmentByUser(User.getUserByUsername(username))) == null)
             return "username in not exist";
-        if (!type.equals("food") && !type.equals("weapon") && !type.equals("Material"))
-            return "invalid resource type";
+        if (!type.equals("food") && !type.equals("weapon") && !type.equals("Material")) return "invalid resource type";
         try {
             Good commodity = Good.valueOf(name.toUpperCase());
             targetGovernment.addRequest(new TradeRequest(currentGovernment, targetGovernment, commodity, price, amount, message));
@@ -58,18 +51,15 @@ public class TradeMenuController {
         TradeRequest request = currentGovernment.getRequestById(id);
         if (request == null) return "invalid id!";
         targetGovernment = request.getSender();
-        int numOfCommodity = 0;
-        for (Storage storage : currentGovernment.getStorages()) {
-            if (storage.getProducts().get(request.getCommodity()) != null)
-                numOfCommodity += storage.getProducts().get(request.getCommodity());
-        }
+
+        int numOfCommodity = currentGovernment.getNumOfInStorages(request.getCommodity());
         if (request.getCount() > numOfCommodity) return "you haven't enough " + request.getCommodity();
 
-        int numOfGold = 0;
-        for (Storage storage : targetGovernment.getStorages()) {
-            if (storage.getProducts().get(Good.GOLD) != null) numOfGold += storage.getProducts().get(Good.GOLD);
-        }
+        int numOfGold = targetGovernment.getNumOfInStorages(Good.GOLD);
         if (request.getPrice() > numOfGold) return targetGovernment.getOwner().getUsername() + " haven't enough gold";
+
+        int emptySpace = targetGovernment.getNumOfEmptySpace(request.getCommodity().getType());
+        if (request.getCount() > emptySpace) return targetGovernment.getOwner().getUsername() + " haven't enough space";
 
         currentGovernment.decreaseAmountOfGood(request.getCommodity(), request.getCount());
         targetGovernment.increaseAmountOfGood(request.getCommodity(), request.getCount());

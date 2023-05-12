@@ -18,20 +18,16 @@ public class MainMenu {
             if (result != null) System.out.println(result);
         }
     }
-
     public static String enterProfileMenu(Matcher matcher) throws ReflectiveOperationException {
-        System.out.println("you are in profile menu!");
         ProfileMenuController.setCurrentUser(MainMenuController.getCurrentUser());
         ProfileMenu.run();
         return null;
     }
-
     public static String enterGameMenu(Matcher matcher) throws ReflectiveOperationException {
         GameMenuController.setCurrentGovernment(MainMenuController.getCurrentUser());
         GameMenu.run();
         return null;
     }
-
     public static String logout(Matcher matcher) throws ReflectiveOperationException {
         System.out.println("user logged out successfully!");
         MainMenuController.setCurrentUser(null);

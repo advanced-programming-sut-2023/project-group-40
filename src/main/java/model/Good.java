@@ -31,4 +31,7 @@ public enum Good {
     public int getSellPrice() {
         return sellPrice;
     }
+    public String getType() {
+        return type;
+    }
 }

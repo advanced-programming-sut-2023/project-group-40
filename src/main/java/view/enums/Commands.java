@@ -46,7 +46,10 @@ public enum Commands{
     ACCEPT_TRADE("trade accept -i (?<id>\\d+) -m (?<message>\\S+)", TradeMenu.class, "acceptTrade"),
     SHOW_TRADE_HISTORY("trade history", TradeMenu.class, "showTradeHistory"),
     CREATE_UNIT("create unit -t (?<type>\\w+) -c (?<count>\\d)", GameMenu.class,"createUnit"),
-    NEXT_TURN("next turn", MapMenu.class,"nextTurn");
+    NEXT_TURN("next turn", MapMenu.class,"nextTurn"),
+    SHOW_PRICE_LIST("show price list", ShopMenu.class, "showPriceList"),
+    BUY("buy -i (?<name>\\S+) -a (?<amount>\\d+)", ShopMenu.class, "buy"),
+    sell("sell -i (?<name>\\S+) -a (?<amount>\\d+)", ShopMenu.class, "sell");
     private final String regex;
     private final String methodName;
     private final Class<?> menuClass;
