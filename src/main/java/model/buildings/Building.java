@@ -7,10 +7,10 @@ import java.io.Serializable;
 import java.util.HashSet;
 
 public class Building implements BuildingAction {
-    protected int x1, y1,x2,y2;
+    protected int x1, y1, x2, y2;
     private boolean isIllegal;
     protected BuildingGroups group;
-    private  HashSet<Texture> textures;
+    private HashSet<Texture> textures;
     protected String name;
     protected int hp;
     // index 0 -> gold 1 -> wood 2 -> stone 3 -> iron 4 -> pitch
@@ -86,23 +86,23 @@ public class Building implements BuildingAction {
         return y2 + 1 == unit.getY() || y1 - 1 == unit.getY();
     }
 
-    public int[] getCost() {
-        return cost;
-    }
-
     public int getX1() {
         return x1;
-    }
-
-    public int getX2() {
-        return x2;
     }
 
     public int getY1() {
         return y1;
     }
 
+    public int getX2() {
+        return x2;
+    }
+
     public int getY2() {
         return y2;
+    }
+
+    public int[] getCost() {
+        return cost;
     }
 }
