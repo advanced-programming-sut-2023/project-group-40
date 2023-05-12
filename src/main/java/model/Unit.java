@@ -29,7 +29,7 @@ public class Unit {
     public void addTroop(Troop troop, int count) {
         for (int i = 0; i < count; i++)
             troops.add(troop);
-        if (troop.getName().equals("Macemen") || troop.getName().equals("Spearmen"))
+        if (troop.getName().equals("Macemen") || troop.getName().equals("Spearmen") ||troop.getName().equals("Assassins"))
             canClimb = true;
         velocity = troop.getVelocity();
         type = troop.getName();

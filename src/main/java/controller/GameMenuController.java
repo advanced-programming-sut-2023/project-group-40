@@ -232,8 +232,7 @@ public class GameMenuController {
     }
 
     public static String createUnit(String type, int count) {
-        //میتونن دو تا اسلحه داشته باشن
-        //یگان مهندس؟؟؟
+        //
         if (count < 0) return "count is invalid";
         if (type.equals("Engineer")) {
             if (selectedBuilding.getName().equals("engineer guild")) {
@@ -256,10 +255,12 @@ public class GameMenuController {
         Troop troop = Troops.getTroopObjectByType(type);
         if (troop == null) return "unit type is invalid";
         int goldForUnit = troop.getValue() * count;
-        if (currentGovernment.getAmountOfGood(Good.GOLD) != goldForUnit)
+        if (currentGovernment.getAmountOfGood(Good.GOLD) < goldForUnit)
             return "you don't have enough gold for create this unit";
-        if (currentGovernment.getAmountOfGood(troop.getWeapon()) != count)
+        if (troop.getWeapon() != null && currentGovernment.getAmountOfGood(troop.getWeapon()) < count)
             return "you don't have enough weapon for create this unit";
+        if (troop.isHasArmor() && currentGovernment.getAmountOfGood(Good.ARMOR) < count)
+            return "you don't have enough armor for create this unit";
         if (currentGovernment.getCastle().getPopulation() < count)
             return "you don't have enough population for create this unit";
         if (troop.getName().equals("Black Monk") && !selectedBuilding.getName().equals("Cathedral"))
@@ -268,7 +269,7 @@ public class GameMenuController {
             return "you can't create european in Mercenary Post";
         if (type.equals("arabian") && selectedBuilding.getName().equals("barrack"))
             return "you can't create arabian in barrack";
-        if (troop.getName().equals("Knight")) {
+        if (troop.getName().equals("Knight") || troop.getName().equals("Horse Archers")) {
             if (count > currentGovernment.getCountOfHorses())
                 return "you don't have enough horses for your Knight unit";
             else

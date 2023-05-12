@@ -13,8 +13,9 @@ public class Barrack extends Building {
         super(name, height, width, hp, cost, textures, isIllegal, group);
     }
 
-    public void addTroop(Troop troop) {
-        troopsList.add(troop);
+    public void addTroop(Troop troop, int count) {
+        for (int i = 0; i < count; i++)
+            troopsList.add(troop);
     }
 
     public void removeTroop(Troop troop) {
