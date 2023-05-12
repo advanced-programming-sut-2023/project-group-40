@@ -1,22 +1,29 @@
 package model.buildings;
 
-import model.Material;
+import controller.GameMenuController;
+import model.Good;
+import model.Government;
+import model.Texture;
 
-public class Mine extends Building{
-    private Material material;
+import java.util.HashSet;
+
+public class Mine extends Building {
+    private Good material;
     private int productRate;
+    private int storage;
+    private int maxStorage = 0;
 
-    public Mine(String name, int height, int width, int hp, int[] cost, int workersRequired, Material material, int productRate) {
-        super(name,height,width, hp, cost, workersRequired);
+    public Mine(String name, int height, int width, int hp, int[] cost, int workersRequired, Good material, int productRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+        super(name, height, width, hp, cost, workersRequired, textures, isIllegal, group);
         this.material = material;
         this.productRate = productRate;
     }
 
-    public Material getMaterial() {
+    public Good getMaterial() {
         return material;
     }
 
-    public void setMaterial(Material material) {
+    public void setMaterial(Good material) {
         this.material = material;
     }
 
@@ -26,5 +33,27 @@ public class Mine extends Building{
 
     public void setProductRate(int productRate) {
         this.productRate = productRate;
+    }
+
+    public int getStorage() {
+        return storage;
+    }
+
+    public void decreaseStorage(int amount){
+        storage -= amount;
+    }
+
+    @Override
+    public void action() {
+        Government government = GameMenuController.getCurrentGovernment();
+        if (name.equals("Quarry")) {
+            storage += productRate;
+            storage = Math.min(storage, maxStorage);
+        }
+        else {
+            government.increaseAmountOfGood(material, productRate);
+            if (name.equals("Dairy products"))
+                government.increaseAmountOfGood(Good.LEATHER_VEST,productRate);
+        }
     }
 }

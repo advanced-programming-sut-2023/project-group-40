@@ -1,32 +1,49 @@
-package model;
+package model.troops;
 
-enum Level {
 
-}
+import model.Good;
+import model.Government;
+import model.People;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class Troop extends People {
+    private Good weapon;
+    private int hp;
     private Government owner;
     private String region;
-    private Level velocity;
-    private Level powerOfAttack;
-    private Level powerOfDefence;
+    private int velocity;
+    private int powerOfAttack;
+    private int powerOfDefence;
     private int value;
-    private boolean hasArmor, canPushLadder, canDigMoat, isHidden, canClimb;
+    private boolean hasArmor, canPushLadder, canDigMoat, isHidden;
     private int shootingRange;
+
+    public Troop(String region, int velocity, int powerOfAttack, int powerOfDefence, int value, boolean hasArmor, boolean canDigMoat, int shootingRange) {
+        this.region = region;
+        this.velocity = velocity;
+        this.powerOfAttack = powerOfAttack;
+        this.powerOfDefence = powerOfDefence;
+        this.value = value;
+        this.hasArmor = hasArmor;
+        this.canDigMoat = canDigMoat;
+        this.shootingRange = shootingRange;
+    }
 
     public String getRegion() {
         return region;
     }
 
-    public Level getVelocity() {
+    public int getVelocity() {
         return velocity;
     }
 
-    public Level getPowerOfAttack() {
+    public int getPowerOfAttack() {
         return powerOfAttack;
     }
 
-    public Level getPowerOfDefence() {
+    public int getPowerOfDefence() {
         return powerOfDefence;
     }
 
@@ -70,14 +87,6 @@ public class Troop extends People {
         isHidden = hidden;
     }
 
-    public boolean isCanClimb() {
-        return canClimb;
-    }
-
-    public void setCanClimb(boolean canClimb) {
-        this.canClimb = canClimb;
-    }
-
     public int getShootingRange() {
         return shootingRange;
     }
@@ -92,5 +101,22 @@ public class Troop extends People {
 
     public void setOwner(Government owner) {
         this.owner = owner;
+    }
+
+    public void changeVelocity(int percent){
+        velocity *= percent;
+    }
+
+    public void changePower(int fearRate) {
+        int percent = (int) (fearRate * 0.05 + 1);
+        powerOfAttack *= percent;
+    }
+
+    public Good getWeapon() {
+        return weapon;
+    }
+
+    public int getHp() {
+        return hp;
     }
 }

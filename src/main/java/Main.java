@@ -1,10 +1,11 @@
-import controller.LoginMenuController;
+import model.User;
 import view.LoginMenu;
 
-import java.util.Scanner;
+
 
 public class Main {
     public static void main(String[] args) throws ReflectiveOperationException {
-        LoginMenu.run(new Scanner(System.in));
+        User.fetchDatabase();
+        LoginMenu.run();
     }
 }
