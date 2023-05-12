@@ -1,15 +1,13 @@
 package model.buildings;
 
+import model.*;
 import model.Texture;
-import model.Government;
-import model.Texture;
-import model.User;
 
 import java.io.Serializable;
 import java.util.HashSet;
 
 public class Building implements BuildingAction {
-    protected int x, y;
+    protected int x1, y1,x2,y2;
     private boolean isIllegal;
     protected BuildingGroups group;
     private  HashSet<Texture> textures;
@@ -82,20 +80,29 @@ public class Building implements BuildingAction {
         return name;
     }
 
-    public void setCoordinates(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+    public boolean isNearGate(Unit unit) {
+        if (x1 - 1 == unit.getX() || x2 + 1 == unit.getX())
+            return true;
+        return y2 + 1 == unit.getY() || y1 - 1 == unit.getY();
     }
 
     public int[] getCost() {
         return cost;
+    }
+
+    public int getX1() {
+        return x1;
+    }
+
+    public int getX2() {
+        return x2;
+    }
+
+    public int getY1() {
+        return y1;
+    }
+
+    public int getY2() {
+        return y2;
     }
 }

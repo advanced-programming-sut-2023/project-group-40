@@ -16,6 +16,7 @@ public class Unit {
     private int velocity;
     private String type;
     private boolean canClimb = false;
+    private int power;
     private int shootingRange;
 
     public Unit(int x , int y,Government government, String state, int hp) {
@@ -27,9 +28,11 @@ public class Unit {
     }
 
     public void addTroop(Troop troop, int count) {
+        power += troop.getPowerOfAttack() * count;
         for (int i = 0; i < count; i++)
             troops.add(troop);
-        if (troop.getName().equals("Macemen") || troop.getName().equals("Spearmen") ||troop.getName().equals("Assassins"))
+        if (troop.getName().equals("Macemen") || troop.getName().equals("Spearmen") ||
+                troop.getName().equals("Assassins") || troop.getName().equals("Laddermen"))
             canClimb = true;
         velocity = troop.getVelocity();
         type = troop.getName();
@@ -80,15 +83,10 @@ public class Unit {
         return velocity;
     }
 
-    public void changeX(int amount){
+    public void setXY(int x,int y){
         Map.getMap()[x][y].setUnit(null);
-        x += amount;
-        Map.getMap()[x][y].setUnit(this);
-    }
-
-    public void changeY(int amount){
-        Map.getMap()[x][y].setUnit(null);
-        y += amount;
+        this.x = x;
+        this.y = y;
         Map.getMap()[x][y].setUnit(this);
     }
 
@@ -98,5 +96,9 @@ public class Unit {
 
     public void increaseShootingRange(int percent) {
         this.shootingRange *= (1 + (percent/100));
+    }
+    public void changePower(int fearRate){
+        int percent = (int) (fearRate * 0.05 + 1);
+        power *= percent;
     }
 }

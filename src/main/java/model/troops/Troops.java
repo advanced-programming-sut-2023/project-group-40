@@ -3,9 +3,6 @@ package model.troops;
 import model.Good;
 
 public enum Troops {
-   //region velocity powerOfAttack powerOfDefence value hasArmor shootingRange weapon
-    //armor spear bow  sword mace
-    //شمشیر   گرز   کمان   نیزه     زره
     ARCHER("archer", new Troop("european", 9, 4, 5, 12, false, 5, Good.BOW)),
     CROSSBOWMEN("Crossbowmen", new Troop("european", 6, 7, 7, 20, false,3, Good.BOW)),
     SPEARMEN("Spearmen", new Troop("european", 6, 5, 2, 8, false, 0, Good.BOW)),
@@ -25,8 +22,8 @@ public enum Troops {
     ARABIAN_SWORDSMEN("Arabian Swordsmen", new Troop("arabian", 4, 9, 9, 80, false, 0, Good.SWORD)),
     FIRE_THROWERS("Fire Throwers", new Troop("arabian", 9, 8, 4, 100, false, 5,null));
     ;
-    String fullName;
-    Troop troopObject;
+    final String fullName;
+    final Troop troopObject;
 
     Troops(String fullName, Troop troopObject) {
         this.fullName = fullName;

@@ -160,14 +160,16 @@ public class GameMenuController {
     }
 
     public static String setFearRate(int rate) {
-        //increase randeman
+        //تاثیر ساختمان اطراف قلعه
+        //ساختمان مناسب چیه ؟؟
+        //increase randeman : تشخیص ساختمونایی ک ریت دارن
         if (rate > 5 || rate < -5) return "rate-number is out of bound";
         currentGovernment.setFearRate(rate);
         for (int i = 0; i < Map.getSize(); i++)
             for (int j = 0; j < Map.getSize(); j++) {
                 Unit unit = Map.getMap()[i][j].getUnit();
                 if (unit != null && unit.getGovernment() == currentGovernment) for (Troop troop : unit.getTroops())
-                    troop.changePower(rate);
+                    unit.changePower(rate);
             }
         return "set rate-number is successful";
     }
@@ -231,7 +233,7 @@ public class GameMenuController {
         return "target building selected";
     }
 
-    public static String createUnit(String type, int count) {
+    public static String createUnit(String type, int count,int x,int y) {
         //
         if (count < 0) return "count is invalid";
         if (type.equals("Engineer")) {
@@ -278,8 +280,6 @@ public class GameMenuController {
         currentGovernment.getCastle().changePopulation(-1 * count);
         currentGovernment.decreaseAmountOfGood(Good.GOLD, count);
         currentGovernment.decreaseAmountOfGood(troop.getWeapon(), count);
-        int x = selectedBuilding.getX();
-        int y = selectedBuilding.getY();
         Unit unit = new Unit(x, y, currentGovernment, "standing", troop.getHp() * count);
         if (troop.getName().startsWith("Archer"))
             unit.setCanDamage(false);
@@ -312,11 +312,8 @@ public class GameMenuController {
             return "you can't go to water regions!";
         if (cell.getTexture() == Texture.SHALLOW_WATER)
             selectedUnit.decreaseVelocity(1);
-        move(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit.getVelocity());
+        selectedUnit.setXY(x,y);
         return "unit move to x: " + selectedUnit.getX() + "and y: " + selectedUnit.getY() + "successfully";
-    }
-
-    private static void move(int x1, int y1, int x2, int y2, int velocity) {
     }
 
     public static String setUnitState(String state) {
@@ -342,6 +339,25 @@ public class GameMenuController {
     }
 
     public static String digTunnel(int x, int y) {
+        Building targetBuilding = Map.getMap()[x][y].getBuilding();
+        if (targetBuilding instanceof Tower && !targetBuilding.getName().equals("lookout tower") ||
+                targetBuilding instanceof Turret && !targetBuilding.getName().equals("turret"))
+            return "you can't dig tunnel under this building";
+        if (Map.getMap()[x][y].getTexture().getType().equals("water"))
+            return "you can't dig tunnel on water regions";
+        if (Map.getMap()[x][y].isStartDigging() || Map.getMap()[x][y].isHaveDitch())
+            return "you can't dig tunnel on ditch";
+        for (int i = x ; i < x+3 ; i++) {
+            targetBuilding = Map.getMap()[i][y].getBuilding();
+            currentGovernment.getBuildings().remove(targetBuilding);
+            for (int j = targetBuilding.getX1(); j <= targetBuilding.getX2(); j++) {
+                for (int k = targetBuilding.getY1(); k <= targetBuilding.getY2(); k++) {
+                    Map.getMap()[j][k].setBuilding(null);
+                    Map.getMap()[j][k].setAvailable(true);
+                    Map.getMap()[j][k].setPassable(true);
+                }
+            }
+        }
         return null;
     }
 
@@ -498,7 +514,7 @@ public class GameMenuController {
         Cell cell = Map.getMap()[x][y];
         if (!cell.isAvailable())
             return "this cell not available!";
-        currentGovernment.addBuilding(new Turret("normal tower",2,5,500,new int[]{0,0,10,0,0},10));
+        currentGovernment.addBuilding(new Turret("turret",2,5,500,new int[]{0,0,10,0,0},10));
         cell.setAvailable(false);
         cell.setPassable(false);
         return "turret dropped successfully";
@@ -513,6 +529,7 @@ public class GameMenuController {
         Map.getMap()[x][y].setDitchOwner(currentGovernment);
         return "digging ditch started";
     }
+
     public static String stopDiggingDitch(int x , int y){
         if (Map.getMap()[x][y].isStartDigging()) {
             Map.getMap()[x][y].setStartDigging(false);
@@ -522,11 +539,21 @@ public class GameMenuController {
     }
 
     public static String deleteDitch(int x , int y){
-        if (Map.getMap()[x][y].isHaveDitch()) {
+        if (Map.getMap()[x][y].isHaveDitch() && Map.getMap()[x][y].getDitchOwner() == currentGovernment) {
             Map.getMap()[x][y].setHaveDitch(false);
             Map.getMap()[x][y].setDitchOwner(null);
+            Map.getMap()[x][y].setPassable(true);
         }
         return "ditch deleted successfully";
+    };
+
+    public static String fillDitch(int x , int y){
+        if (Map.getMap()[x][y].isHaveDitch() && Map.getMap()[x][y].getDitchOwner() != currentGovernment) {
+            Map.getMap()[x][y].setHaveDitch(false);
+            Map.getMap()[x][y].setDitchOwner(null);
+            Map.getMap()[x][y].setPassable(true);
+        }
+        return "ditch filled successfully";
     };
 
     public static String captureTheGate(int x , int y){
@@ -536,7 +563,7 @@ public class GameMenuController {
             return "invalid target";
         if (!selectedUnit.isCanClimb())
             return "your unit can't capture the gate";
-        if (selectedUnit.getX() != selectedBuilding.getX() && selectedUnit.getY() != selectedBuilding.getY())
+        if (!targetBuilding.isNearGate(selectedUnit))
             return "your unit can't capture the gate";
         targetBuilding.getOwner().getBuildings().remove(targetBuilding);
         currentGovernment.addBuilding(targetBuilding);
@@ -559,6 +586,7 @@ public class GameMenuController {
                 if (Map.getMap()[i][i].isStartDigging() && Map.getMap()[i][j].getDitchOwner() == currentGovernment){
                     Map.getMap()[i][i].setStartDigging(false);
                     Map.getMap()[i][i].setHaveDitch(true);
+                    Map.getMap()[i][i].setPassable(false);
                 }
     }
 }

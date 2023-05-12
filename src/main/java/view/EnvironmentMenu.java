@@ -82,7 +82,6 @@ public class EnvironmentMenu {
                     System.out.println("this player already added");
                     continue;
                 }
-                EnvironmentMenuController.addPlayer(username);
                 System.out.println("player " + username + " added");
                 selectedPlayer++;
                 if (selectedPlayer == countOfPlayers - 1) break;

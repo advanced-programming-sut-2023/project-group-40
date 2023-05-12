@@ -87,9 +87,11 @@ public class GameMenu {
     }
 
     public static String createUnit(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
         String type = matcher.group("type");
         int count = Integer.parseInt(matcher.group("count"));
-        return GameMenuController.createUnit(type, count);
+        return GameMenuController.createUnit(type, count,x,y);
     }
 
     public static String repair(Matcher matcher) {
@@ -133,7 +135,9 @@ public class GameMenu {
     }
 
     public static String digTunnel(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.digTunnel(x,y);
     }
 
     public static String buildEquipments(Matcher matcher) {
@@ -190,6 +194,13 @@ public class GameMenu {
         int y = Integer.parseInt(matcher.group("y"));
         return GameMenuController.deleteDitch(x,y);
     };
+
+    public static String fillDitch(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.fillDitch(x,y);
+    };
+
     public static String captureTheGate(Matcher matcher){
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));

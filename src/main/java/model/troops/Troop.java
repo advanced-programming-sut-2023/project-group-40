@@ -73,11 +73,6 @@ public class Troop extends People {
         velocity *= percent;
     }
 
-    public void changePower(int fearRate) {
-        int percent = (int) (fearRate * 0.05 + 1);
-        powerOfAttack *= percent;
-    }
-
     public Good getWeapon() {
         return weapon;
     }

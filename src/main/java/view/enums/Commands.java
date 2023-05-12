@@ -54,7 +54,10 @@ public enum Commands{
     START_DIGGING_DITCH("start digging ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"startDiggingDitch"),
     STOP_DIGGING_DITCH("stop digging ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"stopDiggingDitch"),
     DELETE_DITCH("delete ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"deleteDitch"),
-    CAPTURE_GATE("capture the gate -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"captureTheGate");
+    CAPTURE_GATE("capture the gate -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"captureTheGate"),
+    FILL_DITCH("fill ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"fillDitch"),
+    DIG_TUNNEL("dig tunnel -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"digTunnel"),
+    ;
 
     private final String regex;
     private final String methodName;
