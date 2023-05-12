@@ -2,6 +2,7 @@ package model.buildings;
 
 import model.Map;
 import model.Texture;
+import model.Unit;
 
 import java.util.HashSet;
 
@@ -19,5 +20,10 @@ public class Bridge extends Building {
     @Override
     public void action() {
         if (isUp) Map.getMap()[x][y].setPassable(false);
+        else {
+            Unit unit = Map.getMap()[x][y].getUnit();
+            if (unit != null)
+                unit.decreaseVelocity(1);
+        }
     }
 }

@@ -6,13 +6,21 @@ import java.util.ArrayList;
 
 
 public class Unit {
+    int x;
+    int y;
     private Government government;
     boolean canDamage = true;
     private final ArrayList<Troop> troops = new ArrayList<>();
     private final String state;
     private int hp;
+    private int velocity;
+    private String type;
+    private boolean canClimb = false;
+    private int shootingRange;
 
-    public Unit(Government government, String state, int hp) {
+    public Unit(int x , int y,Government government, String state, int hp) {
+        this.x = x;
+        this.y = y;
         this.government = government;
         this.state = state;
         this.hp = hp;
@@ -21,7 +29,11 @@ public class Unit {
     public void addTroop(Troop troop, int count) {
         for (int i = 0; i < count; i++)
             troops.add(troop);
-
+        if (troop.getName().equals("Macemen") || troop.getName().equals("Spearmen"))
+            canClimb = true;
+        velocity = troop.getVelocity();
+        type = troop.getName();
+        shootingRange = troop.getShootingRange();
     }
 
     public String getState() {
@@ -46,5 +58,45 @@ public class Unit {
 
     public Government getGovernment() {
         return government;
+    }
+
+    public void decreaseVelocity(int amount){
+        velocity -= amount;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getVelocity() {
+        return velocity;
+    }
+
+    public void changeX(int amount){
+        Map.getMap()[x][y].setUnit(null);
+        x += amount;
+        Map.getMap()[x][y].setUnit(this);
+    }
+
+    public void changeY(int amount){
+        Map.getMap()[x][y].setUnit(null);
+        y += amount;
+        Map.getMap()[x][y].setUnit(this);
+    }
+
+    public boolean isCanClimb() {
+        return canClimb;
+    }
+
+    public void increaseShootingRange(int percent) {
+        this.shootingRange *= (1 + (percent/100));
     }
 }

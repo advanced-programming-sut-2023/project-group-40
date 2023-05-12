@@ -17,7 +17,7 @@ public class Troop extends People {
     private int powerOfAttack;
     private int powerOfDefence;
     private int value;
-    private boolean hasArmor, canPushLadder, canDigMoat, isHidden, canClimb;
+    private boolean hasArmor, canPushLadder, canDigMoat, isHidden;
     private int shootingRange;
 
     public Troop(String region, int velocity, int powerOfAttack, int powerOfDefence, int value, boolean hasArmor, boolean canDigMoat, int shootingRange) {
@@ -85,14 +85,6 @@ public class Troop extends People {
 
     public void setHidden(boolean hidden) {
         isHidden = hidden;
-    }
-
-    public boolean isCanClimb() {
-        return canClimb;
-    }
-
-    public void setCanClimb(boolean canClimb) {
-        this.canClimb = canClimb;
     }
 
     public int getShootingRange() {

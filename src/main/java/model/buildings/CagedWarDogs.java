@@ -14,4 +14,11 @@ public class CagedWarDogs extends Building {
     public void setOpen(boolean open) {
         isOpen = open;
     }
+
+    @Override
+    public void action() {
+        if (isOpen) {
+            // TODO: 5/11/2023
+        }
+    }
 }

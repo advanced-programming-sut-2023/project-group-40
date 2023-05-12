@@ -19,4 +19,12 @@ public class EngineerGuild extends Building {
     public void increaseNumberOfLadderMan(int amount) {
         this.numberOfLadderMan += amount;
     }
+
+    public int getCostOfEngineer() {
+        return costOfEngineer;
+    }
+
+    public int getCostOfLadderMan() {
+        return costOfLadderMan;
+    }
 }

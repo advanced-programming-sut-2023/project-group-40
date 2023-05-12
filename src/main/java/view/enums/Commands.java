@@ -44,7 +44,18 @@ public enum Commands{
     DROP_ROCK("drop rock -x (?<x>\\d+) -y (?<y>\\d+) -d (?<direction>\\w+)", EnvironmentMenu.class,"dropRock"),
     NEXT_TURN("next turn", EnvironmentMenu.class,"nextTurn"),
     DROP_TREE("drop tree -x (?<x>\\d+) -y (?<y>\\d+) -type (?<type>\\w+)", EnvironmentMenu.class,"dropTree"),
-    CLEAR_BLOCK("clear block -x (?<x>\\d+) -y (?<y>\\d+)",EnvironmentMenu.class,"clearBlock");
+    CLEAR_BLOCK("clear block -x (?<x>\\d+) -y (?<y>\\d+)",EnvironmentMenu.class,"clearBlock"),
+    BUILD_EQUIPMENT("build -q (?<equipmentName>\\w+)",GameMenu.class,"buildEquipments"),
+    SELECT_UNIT("select unit -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"selectUnit"),
+    MOVE_UNIT("move unit to -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"moveUnit"),
+    DROP_WALL("drop wall -x (?<x>\\d+) -y (?<y>\\d+) -t (?<thickness>\\d+) -h (?<height>\\d+) -d (?<direction>\\w+)",GameMenu.class,"dropWall"),
+    DROP_TOWER("drop tower -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"dropTower"),
+    DROP_TURRET("drop turret -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"dropTurret"),
+    START_DIGGING_DITCH("start digging ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"startDiggingDitch"),
+    STOP_DIGGING_DITCH("stop digging ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"stopDiggingDitch"),
+    DELETE_DITCH("delete ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"deleteDitch"),
+    CAPTURE_GATE("capture the gate -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"captureTheGate");
+
     private final String regex;
     private final String methodName;
     private final Class<?> menuClass;

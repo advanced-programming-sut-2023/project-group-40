@@ -39,21 +39,29 @@ public class EnvironmentMenuController {
     public static String setTexture(int x, int y, String type) {
         if (!GameMenuController.isCoordinateValid(x) || !GameMenuController.isCoordinateValid(y)) return "your coordinates is incorrect!";
         if (Map.getMap()[x][y].getBuilding() != null) return "There is already a building in your coordinates!";
-        Map.getMap()[x][y].setTexture(Texture.getTextureByName(type));
+        changeTextureOfCell(Map.getMap()[x][y],Texture.getTextureByName(type));
         return "texture successfully changed";
     }
 
     public static String setTexture(int x1, int y1, int x2, int y2, String type) {
         if (!GameMenuController.isCoordinateValid(x1) || !GameMenuController.isCoordinateValid(x2) || !GameMenuController.isCoordinateValid(y1) || !GameMenuController.isCoordinateValid(y2))
             return "your coordinates is incorrect!";
-        for (int i = x1; i < x2; i++)
-            for (int j = y1; j < y2; j++) {
-                if (Map.getMap()[i][j].getBuilding() != null) return "There is already a building in your coordinates!";
-                Map.getMap()[i][j].setTexture(Texture.getTextureByName(type));
+        for (int i = x1; i <= x2; i++)
+            for (int j = y1; j <= y2; j++) {
+                if (!Map.getMap()[i][j].isAvailable())
+                    return "this cell not available for changing texture!";
+                changeTextureOfCell(Map.getMap()[i][j],Texture.getTextureByName(type));
             }
         return "texture successfully changed";
     }
 
+    public static void changeTextureOfCell(Cell cell,Texture texture) {
+        if (texture == Texture.STONE || texture == Texture.KOCH_POND ||
+        texture == Texture.BIG_POND || texture == Texture.SEA)
+            cell.setPassable(false);
+        if (texture == Texture.STONE) cell.setAvailable(false);
+        cell.setTexture(texture);
+    }
     public static String clearBlock(int x, int y) {
         Map.getMap()[x][y].setRock(null);
         Map.getMap()[x][y].setTree(null);
@@ -69,6 +77,7 @@ public class EnvironmentMenuController {
             direction = generator.generate(1);
         }
         Map.getMap()[x][y].setRock(new Rock(direction));
+        Map.getMap()[x][y].setAvailable(false);
         return "rock successfully dropped";
     }
 
@@ -79,6 +88,7 @@ public class EnvironmentMenuController {
             return "your tree type is incorrect";
         //جنس زمین
         Map.getMap()[x][y].setTree(Tree.getTree(type));
+        Map.getMap()[x][y].setAvailable(false);
         return "tree successfully dropped";
     }
 }

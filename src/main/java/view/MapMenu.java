@@ -35,6 +35,6 @@ public class MapMenu {
     public static String showDetails(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.showDetails(x,y);
+        return MapMenuController.showDetails(x,y);
     }
 }

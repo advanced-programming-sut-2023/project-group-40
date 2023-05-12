@@ -29,10 +29,7 @@ public class KillingPit extends Building {
     @Override
     public void action() {
         Government government = GameMenuController.getCurrentGovernment();
-        for (int i = x - 1; i < x + 1; i++)
-            for (int j = y - 1; j < y + 1; j++) {
-                Unit unit = Map.getMap()[i][j].getUnit();
-                if (unit.getGovernment() == government) unit.decreaseHpOfUnit(damage);
-            }
+        Unit unit = Map.getMap()[x][y].getUnit();
+        if (unit.getGovernment() != government) unit.decreaseHpOfUnit(damage);
     }
 }

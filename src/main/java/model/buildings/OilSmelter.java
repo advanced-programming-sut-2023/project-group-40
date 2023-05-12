@@ -1,6 +1,9 @@
 package model.buildings;
 
+import controller.GameMenuController;
+import model.Good;
 import model.Texture;
+import view.GameMenu;
 
 import java.util.HashSet;
 
@@ -20,4 +23,8 @@ public class OilSmelter extends Building {
         return rate;
     }
 
+    @Override
+    public void action() {
+        GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.MELTING_POT,rate);
+    }
 }

@@ -12,6 +12,8 @@ public class Government {
     private final ArrayList<TradeRequest> requests = new ArrayList<>();
     private final ArrayList<Storage> storages = new ArrayList<>();
     private final ArrayList<Building> buildings = new ArrayList<>();
+    private int countofhorses = 0;
+    private int numberOfKnight = 0;
     private User owner;
     private int foodRate = -2;
     private int taxRate = 0;
@@ -215,11 +217,11 @@ public class Government {
         for (Building building : buildings) {
             if (building.getName().equals("Small stone gatehouse") || building.getName().equals("big stone gatehouse")) {
                 GateHouse gateHouse = (GateHouse) building;
-                emptySpace += gateHouse.getCapacity();
+                emptySpace += gateHouse.getMaxCapacity() - gateHouse.getCapacity();
             }
             if (building.getName().equals("Hovel")) {
                 Hovel hovel = (Hovel) building;
-                emptySpace += hovel.getCapacity();
+                emptySpace += hovel.getMaxCapacity() - hovel.getCapacity();
             }
         }
         return emptySpace;
@@ -259,5 +261,40 @@ public class Government {
                 }
             }
         }
+    }
+
+    public ArrayList<Building> getBuildings() {
+        return buildings;
+    }
+
+    public int getCountOfBuilding(String buildingName){
+        int count = 0;
+        for (Building building : buildings)
+            if (building.getName().equals(buildingName))
+                count ++;
+        return count;
+    }
+
+    public void updateCountOfHorses() {
+        this.countofhorses = getCountOfBuilding("stable") * 4 - numberOfKnight;
+    }
+    public int getCountOfHorses() {
+        return countofhorses;
+    }
+
+    public void changeCountOfHorses(int amount){
+        countofhorses -= amount;
+        numberOfKnight += amount;
+    }
+
+    public int getNumberOfEngineer(){
+        int count = 0;
+        for (Building building : buildings) {
+            if (building instanceof EngineerGuild) {
+                EngineerGuild engineerGuild = (EngineerGuild) building;
+                count += engineerGuild.getCostOfEngineer();
+            }
+        }
+        return count;
     }
 }

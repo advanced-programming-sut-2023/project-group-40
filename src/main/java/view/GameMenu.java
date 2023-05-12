@@ -2,6 +2,9 @@ package view;
 
 import controller.GameMenuController;
 import controller.MainController;
+import model.Good;
+import model.Map;
+import model.buildings.Building;
 import org.apache.commons.lang3.StringUtils;
 import view.enums.Commands;
 
@@ -94,11 +97,23 @@ public class GameMenu {
     }
 
     public static String selectUnit(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.selectUnit(x,y);
     }
 
     public static String moveUnit(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.moveUnit(x,y);
+    }
+
+    public static String patrolUnit(Matcher matcher) {
+        int x1 = Integer.parseInt(matcher.group("x"));
+        int y1 = Integer.parseInt(matcher.group("y"));
+        int x2 = Integer.parseInt(matcher.group("x"));
+        int y2 = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.patrolUnit(x1,y1,x2,y2);
     }
 
     public static String setUnitState(Matcher matcher) {
@@ -122,7 +137,8 @@ public class GameMenu {
     }
 
     public static String buildEquipments(Matcher matcher) {
-        return null;
+        String equipmentName = matcher.group("equipmentName");
+        return GameMenuController.buildEquipments(equipmentName);
     }
 
     public static String disbandUnit(Matcher matcher) {
@@ -137,9 +153,58 @@ public class GameMenu {
         return null;
     }
 
+    public static String dropWall(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        int thickness = Integer.parseInt(matcher.group("thickness"));
+        int height = Integer.parseInt(matcher.group("height"));
+        String direction = matcher.group("direction");
+        return GameMenuController.dropWall(x,y,thickness,height,direction);
+    }
+
+    public static String dropTower(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.dropTower(x,y);
+    }
+
+    public static String dropTurret(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.dropTurret(x,y);
+    }
+
+    public static String startDiggingDitch(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.startDiggingDitch(x,y);
+    }
+    public static String stopDiggingDitch(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.stopDiggingDitch(x,y);
+    }
+
+    public static String deleteDitch(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.deleteDitch(x,y);
+    };
+    public static String captureTheGate(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.captureTheGate(x,y);
+    };
     public static String nextTurn(Matcher matcher) {
+        if (GameMenuController.isLastGovernment()){
+            GameMenuController.foodVarietyAction();
+            GameMenuController.runBuildings();
+            GameMenuController.oxTetherAction();
+            GameMenuController.checkPopulation();
+            GameMenuController.StableAction();
+        }
         GameMenuController.setOnGovernment();
-        GameMenuController.checkPopulation();
+        GameMenuController.diggingDitch();
         return null;
     }
 

@@ -34,4 +34,5 @@ public class Inn extends Building {
     public void setRate(int rate) {
         this.rate = rate;
     }
+
 }

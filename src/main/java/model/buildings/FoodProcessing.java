@@ -2,8 +2,11 @@ package model.buildings;
 
 import java.util.HashSet;
 
+import controller.GameMenuController;
 import model.Good;
+import model.Government;
 import model.Texture;
+import view.GameMenu;
 
 public class FoodProcessing extends Building {
     private Good material;
@@ -39,5 +42,13 @@ public class FoodProcessing extends Building {
 
     public void setProductRate(Integer productRate) {
         this.productRate = productRate;
+    }
+
+    @Override
+    public void action() {
+        Government government = GameMenuController.getCurrentGovernment();
+        if (government.getAmountOfGood(material) < productRate) return;
+        government.decreaseAmountOfGood(material,productRate);
+        government.increaseAmountOfGood(product,productRate);
     }
 }
