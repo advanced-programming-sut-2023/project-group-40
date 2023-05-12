@@ -238,35 +238,18 @@ public class GameMenuController {
     }
 
     public static String createUnit(int x, int y, String type, int count) {
-        //
         if (!Map.getMap()[x][y].isAvailable())
             return "you can't drop unit because this cell isn't available!";
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
         if (count < 0) return "count is invalid";
-        if (type.equals("Engineer")) {
-            if (selectedBuilding.getName().equals("engineer guild")) {
-                EngineerGuild engineerGuild = (EngineerGuild) selectedBuilding;
-                if (currentGovernment.getAmountOfGood(Good.GOLD) < engineerGuild.getCostOfEngineer() * count)
-                    return "you don't have enough gold for create Engineer";
-                engineerGuild.increaseNumberOfEngineer(count);
-                return "you successfully create Engineer";
-            } else return "you can't create engineer in this building";
-        }
-        if (type.equals("LadderMan")) {
-            if (selectedBuilding.getName().equals("engineer guild")) {
-                EngineerGuild engineerGuild = (EngineerGuild) selectedBuilding;
-                if (currentGovernment.getAmountOfGood(Good.GOLD) < engineerGuild.getCostOfLadderMan() * count)
-                    return "you don't have enough gold for create LadderMan";
-                engineerGuild.increaseNumberOfLadderMan(count);
-                return "you successfully create LadderMan";
-            } else return "you can't create LadderMan in this building";
-        }
         Troop troop = Troops.getTroopObjectByType(type);
         if (troop == null) return "unit type is invalid";
         int goldForUnit = troop.getValue() * count;
         if (currentGovernment.getAmountOfGood(Good.GOLD) < goldForUnit)
             return "you don't have enough gold for create this unit";
+        if((type.equals("LadderMan") || type.equals("engineer guild")) && selectedBuilding.getName().equals("engineer guild"))
+            return "you can't create " + type + " in " + selectedBuilding.getName();
         if (troop.getWeapon() != null && currentGovernment.getAmountOfGood(troop.getWeapon()) < count)
             return "you don't have enough weapon for create this unit";
         if (troop.isHasArmor() && currentGovernment.getAmountOfGood(Good.ARMOR) < count)
@@ -285,6 +268,10 @@ public class GameMenuController {
             else
                 currentGovernment.changeCountOfHorses(count);
         }
+        if(type.equals("LadderMan"))
+            currentGovernment.getCastle().increaseNumberOfLadderMan(count);
+        if(type.equals("engineer guild"))
+            currentGovernment.addEngineer(count);
         currentGovernment.getCastle().changePopulation(-1 * count);
         currentGovernment.decreaseAmountOfGood(Good.GOLD, count);
         currentGovernment.decreaseAmountOfGood(troop.getWeapon(), count);
@@ -297,7 +284,16 @@ public class GameMenuController {
     }
 
     public static String repair() {
-        return null;
+        for(int i = selectedBuilding.getX1() -1; i < selectedBuilding.getX2() + 1; i++)
+            for(int j = selectedBuilding.getY1() -1; j < selectedBuilding.getY2() +1; j++) {
+                Unit unit = Map.getMap()[i][j].getUnit();
+                if(unit != null && !unit.getGovernment().equals(currentGovernment))
+                    return "enemy is near your building!";
+            }
+        int consumableStone = (int)Math.ceil((double) (selectedBuilding.getMaxHp() - selectedBuilding.getHp()) /40);
+        selectedBuilding.getOwner().decreaseAmountOfGood(Good.STONE, consumableStone);
+        selectedBuilding.setHp(selectedBuilding.getMaxHp());
+        return "repair successful";
     }
 
     public static String selectUnit(int x, int y) {

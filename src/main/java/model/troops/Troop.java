@@ -3,12 +3,12 @@ package model.troops;
 
 import model.Good;
 import model.Government;
-import model.People;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class Troop extends People {
+public class Troop{
+    private String name;
     private Good weapon;
     private int hp;
     private Government owner;
@@ -18,7 +18,7 @@ public class Troop extends People {
     private final boolean hasArmor;
     private int shootingRange;
 
-    public Troop(String region, int velocity, int powerOfAttack, int powerOfDefence, int value, boolean hasArmor, int shootingRange,Good weapon) {
+    public Troop(String name, String region, int velocity, int powerOfAttack, int powerOfDefence, int value, boolean hasArmor, int shootingRange,Good weapon) {
         this.region = region;
         this.velocity = velocity;
         this.powerOfAttack = powerOfAttack;
@@ -79,5 +79,8 @@ public class Troop extends People {
 
     public int getHp() {
         return hp;
+    }
+    public String getName() {
+        return name;
     }
 }

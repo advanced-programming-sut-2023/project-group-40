@@ -12,6 +12,7 @@ public class Building implements BuildingAction {
     protected BuildingGroups group;
     private HashSet<Texture> textures;
     protected String name;
+    protected int maxHp;
     protected int hp;
     // index 0 -> gold 1 -> wood 2 -> stone 3 -> iron 4 -> pitch
     protected int[] cost;
@@ -23,6 +24,7 @@ public class Building implements BuildingAction {
         this.name = name;
         this.height = height;
         this.width = width;
+        this.maxHp = hp;
         this.hp = hp;
         this.cost = cost;
     }
@@ -31,6 +33,7 @@ public class Building implements BuildingAction {
         this.name = name;
         this.height = height;
         this.width = width;
+        this.maxHp = hp;
         this.hp = hp;
         this.cost = cost;
         this.workersRequired = workersRequired;
@@ -44,6 +47,7 @@ public class Building implements BuildingAction {
         this.name = name;
         this.height = height;
         this.width = width;
+        this.maxHp = hp;
         this.hp = hp;
         this.cost = cost;
         this.workersRequired = workersRequired;
@@ -56,6 +60,7 @@ public class Building implements BuildingAction {
         this.name = name;
         this.height = height;
         this.width = width;
+        this.maxHp = hp;
         this.hp = hp;
         this.cost = cost;
         this.textures = textures;
@@ -104,5 +109,17 @@ public class Building implements BuildingAction {
 
     public int[] getCost() {
         return cost;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 }
