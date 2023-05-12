@@ -157,7 +157,7 @@ public class Government {
         return governments;
     }
 
-    public <T> void addRequest(TradeRequest<T> tradeRequest) {
+    public void addRequest(TradeRequest tradeRequest) {
         requests.add(tradeRequest);
     }
 

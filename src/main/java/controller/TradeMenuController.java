@@ -1,9 +1,12 @@
 package controller;
 
 
-import com.google.gson.internal.bind.util.ISO8601Utils;
-import model.*;
+import model.Good;
+import model.Government;
+import model.TradeRequest;
+import model.User;
 
+import java.util.Optional;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,18 +27,16 @@ public class TradeMenuController {
     }
 
     public static String sendRequest(String type, String name, int amount, int price, String message, String username) {
-        Optional<Government> result = Government.getGovernments().stream().filter(government -> government.getOwner().getUsername().equals(username)).findFirst();
-        if (result.isPresent()) {
-            targetGovernment = result.get();
-        } else {
-            return "username is not exist";
-        }
+        if ((targetGovernment = Government.getGovernmentByUser(User.getUserByUsername(username))) == null)
+            return "username in not exist";
+        if (!type.equals("food") && !type.equals("weapon") && !type.equals("Material")) return "invalid resource type";
         try {
-            Class.forName("model." + type);
-        } catch (ClassNotFoundException e) {
-            return "invalid resource type!";
+            Good commodity = Good.valueOf(name.toUpperCase());
+            targetGovernment.addRequest(new TradeRequest(currentGovernment, targetGovernment, commodity, price, amount, message));
+            return "request sent";
+        } catch (IllegalArgumentException e) {
+            return "invalid resource name";
         }
-        return "request sent";
     }
 
     public static String showTradeList() {
@@ -43,7 +44,7 @@ public class TradeMenuController {
         for (TradeRequest request : currentGovernment.getRequests()) {
             if (!request.getAccepted()) {
                 String username = request.getSender().getOwner().getUsername();
-                output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
+                output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n" + "   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
             }
         }
         return output;
@@ -53,8 +54,20 @@ public class TradeMenuController {
         TradeRequest request = currentGovernment.getRequestById(id);
         if (request == null) return "invalid id!";
         targetGovernment = request.getSender();
-        // TODO: ۰۶/۰۵/۲۰۲۳  
 
+        int numOfCommodity = currentGovernment.getNumOfInStorages(request.getCommodity());
+        if (request.getCount() > numOfCommodity) return "you haven't enough " + request.getCommodity();
+
+        int numOfGold = targetGovernment.getNumOfInStorages(Good.GOLD);
+        if (request.getPrice() > numOfGold) return targetGovernment.getOwner().getUsername() + " haven't enough gold";
+
+        int emptySpace = targetGovernment.getNumOfEmptySpace(request.getCommodity().getType());
+        if (request.getCount() > emptySpace) return targetGovernment.getOwner().getUsername() + " haven't enough space";
+
+        currentGovernment.decreaseAmountOfGood(request.getCommodity(), request.getCount());
+        targetGovernment.increaseAmountOfGood(request.getCommodity(), request.getCount());
+        currentGovernment.increaseAmountOfGood(Good.GOLD, request.getPrice());
+        targetGovernment.decreaseAmountOfGood(Good.GOLD, request.getPrice());
         request.setReceiverMessage(message);
         request.setAccepted(true);
         return "trade successful";
@@ -87,6 +100,5 @@ public class TradeMenuController {
             }
         }
         return output;
-
     }
 }

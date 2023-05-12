@@ -35,14 +35,6 @@ public class Mine extends Building {
         this.productRate = productRate;
     }
 
-    public int getStorage() {
-        return storage;
-    }
-
-    public void decreaseStorage(int amount){
-        storage -= amount;
-    }
-
     @Override
     public void action() {
         Government government = GameMenuController.getCurrentGovernment();
@@ -50,10 +42,9 @@ public class Mine extends Building {
             storage += productRate;
             storage = Math.min(storage, maxStorage);
         }
-        else {
+        if (name.equals("Ox tether")) {
             government.increaseAmountOfGood(material, productRate);
-            if (name.equals("Dairy products"))
-                government.increaseAmountOfGood(Good.LEATHER_VEST,productRate);
-        }
+            storage -= productRate;
+        } else government.increaseAmountOfGood(material, productRate);
     }
 }

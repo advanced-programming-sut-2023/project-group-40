@@ -1,60 +1,36 @@
 package controller;
 
-import model.Good;
-import model.Map;
-import model.buildings.Storage;
-
-import javax.print.DocFlavor;
+import model.Government;
+import model.User;
+import view.GameMenu;
 
 public class MapMenuController {
-    private static int x;
-    private static int y;
 
-    public static void increaseX(int amount) {
-        x += amount;
+    public static boolean isFirstPlayer() {
+        return Government.getGovernmentsSize() == 0;
     }
 
-    public static void increaseY(int amount) {
-        y += amount;
-    }
-    public static int getY() {
-        return y;
+    public static boolean isUserInGame(User user) {
+        return Government.getGovernmentByUser(user) != null;
     }
 
-    public static int getX() {
-        return x;
+    public static boolean isCurrentGovernmentChooseColor(User user) {
+        return Government.getGovernmentByUser(user).getColor() != null;
     }
 
-    public static void setX(int x) {
-        MapMenuController.x = x;
+    public static void checkGameStarted() {
+        if (Government.checkAllGovernmentsChooseColor()) GameMenu.setGameStarted(true);
     }
 
-    public static void setY(int y) {
-        MapMenuController.y = y;
+    public static void addPlayer(String username) {
+        Government.addGovernment(username);
     }
 
-    public static String showDetails(int x, int y) {
-        String result = "";
-        result += "Texture: " + Map.getMap()[x][y].getTexture().name().toLowerCase();
-        if (Map.getMap()[x][y].getBuilding().getName().equals("Stockpile")) {
-            Storage storage = (Storage) Map.getMap()[x][y].getBuilding();
-            result += "gold :";
-            result += storage.getProducts().get(Good.GOLD) + "\n";
-            result += "wood :";
-            result += storage.getProducts().get(Good.WOOD) + "\n";
-            result += "iron :";
-            result += storage.getProducts().get(Good.IRON)+ "\n";
-            result += "stone :";
-            result += storage.getProducts().get(Good.STONE)+ "\n";
-        }
-        if (Map.getMap()[x][y].getUnit() != null) {
-            result += "troops type: " + Map.getMap()[x][y].getUnit().getType();
-            result += "troop count: "+ Map.getMap()[x][y].getUnit().getTroops().size();
-        }
-        if (Map.getMap()[x][y].getBuilding() != null) {
-            result += "building: " + Map.getMap()[x][y].getBuilding().getName();
-        }
-        return result;
+    public static boolean isPlayerAdded(String username) {
+        return Government.getGovernmentByUser(User.getUserByUsername(username)) != null;
     }
 
+    public static boolean isPlayerValid(String username) {
+        return User.isUsernameExists(username);
+    }
 }
