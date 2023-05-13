@@ -29,16 +29,22 @@ public class MapMenuController {
         setCenters(x,y);
         StringBuilder result = new StringBuilder();
         int size = Map.getSize();
-        for (int i = Math.max(0, x - 20); i < Math.min(size - 1, x + 20); i++) {
-            for (int j = Math.max(0, y - 6); j < Math.min(size - 1, y + 6); j++) {
+        result.append("    ");
+        for (int j = Math.max(0, y - 20); j < Math.min(size - 1, y + 20); j++)
+            result.append(String.format("%03d ",j));
+        result.append("\n");
+        for (int i = Math.max(0, x - 6); i < Math.min(size - 1, x + 6); i++) {
+            result.append(String.format("%03d ",i));
+            for (int j = Math.max(0, y - 20); j < Math.min(size - 1, y + 20); j++) {
                 Cell cell = Map.getMap()[i][j];
-                String text = " ";
+                String text = "   ";
                 Texture texture = cell.getTexture();
-                if (cell.getTree() != null) text = "T";
-                if (cell.getBuilding() != null) text = "B";
-                if (cell.getUnit() != null) text = "S";
-                if(cell.getCastle() != null) text = "C";
-                result.append(texture.getBackGroundColor()).append(texture.getTextColor()).append(text);
+                if (cell.getTree() != null) text = " T ";
+                if (cell.getBuilding() != null) text = " B ";
+                if (cell.getUnit() != null) text = " S ";
+                if(cell.getCastle() != null) text = " C ";
+                result.append(texture.getBackGroundColor())
+                        .append(texture.getTextColor()).append(text).append(ANSI_RESET).append("|");
             }
             result.append("\n");
         }
@@ -81,4 +87,6 @@ public class MapMenuController {
         }
         return result;
     }
+
+
 }

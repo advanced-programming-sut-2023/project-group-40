@@ -28,14 +28,17 @@ public class MapMenu {
     public static String changeSightArea(Matcher matcher) {
         int leftNumber = 0,topNumber = 0,rightNumber = 0,downNumber = 0;
         //left in another first
-        while (matcher.find()) {
-            leftNumber = StringUtils.isNotBlank(matcher.group("leftNumber")) ? Integer.parseInt(matcher.group("leftNumber")) : 1;
-            topNumber = StringUtils.isNotBlank(matcher.group("topNumber")) ? Integer.parseInt(matcher.group("topNumber")) : 1;
-            rightNumber = StringUtils.isNotBlank(matcher.group("rightNumber")) ? Integer.parseInt(matcher.group("rightNumber")) : 1;
-            downNumber = StringUtils.isNotBlank(matcher.group("downNumber")) ? Integer.parseInt(matcher.group("downNumber")) : 1;
+        while (true) {
+            if (matcher.group("left") != null) leftNumber = StringUtils.isNotBlank(matcher.group("leftNumber")) ? Integer.parseInt(matcher.group("leftNumber")) : 1;
+            if (matcher.group("top") != null) topNumber = StringUtils.isNotBlank(matcher.group("topNumber")) ? Integer.parseInt(matcher.group("topNumber")) : 1;
+            if (matcher.group("right") != null) rightNumber = StringUtils.isNotBlank(matcher.group("rightNumber")) ? Integer.parseInt(matcher.group("rightNumber")) : 1;
+            if (matcher.group("down") != null) downNumber = StringUtils.isNotBlank(matcher.group("downNumber")) ? Integer.parseInt(matcher.group("downNumber")) : 1;
+            boolean res = matcher.find();
+            if (!res) break;
         }
-        return MapMenuController.showMap(MapMenuController.getCenterX() - leftNumber + rightNumber,
-                MapMenuController.getCenterY() - topNumber + downNumber);
+
+        return MapMenuController.showMap(MapMenuController.getCenterX() - topNumber + downNumber,
+                MapMenuController.getCenterY() - leftNumber + rightNumber);
     }
 
     public static String showDetails(Matcher matcher) {

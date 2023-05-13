@@ -32,7 +32,7 @@ public class LoginMenu {
         boolean isStayLoggedIn = matcher.group("stayLoggedIn") != null;
         try {
             System.out.println(LoginMenuController.login(username, password, isStayLoggedIn));
-            handleCaptcha();
+//            handleCaptcha();
             MainMenu.run();
             return null;
         } catch (RuntimeException e) {

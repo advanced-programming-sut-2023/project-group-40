@@ -14,14 +14,16 @@ public class EnvironmentMenu {
             chooseMapSize();
             setPlayers();
             chooseColor();
-        } else {
+        }
+        else {
             if (EnvironmentMenuController.isCurrentGovernmentChoseColor(GameMenuController.getCurrentGovernment().getOwner()))
-                return "you chose your color wait for starting game!";
+                return "you choose your color wait for starting game!";
             chooseColor();
             EnvironmentMenuController.checkGameStarted();
         }
         while (true) {
             String command = Commands.scanner.nextLine();
+            if (command.equals("return")) return "you are in main menu!";
             System.out.println(Commands.regexFinder(command, EnvironmentMenu.class));
         }
     }
@@ -40,17 +42,17 @@ public class EnvironmentMenu {
     }
     public static String setTexture(Matcher matcher) {
         String type = matcher.group("type");
-        if (matcher.group("x") != null) {
-            int x = Integer.parseInt(matcher.group("x"));
-            int y = Integer.parseInt(matcher.group("y"));
-            return EnvironmentMenuController.setTexture(x, y, type);
-        } else {
+//        if (matcher.group("x") != null) {
+//            int x = Integer.parseInt(matcher.group("x"));
+//            int y = Integer.parseInt(matcher.group("y"));
+//            return EnvironmentMenuController.setTexture(x, y, type);
+//        } else {
             int x1 = Integer.parseInt(matcher.group("x1"));
             int x2 = Integer.parseInt(matcher.group("x2"));
             int y1 = Integer.parseInt(matcher.group("y1"));
             int y2 = Integer.parseInt(matcher.group("y2"));
-            return EnvironmentMenuController.setTexture(x1, x2, y1, y2, type);
-        }
+            return EnvironmentMenuController.setTexture(x1, y1, x2, y2, type);
+//        }
     }
 
     public static String clearBlock(Matcher matcher) {
@@ -75,7 +77,7 @@ public class EnvironmentMenu {
     }
 
     public static void chooseMapSize() {
-        System.out.print("choose your size for map (A: 200 X 200 B: 400 X 400): ");
+        System.out.print("choose your size for map A) 200 X 200 B) 400 X 400 : ");
         while (true){
             String response = Commands.scanner.nextLine();
             int size = response.equalsIgnoreCase("A") ? 200 : response.equalsIgnoreCase("B") ? 400 : 0;
@@ -110,12 +112,12 @@ public class EnvironmentMenu {
 
     public static int setNumberOfPlayers() {
         int countOfPlayers = 0;
+        System.out.print("choose number of players of game: ");
         while (true) {
-            System.out.print("choose number of players of game: ");
             try {
                 countOfPlayers = Integer.parseInt(Commands.scanner.nextLine());
                 if (countOfPlayers != 2 && countOfPlayers != 4 && countOfPlayers != 8)
-                    System.out.print("please enter invalid number (2 or 4 or 8): ");
+                    System.out.print("please enter invalid number: ");
                 else break;
             } catch (NumberFormatException e) {
                 System.out.print("please enter a number: ");

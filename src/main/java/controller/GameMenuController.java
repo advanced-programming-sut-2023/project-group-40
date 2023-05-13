@@ -385,11 +385,7 @@ public class GameMenuController {
     }
 
     public static String chooseColor(String color) {
-        try {
-            return Color.setOwnerOfColor(color, currentGovernment);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
+        return Color.setOwnerOfColor(color, currentGovernment);
     }
 
     public static String getColorList() {
