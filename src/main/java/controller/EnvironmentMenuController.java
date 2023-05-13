@@ -69,15 +69,19 @@ public class EnvironmentMenuController {
         }
         Map.getMap()[x][y].setRock(new Rock(direction));
         Map.getMap()[x][y].setAvailable(false);
+        Map.getMap()[x][y].setPassable(false);
         return "rock successfully dropped";
     }
 
     public static String dropTree(int x, int y, String type) {
         if (!GameMenuController.isCoordinateValid(x) || !GameMenuController.isCoordinateValid(y))
             return "your coordinates is incorrect!";
-        if (!Tree.checkType(type))
+        if (Tree.getTree(type) == null)
             return "your tree type is incorrect";
-        //جنس زمین
+        if (Map.getMap()[x][y].getTexture() != Texture.LAND && Map.getMap()[x][y].getTexture() != Texture.GRASS
+        && Map.getMap()[x][y].getTexture() != Texture.GRASS_LAND &&Map.getMap()[x][y].getTexture() != Texture.DENSE_GRASS_LAND)
+            return "you can't drop tree on this cell because of texture!";
+
         Map.getMap()[x][y].setTree(Tree.getTree(type));
         Map.getMap()[x][y].setAvailable(false);
         return "tree successfully dropped";

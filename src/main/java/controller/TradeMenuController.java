@@ -4,7 +4,6 @@ package controller;
 import model.Good;
 import model.Government;
 import model.TradeRequest;
-import model.User;
 
 import java.util.Optional;
 import java.util.Locale;
@@ -26,27 +25,26 @@ public class TradeMenuController {
         return output;
     }
 
-    public static String sendRequest(String type, String name, int amount, int price, String message, String username) {
-        if ((targetGovernment = Government.getGovernmentByUser(UserController.getUserByUsername(username))) == null)
-            return "username in not exist";
-        if (!type.equals("food") && !type.equals("weapon") && !type.equals("Material")) return "invalid resource type";
+    public static String sendRequest(String type, int amount, int price, String message, String username) {
         try {
-            Good commodity = Good.valueOf(name.toUpperCase());
+            Good commodity = Good.valueOf(type.toUpperCase());
             targetGovernment.addRequest(new TradeRequest(currentGovernment, targetGovernment, commodity, price, amount, message));
             return "request sent";
         } catch (IllegalArgumentException e) {
-            return "invalid resource name";
+            return "invalid resource type";
         }
     }
 
     public static String showTradeList() {
-        String output = "Unaccepted Requests: \n";
+        String output = "Unaccepted Requests:";
         for (TradeRequest request : currentGovernment.getRequests()) {
             if (!request.getAccepted()) {
                 String username = request.getSender().getOwner().getUsername();
-                output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n" + "   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
+                output += "\n" + request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n" + "   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
             }
         }
+        if(!output.contains("count"))
+            return "no exist unaccepted requests";
         return output;
     }
 
@@ -74,12 +72,14 @@ public class TradeMenuController {
     }
 
     public static String showTradeHistory() {
-        String output = "All Request: \n";
+        String output = "All Request:";
         for (TradeRequest request : currentGovernment.getRequests()) {
             String username = request.getSender().getOwner().getUsername();
-            output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
+            output += "\n" + request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
             if (request.getReceiverMessage() != null) output += "\n   your message: " + request.getReceiverMessage();
         }
+        if(!output.contains("count"))
+            return "no exist request";
         return output;
     }
 
@@ -92,7 +92,6 @@ public class TradeMenuController {
     }
 
     public static String showGovernment() {
-        if (Government.getGovernments().size() == 1) return "no government exist except you";
         String output = "Governments : \n";
         for (Government government : Government.getGovernments()) {
             if (!government.equals(currentGovernment)) {
@@ -100,5 +99,8 @@ public class TradeMenuController {
             }
         }
         return output;
+    }
+    public static Boolean isGovernmentValid(String username) {
+        return (targetGovernment = Government.getGovernmentByUser(UserController.getUserByUsername(username))) != null;
     }
 }

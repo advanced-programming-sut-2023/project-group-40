@@ -106,10 +106,13 @@ public class Government {
     }
 
     public int getAmountOfGood(Good good) {
-        int amount = 0;
-        for (Storage storage : storages)
-            amount += storage.getSumOfProducts(good);
-        return amount;
+        int count = 0;
+        for (Storage storage : this.storages) {
+            if (storage.getProducts().get(good) != null) {
+                count += storage.getProducts().get(good);
+            }
+        }
+        return count;
     }
 
     public Castle getCastle() {

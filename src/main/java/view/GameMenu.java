@@ -1,6 +1,8 @@
 package view;
 
 import controller.GameMenuController;
+import controller.ShopMenuController;
+import controller.TradeMenuController;
 import view.enums.Commands;
 
 import java.io.IOException;
@@ -22,7 +24,8 @@ public class GameMenu {
         }
         while (true) {
             String command = Commands.scanner.nextLine();
-            System.out.println(Commands.regexFinder(command, GameMenu.class));
+            String result = Commands.regexFinder(command, GameMenu.class);
+            if (result != null) System.out.println(result);
         }
     }
 
@@ -89,6 +92,17 @@ public class GameMenu {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
         return GameMenuController.createUnit(x,y,type, count);
+    }
+    public static String trade(Matcher matcher) throws ReflectiveOperationException {
+        TradeMenuController.setCurrentGovernment(GameMenuController.getCurrentGovernment());
+        TradeMenu.run();
+        return null;
+    }
+
+    public static String shop(Matcher matcher) throws ReflectiveOperationException {
+        ShopMenuController.setCurrentGovernment(GameMenuController.getCurrentGovernment());
+        ShopMenu.run();
+        return null;
     }
 
     public static String repair(Matcher matcher) {

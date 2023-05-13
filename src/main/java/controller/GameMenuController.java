@@ -372,9 +372,6 @@ public class GameMenuController {
         return null;
     }
 
-    public static String enterTrade() {
-        return null;
-    }
 
     public static Government getCurrentGovernment() {
         return currentGovernment;

@@ -46,7 +46,7 @@ public enum Commands{
     SET_TEXTURE("set texture -x1 (?<x1>\\d+) -y1 (?<y1>\\d+) -x2 (?<x2>\\d+) -y2 (?<y2>\\d+) -t (?<type>\\w+)", EnvironmentMenu.class,"setTexture"),
     DROP_ROCK("drop rock -x (?<x>\\d+) -y (?<y>\\d+) -d (?<direction>\\w+)", EnvironmentMenu.class,"dropRock"),
     NEXT_TURN("next turn", EnvironmentMenu.class,"nextTurn"),
-    DROP_TREE("drop tree -x (?<x>\\d+) -y (?<y>\\d+) -type (?<type>\\w+)", EnvironmentMenu.class,"dropTree"),
+    DROP_TREE("drop tree -x (?<x>\\d+) -y (?<y>\\d+) -t \"(?<type>.*)\"", EnvironmentMenu.class,"dropTree"),
     CLEAR_BLOCK("clear block -x (?<x>\\d+) -y (?<y>\\d+)",EnvironmentMenu.class,"clearBlock"),
     BUILD_EQUIPMENT("build -q (?<equipmentName>\\w+)",GameMenu.class,"buildEquipments"),
     SELECT_UNIT("select unit -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"selectUnit"),
@@ -57,7 +57,15 @@ public enum Commands{
     START_DIGGING_DITCH("start digging ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"startDiggingDitch"),
     STOP_DIGGING_DITCH("stop digging ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"stopDiggingDitch"),
     DELETE_DITCH("delete ditch -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"deleteDitch"),
-    CAPTURE_GATE("capture the gate -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"captureTheGate");
+    CAPTURE_GATE("capture the gate -x (?<x>\\d+) -y (?<y>\\d+)",GameMenu.class,"captureTheGate"),
+    ENTER_TRADE_MENU("enter trade menu", GameMenu.class, "trade"),
+    SEND_REQUEST("trade -t (?<resourceType>\\S+) -a (?<resourceAmount>\\S+) -p (?<price>\\d+) -m (?<message>\\S+)", TradeMenu.class, "sendRequest"),
+    SHOW_TRADE_LIST("trade list", TradeMenu.class, "showTradeList"),
+    ACCEPT_TRADE("trade accept -i (?<id>\\d+) -m (?<message>\\S+)", TradeMenu.class, "acceptTrade"),
+    SHOW_TRADE_HISTORY("trade history", TradeMenu.class, "showTradeHistory"),
+    SHOW_PRICE_LIST("show price list", ShopMenu.class, "showPriceList"),
+    BUY("buy -i (?<name>\\S+) -a (?<amount>\\d+)", ShopMenu.class, "buy"),
+    sell("sell -i (?<name>\\S+) -a (?<amount>\\d+)", ShopMenu.class, "sell");
 
     private final String regex;
     private String methodName;
