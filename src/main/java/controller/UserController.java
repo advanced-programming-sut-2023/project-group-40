@@ -74,13 +74,18 @@ public class UserController {
         }
     }
 
-    public static void updateDatabase() throws IOException {
+    public static void updateDatabase() {
         File file = new File(User.getPATH());
+        try {
         if (!file.exists()) file.createNewFile();
+        }
+        catch (IOException e){
+            System.out.println("update database failed");
+        }
         try (FileWriter writer = new FileWriter(User.getPATH(), false)) {
             writer.write(new Gson().toJson(User.getUsers()));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("update database failed");
         }
     }
 

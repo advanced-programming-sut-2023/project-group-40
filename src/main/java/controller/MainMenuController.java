@@ -22,7 +22,7 @@ public class MainMenuController {
         Government governmentByUser = Government.getGovernmentByUser(currentUser);
         if(Government.getGovernments().size() == 0){
             Government.addGovernment(currentUser.getUsername());
-            GameMenuController.setCurrentGovernment(governmentByUser);
+            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(currentUser));
             return "you entered a new game!";
         }
         if(governmentByUser == null)

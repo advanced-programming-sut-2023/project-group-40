@@ -16,6 +16,7 @@ public class Cell {
     private boolean isStartDigging;
     private boolean haveDitch;
     private Government ditchOwner;
+    private Castle castle;
 
     public Cell(Texture texture) {
         this.texture = texture;
@@ -115,5 +116,9 @@ public class Cell {
 
     public Government getDitchOwner() {
         return ditchOwner;
+    }
+
+    public Castle getCastle() {
+        return castle;
     }
 }

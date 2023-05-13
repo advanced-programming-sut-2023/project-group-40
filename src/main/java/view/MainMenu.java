@@ -10,9 +10,11 @@ import java.util.regex.Matcher;
 
 public class MainMenu {
     public static void run() throws ReflectiveOperationException {
+        System.out.println("you are in main menu");
         while (true) {
             String command = Commands.scanner.nextLine();
             String result = Commands.regexFinder(command, MainMenu.class);
+            UserController.updateDatabase();
             if (result != null) System.out.println(result);
         }
     }

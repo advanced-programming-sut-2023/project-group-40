@@ -4,14 +4,17 @@ import controller.RegisterMenuController;
 import controller.UserController;
 import view.enums.Commands;
 
+import java.io.IOException;
+import java.nio.file.attribute.UserPrincipal;
 import java.util.regex.Matcher;
 
 public class RegisterMenu {
-    public static void run() throws ReflectiveOperationException {
+    public static void run() throws ReflectiveOperationException{
         System.out.println("you are in register menu");
         while (true) {
             String command = Commands.scanner.nextLine();
             String result = Commands.regexFinder(command, RegisterMenu.class);
+            UserController.updateDatabase();
             if (result != null) System.out.println(result);
         }
     }

@@ -28,9 +28,9 @@ public class EnvironmentMenu {
 
     public static void chooseColor() {
         while (true) {
-            System.out.print("type your color: ");
             System.out.print(GameMenuController.getColorList());
             try {
+                System.out.print("type your color: ");
                 System.out.println(GameMenuController.chooseColor(Commands.scanner.nextLine()));
                 break;
             } catch (RuntimeException e) {
@@ -75,7 +75,7 @@ public class EnvironmentMenu {
     }
 
     public static void chooseMapSize() {
-        System.out.print("choose your size for map (A: 200X200 B: 400X400): ");
+        System.out.print("choose your size for map (A: 200 X 200 B: 400 X 400): ");
         while (true){
             String response = Commands.scanner.nextLine();
             int size = response.equalsIgnoreCase("A") ? 200 : response.equalsIgnoreCase("B") ? 400 : 0;

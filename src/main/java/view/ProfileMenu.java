@@ -1,6 +1,7 @@
 package view;
 
 import controller.ProfileMenuController;
+import controller.UserController;
 import view.enums.Commands;
 
 import java.util.regex.Matcher;
@@ -15,7 +16,8 @@ public class ProfileMenu {
                 return;
             }
             String result = Commands.regexFinder(command, ProfileMenu.class);
-            if (command != null) System.out.println(result);
+            UserController.updateDatabase();
+            if (result != null) System.out.println(result);
         }
     }
 

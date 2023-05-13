@@ -26,7 +26,7 @@ public enum Commands{
     PROFILE_DISPLAY_HIGH_SCORE("profile display highscore", ProfileMenu.class, "displayHighscore"),
     PROFILE_DISPLAY_RANK("profile display rank", ProfileMenu.class, "displayRank"),
     PROFILE_DISPLAY_SLOGAN("profile display slogan", ProfileMenu.class, "displaySlogan"),
-    PROFILE_DISPLAY("profile display", ProfileMenu.class, "profileDisplay"),
+    PROFILE_DISPLAY("profile display", ProfileMenu.class, "displayProfile"),
     ENTER_MAP_MENU("enter map menu", GameMenu.class,"enterMapMenu"),
     SHOW_MAP("show map -x (?<x>\\d+) -y (?<y>\\d+)", GameMenu.class,"showMap"),
     CHANGE_SIGHT_AREA("map (?<left>left(\\s(?<leftNumber>\\d+))?)|(?<top>top(\\s(?<topNumber>\\d+))?)|(?<right>right(\\s(?<rightNumber>\\d+))?)|(?<down>down(\\s(?<downNumber>\\d+))?)", MapMenu.class,"changeSightArea"),

@@ -1,17 +1,16 @@
 package model;
 
 public class Castle {
-    int hp;
-    int cornerUpLeft;
-    int cornerDownRight;
+    private int hp = 10000;
+    private final int x1,y1,x2,y2;
     private int population = 5;
-    private int numberOfLadderMan = 0;
+    private int numberOfWorkers;
 
-    public Castle(int hp, int cornerUpLeft, int cornerDownRight, int population) {
-        this.hp = hp;
-        this.cornerUpLeft = cornerUpLeft;
-        this.cornerDownRight = cornerDownRight;
-        this.population = population;
+    public Castle(int x1, int y1, int x2, int y2) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
     }
 
     public int getPopulation() {
@@ -22,8 +21,11 @@ public class Castle {
         population += amount;
     }
 
-    public void increaseNumberOfLadderMan(int amount) {
-        this.numberOfLadderMan += amount;
+    public void changeNumberOfWorkers(int amount) {
+        numberOfWorkers += amount;
     }
 
+    public int getNumberOfWorkers() {
+        return numberOfWorkers;
+    }
 }

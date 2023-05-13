@@ -37,6 +37,7 @@ public class MapMenuController {
                 if (cell.getTree() != null) text = "T";
                 if (cell.getBuilding() != null) text = "B";
                 if (cell.getUnit() != null) text = "S";
+                if(cell.getCastle() != null) text = "C";
                 result.append(texture.getBackGroundColor()).append(texture.getTextColor()).append(text);
             }
             result.append("\n");

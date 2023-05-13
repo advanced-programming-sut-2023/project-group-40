@@ -15,6 +15,7 @@ public class LoginMenu {
         while (true) {
             String command = Commands.scanner.nextLine();
             String result = Commands.regexFinder(command, LoginMenu.class);
+            UserController.updateDatabase();
             if (result != null) System.out.println(result);
         }
     }

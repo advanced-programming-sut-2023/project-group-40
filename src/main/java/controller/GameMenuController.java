@@ -252,7 +252,7 @@ public class GameMenuController {
                 return "you don't have enough gold for create worker!";
             if (selectedBuilding.getName().equals("engineer guild"))
                 return "you can't create " + type + " in " + selectedBuilding.getName();
-            currentGovernment.getCastle().increaseNumberOfLadderMan(count);
+            currentGovernment.getCastle().changeNumberOfWorkers(count);
             currentGovernment.decreaseAmountOfGood(Good.GOLD,10 * count);
         }
         else {
