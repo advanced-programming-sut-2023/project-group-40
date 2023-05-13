@@ -5,6 +5,7 @@ import model.buildings.*;
 import model.buildings.Storage;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -23,6 +24,8 @@ public class Government {
     private Color color = null;
     private Castle castle;
     private int emptySpace = 0;
+    private int numberOfEngineer;
+
 
     public Government(User owner) {
         this.owner = owner;
@@ -178,30 +181,29 @@ public class Government {
     }
 
     public void decreaseAmountOfFood(int amount) {
-        int remainFromFood1 = decreaseAmountOfOneFood(amount,Good.FOOD1);
+        int remainFromFood1 = decreaseAmountOfOneFood(amount, Good.FOOD1);
         if (remainFromFood1 == 0) return;
-        int remainFromFood2 = decreaseAmountOfOneFood(remainFromFood1,Good.FOOD1);
+        int remainFromFood2 = decreaseAmountOfOneFood(remainFromFood1, Good.FOOD1);
         if (remainFromFood2 == 0) return;
-        decreaseAmountOfOneFood(remainFromFood2,Good.FOOD1);
+        decreaseAmountOfOneFood(remainFromFood2, Good.FOOD1);
     }
 
-    public int decreaseAmountOfOneFood(int amount ,Good food) {
+    public int decreaseAmountOfOneFood(int amount, Good food) {
         if (amount < getAmountOfGood(food)) {
             decreaseAmountOfGood(food, amount);
             return 0;
-        }
-        else {
+        } else {
             decreaseAmountOfGood(food, getAmountOfGood(food));
             return amount - getAmountOfGood(food);
         }
     }
 
-    public int getNumberOfFoodVariety(){
+    public int getNumberOfFoodVariety() {
         int result = 0;
-        if (getAmountOfGood(Good.FOOD1) != 0) result ++;
-        if (getAmountOfGood(Good.FOOD2) != 0) result ++;
-        if (getAmountOfGood(Good.FOOD3) != 0) result ++;
-        if (getAmountOfGood(Good.FOOD4) != 0) result ++;
+        if (getAmountOfGood(Good.FOOD1) != 0) result++;
+        if (getAmountOfGood(Good.FOOD2) != 0) result++;
+        if (getAmountOfGood(Good.FOOD3) != 0) result++;
+        if (getAmountOfGood(Good.FOOD4) != 0) result++;
         if (result == 0) result = 1;
         return result;
     }
@@ -214,7 +216,7 @@ public class Government {
         buildings.add(building);
     }
 
-    public int getEmptySpaces(){
+    public int getEmptySpaces() {
         for (Building building : buildings) {
             if (building.getName().equals("Small stone gatehouse") || building.getName().equals("big stone gatehouse")) {
                 GateHouse gateHouse = (GateHouse) building;
@@ -233,29 +235,26 @@ public class Government {
         int emptySpace = 0;
         for (Building building : buildings) {
             if (total == 0) return;
-            if (building.getName().equals("Small stone gatehouse") || building.getName().equals("big stone gatehouse")){
+            if (building.getName().equals("Small stone gatehouse") || building.getName().equals("big stone gatehouse")) {
                 GateHouse gateHouse = (GateHouse) building;
                 emptySpace = gateHouse.getMaxCapacity() - gateHouse.getCapacity();
                 if (total >= emptySpace) {
                     gateHouse.setCapacity(gateHouse.getMaxCapacity());
                     castle.changePopulation(emptySpace);
                     total -= emptySpace;
-                }
-                else {
+                } else {
                     gateHouse.setCapacity(gateHouse.getCapacity() + total);
                     castle.changePopulation(total);
                     total = 0;
                 }
-            }
-            else if (building.getName().equals("Hovel")) {
+            } else if (building.getName().equals("Hovel")) {
                 Hovel hovel = (Hovel) building;
-                emptySpace = hovel.getMaxCapacity() - hovel.getCapacity() ;
+                emptySpace = hovel.getMaxCapacity() - hovel.getCapacity();
                 if (total >= emptySpace) {
                     hovel.setCapacity(hovel.getMaxCapacity());
                     castle.changePopulation(emptySpace);
                     total -= emptySpace;
-                }
-                else {
+                } else {
                     hovel.setCapacity(hovel.getCapacity() + total);
                     castle.changePopulation(total);
                     total = 0;
@@ -268,27 +267,28 @@ public class Government {
         return buildings;
     }
 
-    public int getCountOfBuilding(String buildingName){
+    public int getCountOfBuilding(String buildingName) {
         int count = 0;
         for (Building building : buildings)
             if (building.getName().equals(buildingName))
-                count ++;
+                count++;
         return count;
     }
 
     public void updateCountOfHorses() {
         this.countofhorses = getCountOfBuilding("stable") * 4 - numberOfKnight;
     }
+
     public int getCountOfHorses() {
         return countofhorses;
     }
 
-    public void changeCountOfHorses(int amount){
+    public void changeCountOfHorses(int amount) {
         countofhorses -= amount;
         numberOfKnight += amount;
     }
 
-    public int getNumberOfEngineer(){
+    public int getNumberOfEngineer() {
         int count = 0;
         for (Building building : buildings) {
             if (building instanceof EngineerGuild) {
@@ -298,4 +298,17 @@ public class Government {
         }
         return count;
     }
+
+    public int getNumOfEmptySpace(String type) {
+        int count = 0;
+        List<Storage> filteredStorages = storages.stream().filter(storage -> storage.getProductType().equals(type)).toList();
+        for (Storage storage : filteredStorages) {
+            for (Integer value : storage.getProducts().values()) {
+                count += value;
+            }
+            count = storage.getCapacity() - count;
+        }
+        return count;
+    }
+
 }

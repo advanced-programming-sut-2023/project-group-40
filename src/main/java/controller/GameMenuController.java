@@ -10,6 +10,8 @@ import view.*;
 import model.buildings.Buildings;
 import view.enums.Commands;
 
+import java.lang.reflect.Field;
+
 enum Direction {
 
 }
@@ -154,14 +156,26 @@ public class GameMenuController {
     }
 
     public static String setFearRate(int rate) {
-        //increase randeman
+        for (Building building : currentGovernment.getBuildings()) {
+            try {
+                Field rateField = building.getClass().getField("rate");
+                rateField.setAccessible(true);
+                rateField.set(building,rateField.getInt(building) + 50 * rate);
+
+            }
+            catch (NoSuchFieldException | IllegalAccessException e) {
+                 continue;
+            }
+        }
+
         if (rate > 5 || rate < -5) return "rate-number is out of bound";
         currentGovernment.setFearRate(rate);
         for (int i = 0; i < Map.getSize(); i++)
             for (int j = 0; j < Map.getSize(); j++) {
                 Unit unit = Map.getMap()[i][j].getUnit();
-                if (unit != null && unit.getGovernment() == currentGovernment) for (Troop troop : unit.getTroops())
-                    troop.changePower(rate);
+                if (unit != null && unit.getGovernment() == currentGovernment)
+                    for (Troop troop : unit.getTroops())
+                       unit.changePower(rate);
             }
         return "set rate-number is successful";
     }
@@ -199,7 +213,7 @@ public class GameMenuController {
         return "building dropped to the target cell!";
     }
 
-    public static String selectBuilding(int x, int y) {
+    public static String selectBuilding(int x, int y) throws ReflectiveOperationException {
         //do work after select
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
@@ -208,13 +222,13 @@ public class GameMenuController {
         selectedBuilding = Map.getMap()[x][y].getBuilding();
         if (selectedBuilding.getName().equals("shop")) ShopMenu.run();
         if (selectedBuilding.getName().equals("Mercenary Post")) {
-            //فرض invalid troop name نمیده
-            //سربازخونه مزدوران barrack??
             System.out.print("enter number of troops you want buy: ");
             int count = Commands.scanner.nextInt();
             System.out.print("enter type of troops you want buy: ");
             String type = Commands.scanner.nextLine();
             Troop troop = Troops.getTroopObjectByType(type);
+            if (troop == null)
+                return "invalid troop name";
             if (troop.getValue() * count > currentGovernment.getAmountOfGood(Good.GOLD))
                 return "you haven't enough gold";
             Barrack barrack = (Barrack) selectedBuilding;
@@ -225,59 +239,54 @@ public class GameMenuController {
         return "target building selected";
     }
 
-    public static String createUnit(String type, int count) {
-        //میتونن دو تا اسلحه داشته باشن
-        //یگان مهندس؟؟؟
+    public static String createUnit(int x, int y, String type, int count) {
+        if (!Map.getMap()[x][y].isAvailable())
+            return "you can't drop unit because this cell isn't available!";
+        if (!isCoordinateValid(x) || !isCoordinateValid(y))
+            return "your coordinates is incorrect!";
         if (count < 0) return "count is invalid";
-        if (type.equals("Engineer")) {
-            if (selectedBuilding.getName().equals("engineer guild")) {
-                EngineerGuild engineerGuild = (EngineerGuild) selectedBuilding;
-                if (currentGovernment.getAmountOfGood(Good.GOLD) < engineerGuild.getCostOfEngineer() * count)
-                    return "you don't have enough gold for create Engineer";
-                engineerGuild.increaseNumberOfEngineer(count);
-                return "you successfully create Engineer";
-            } else return "you can't create engineer in this building";
-        }
-        if (type.equals("LadderMan")) {
-            if (selectedBuilding.getName().equals("engineer guild")) {
-                EngineerGuild engineerGuild = (EngineerGuild) selectedBuilding;
-                if (currentGovernment.getAmountOfGood(Good.GOLD) < engineerGuild.getCostOfLadderMan() * count)
-                    return "you don't have enough gold for create LadderMan";
-                engineerGuild.increaseNumberOfLadderMan(count);
-                return "you successfully create LadderMan";
-            } else return "you can't create LadderMan in this building";
-        }
-        Troop troop = Troops.getTroopObjectByType(type);
-        if (troop == null) return "unit type is invalid";
-        int goldForUnit = troop.getValue() * count;
-        if (currentGovernment.getAmountOfGood(Good.GOLD) != goldForUnit)
-            return "you don't have enough gold for create this unit";
-        if (currentGovernment.getAmountOfGood(troop.getWeapon()) != count)
-            return "you don't have enough weapon for create this unit";
         if (currentGovernment.getCastle().getPopulation() < count)
             return "you don't have enough population for create this unit";
-        if (troop.getName().equals("Black Monk") && !selectedBuilding.getName().equals("Cathedral"))
-            return "you can make Black Monk only in Cathedral";
-        if (type.equals("european") && selectedBuilding.getName().equals("Mercenary Post"))
-            return "you can't create european in Mercenary Post";
-        if (type.equals("arabian") && selectedBuilding.getName().equals("barrack"))
-            return "you can't create arabian in barrack";
-        if (troop.getName().equals("Knight")) {
-            if (count > currentGovernment.getCountOfHorses())
-                return "you don't have enough horses for your Knight unit";
-            else
-                currentGovernment.changeCountOfHorses(count);
+        if(type.equals("worker")) {
+            if (currentGovernment.getAmountOfGood(Good.GOLD) < 10 * count)
+                return "you don't have enough gold for create worker!";
+            if (selectedBuilding.getName().equals("engineer guild"))
+                return "you can't create " + type + " in " + selectedBuilding.getName();
+            currentGovernment.getCastle().increaseNumberOfLadderMan(count);
+            currentGovernment.decreaseAmountOfGood(Good.GOLD,10 * count);
         }
-        currentGovernment.getCastle().changePopulation(-1 * count);
-        currentGovernment.decreaseAmountOfGood(Good.GOLD, count);
-        currentGovernment.decreaseAmountOfGood(troop.getWeapon(), count);
-        int x = selectedBuilding.getX();
-        int y = selectedBuilding.getY();
-        Unit unit = new Unit(x, y, currentGovernment, "standing", troop.getHp() * count);
-        if (troop.getName().startsWith("Archer"))
-            unit.setCanDamage(false);
-        unit.addTroop(troop, count);
-        Map.getMap()[x][y].setUnit(unit);
+        else {
+            Troop troop = Troops.getTroopObjectByType(type);
+            if (troop == null) return "unit type is invalid";
+            if (currentGovernment.getAmountOfGood(Good.GOLD) < troop.getValue() * count)
+                return "you don't have enough gold for create this unit";
+            if (troop.getWeapon() != null && currentGovernment.getAmountOfGood(troop.getWeapon()) < count)
+                return "you don't have enough weapon for create this unit";
+            if (troop.isHasArmor() && currentGovernment.getAmountOfGood(Good.ARMOR) < count)
+                return "you don't have enough armor for create this unit";
+            if (troop.getName().equals("Black Monk") && !selectedBuilding.getName().equals("Cathedral"))
+                return "you can make Black Monk only in Cathedral";
+            if (type.equals("european") && selectedBuilding.getName().equals("Mercenary Post"))
+                return "you can't create european in Mercenary Post";
+            if (type.equals("arabian") && selectedBuilding.getName().equals("barrack"))
+                return "you can't create arabian in barrack";
+            if (type.equals("engineer") && selectedBuilding.getName().equals("engineer guild"))
+                return "you can create engineer unit only in engineer guild";
+            if (troop.getName().equals("Knight") || troop.getName().equals("Horse Archers")) {
+                if (count > currentGovernment.getCountOfHorses())
+                    return "you don't have enough horses for your Knight unit";
+                else
+                    currentGovernment.changeCountOfHorses(count);
+            }
+            currentGovernment.getCastle().changePopulation(-1 * count);
+            Unit unit = new Unit(x, y, currentGovernment, "standing", troop.getHp() * count);
+            if (troop.getName().startsWith("Archer"))
+                unit.setCanDamage(false);
+            unit.addTroop(troop, count);
+            Map.getMap()[x][y].setUnit(unit);
+            currentGovernment.decreaseAmountOfGood(Good.GOLD, count * troop.getValue());
+            currentGovernment.decreaseAmountOfGood(troop.getWeapon(), count);
+        }
         return "you successfully create unit";
     }
 
@@ -525,14 +534,14 @@ public class GameMenuController {
         return "ditch deleted successfully";
     };
 
-    public static String captureTheGate(int x , int y){
+    public static String captureTheGate(int x, int y) {
         Cell cell = Map.getMap()[x][y];
         Building targetBuilding = cell.getBuilding();
         if (!(targetBuilding instanceof GateHouse))
             return "invalid target";
         if (!selectedUnit.isCanClimb())
             return "your unit can't capture the gate";
-        if (selectedUnit.getX() != selectedBuilding.getX() && selectedUnit.getY() != selectedBuilding.getY())
+        if (!targetBuilding.isNearGate(selectedUnit))
             return "your unit can't capture the gate";
         targetBuilding.getOwner().getBuildings().remove(targetBuilding);
         currentGovernment.addBuilding(targetBuilding);
@@ -557,4 +566,5 @@ public class GameMenuController {
                     Map.getMap()[i][i].setHaveDitch(true);
                 }
     }
+
 }

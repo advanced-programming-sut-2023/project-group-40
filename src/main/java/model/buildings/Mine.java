@@ -35,6 +35,12 @@ public class Mine extends Building {
         this.productRate = productRate;
     }
 
+    public int getStorage() {
+        return storage;
+    }
+
+
+
     @Override
     public void action() {
         Government government = GameMenuController.getCurrentGovernment();
@@ -46,5 +52,9 @@ public class Mine extends Building {
             government.increaseAmountOfGood(material, productRate);
             storage -= productRate;
         } else government.increaseAmountOfGood(material, productRate);
+    }
+
+    public void decreaseStorage(int amount) {
+        storage -= amount;
     }
 }

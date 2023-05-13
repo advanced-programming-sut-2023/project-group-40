@@ -27,7 +27,7 @@ public class TradeMenuController {
     }
 
     public static String sendRequest(String type, String name, int amount, int price, String message, String username) {
-        if ((targetGovernment = Government.getGovernmentByUser(User.getUserByUsername(username))) == null)
+        if ((targetGovernment = Government.getGovernmentByUser(UserController.getUserByUsername(username))) == null)
             return "username in not exist";
         if (!type.equals("food") && !type.equals("weapon") && !type.equals("Material")) return "invalid resource type";
         try {
@@ -55,10 +55,10 @@ public class TradeMenuController {
         if (request == null) return "invalid id!";
         targetGovernment = request.getSender();
 
-        int numOfCommodity = currentGovernment.getNumOfInStorages(request.getCommodity());
+        int numOfCommodity = currentGovernment.getAmountOfGood(request.getCommodity());
         if (request.getCount() > numOfCommodity) return "you haven't enough " + request.getCommodity();
 
-        int numOfGold = targetGovernment.getNumOfInStorages(Good.GOLD);
+        int numOfGold = targetGovernment.getAmountOfGood(Good.GOLD);
         if (request.getPrice() > numOfGold) return targetGovernment.getOwner().getUsername() + " haven't enough gold";
 
         int emptySpace = targetGovernment.getNumOfEmptySpace(request.getCommodity().getType());

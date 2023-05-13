@@ -19,11 +19,20 @@ public class Bridge extends Building {
 
     @Override
     public void action() {
-        if (isUp) Map.getMap()[x][y].setPassable(false);
+        if (isUp){
+            for (int i = x1; i <= x2; i++)
+                for (int j = y1; j <= y2; j++)
+                    Map.getMap()[i][j].setPassable(false);
+        }
+
         else {
-            Unit unit = Map.getMap()[x][y].getUnit();
-            if (unit != null)
-                unit.decreaseVelocity(1);
+            for (int i = x1; i <= x2; i++) {
+                for (int j = y1; j <= y2; j++) {
+                    Unit unit = Map.getMap()[i][j].getUnit();
+                    if (unit != null)
+                        unit.decreaseVelocity(1);
+                }
+            }
         }
     }
 }

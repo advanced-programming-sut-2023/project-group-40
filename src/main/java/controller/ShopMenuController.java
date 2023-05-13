@@ -15,7 +15,7 @@ public class ShopMenuController {
             if (good.getType().equals("food")) {
                 String name = good.name().toLowerCase();
                 output += "   " + name + " ->  buy price: " + good.getBuyPrice() + "  sell price: " + good.getSellPrice() +
-                        "  number of " + name + " in storages: " + currentGovernment.getNumOfInStorages(good) + "\n";
+                        "  number of " + name + " in storages: " + currentGovernment.getAmountOfGood(good) + "\n";
             }
         }
         output += " -Materials: \n";
@@ -23,7 +23,7 @@ public class ShopMenuController {
             if (good.getType().equals("material")) {
                 String name = good.name().toLowerCase();
                 output += "   " + name + " ->  buy price: " + good.getBuyPrice() + "  sell price: " + good.getSellPrice() +
-                        "  number of " + name + " in storages: " + currentGovernment.getNumOfInStorages(good) + "\n";
+                        "  number of " + name + " in storages: " + currentGovernment.getAmountOfGood(good) + "\n";
             }
         }
         output += " -Weapon: \n";
@@ -31,7 +31,7 @@ public class ShopMenuController {
             if (good.getType().equals("weapon")) {
                 String name = good.name().toLowerCase();
                 output += "   " + name + " ->  buy price: " + good.getBuyPrice() + "  sell price: " + good.getSellPrice() +
-                        "  number of " + name + " in storages: " + currentGovernment.getNumOfInStorages(good) + "\n";
+                        "  number of " + name + " in storages: " + currentGovernment.getAmountOfGood(good) + "\n";
             }
         }
         return output;
@@ -41,11 +41,11 @@ public class ShopMenuController {
         try {
             Good good = Good.valueOf(name.toUpperCase());
             int price = good.getBuyPrice() * count;
-            if (price > currentGovernment.getNumOfInStorages(Good.GOLD))
+            if (price > currentGovernment.getAmountOfGood(Good.GOLD))
                 return "you haven't enough gold";
-            if (count > currentGovernment.getNumOfEmptySpace(good.getType())) {
-                return "you haven't enough space";
-            }
+//            if (count > currentGovernment.getNumOfEmptySpace(good.getType())) {
+//                return "you haven't enough space";
+//            }
             currentGovernment.increaseAmountOfGood(good, count);
             currentGovernment.decreaseAmountOfGood(Good.GOLD, price);
             return "buy successful";
@@ -58,7 +58,7 @@ public class ShopMenuController {
         try {
             Good good = Good.valueOf(name.toUpperCase());
             int price = good.getSellPrice() * count;
-            if (count > currentGovernment.getNumOfInStorages(good)) {
+            if (count > currentGovernment.getAmountOfGood(good)) {
                 return "you haven't enough " + name;
             }
             currentGovernment.increaseAmountOfGood(Good.GOLD, price);

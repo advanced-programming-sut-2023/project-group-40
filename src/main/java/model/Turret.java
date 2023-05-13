@@ -22,11 +22,12 @@ public class Turret extends Building {
    }
    @Override
    public void action() {
-      for (int i = x - 1; i < x + 1 ; i++)
-         for (int j = y - 1; j < y + 1; j++) {
+      int amount = 3;
+      for (int i = x1 - amount; i <= x2 + amount ; i++)
+         for (int j = y1 - amount; j <= y2 + amount; j++) {
             Unit unit = Map.getMap()[i][j].getUnit();
             if (unit != null)
-               unit.increaseShootingRange(20);
+               unit.increaseShootingRange(10);
          }
    }
 

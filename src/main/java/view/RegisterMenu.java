@@ -90,7 +90,8 @@ public class RegisterMenu {
         System.out.print(UserController.getSecurityQuestionsList());
         while (true) {
             String input = Commands.scanner.nextLine();
-            if (!Commands.PICK_SECURITY_QUESTION.canMatch(input)) System.out.println("invalid command!");
+            if (!Commands.PICK_SECURITY_QUESTION.canMatch(input))
+                System.out.println("invalid command!");
             else {
                 Matcher matcher = Commands.PICK_SECURITY_QUESTION.getMatcher(input);
                 matcher.find();

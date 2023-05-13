@@ -77,7 +77,7 @@ public class GameMenu {
         return GameMenuController.dropBuilding(x, y, type);
     }
 
-    public static String selectBuilding(Matcher matcher) {
+    public static String selectBuilding(Matcher matcher) throws ReflectiveOperationException {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
         return GameMenuController.selectBuilding(x, y);
@@ -86,7 +86,9 @@ public class GameMenu {
     public static String createUnit(Matcher matcher) {
         String type = matcher.group("type");
         int count = Integer.parseInt(matcher.group("count"));
-        return GameMenuController.createUnit(type, count);
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.createUnit(x,y,type, count);
     }
 
     public static String repair(Matcher matcher) {

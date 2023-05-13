@@ -17,7 +17,7 @@ public class Unit {
     private String type;
     private boolean canClimb = false;
     private int shootingRange;
-
+    private int power;
     public Unit(int x , int y,Government government, String state, int hp) {
         this.x = x;
         this.y = y;
@@ -34,6 +34,7 @@ public class Unit {
         velocity = troop.getVelocity();
         type = troop.getName();
         shootingRange = troop.getShootingRange();
+        power = troop.getPowerOfAttack();
     }
 
     public String getState() {
@@ -98,5 +99,9 @@ public class Unit {
 
     public void increaseShootingRange(int percent) {
         this.shootingRange *= (1 + (percent/100));
+    }
+
+    public void changePower(int rate) {
+        power *= Math.round((1 + (rate * 5) / 100.0) * rate);
     }
 }
