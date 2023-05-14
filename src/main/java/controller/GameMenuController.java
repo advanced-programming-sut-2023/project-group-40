@@ -319,6 +319,10 @@ public class GameMenuController {
         if (Map.getMap()[x][y].getUnit() == null)
             return "there is no unit in this cell!";
         selectedUnit = Map.getMap()[x][y].getUnit();
+        if(selectedUnit.isPatrolling()){
+            selectedUnit.setPatrolTargetXY(x,y);
+            moveUnit(selectedUnit.getPatrolTargetX(),selectedUnit.getPatrolTargetY());
+        }
         return "unit successfully selected";
     }
 
@@ -401,9 +405,26 @@ public class GameMenuController {
     }
 
     public static String patrolUnit(int x1, int y1, int x2, int y2) {
-        if (Map.getMap()[x1][y1].getTexture().getType().equals("water") || Map.getMap()[x2][y2].getTexture().getType().equals("water"))
-            return "you can't go to water regions!";
-        return "your unit stayed in x:" + selectedUnit.getX() + "y: " + selectedUnit.getY();
+        if(selectedUnit == null)
+            return "no selected unit found!";
+        if (!canPass(x1,y1) || !canPass(x2,y2)) {
+            return "you can't patrol between two points!";
+        }
+        if(checkMove(selectedUnit.getX(),selectedUnit.getY(),x1,y1,selectedUnit,selectedUnit.getVelocity()))
+            return "you cant go to your first coordinate";
+        if(checkMove(selectedUnit.getX(),selectedUnit.getY(),x2,y2,selectedUnit,selectedUnit.getVelocity()))
+            return "you cant go to your second coordinate";
+        selectedUnit.setPatrolling(true);
+
+        if(selectedUnit.getX() == x2 && selectedUnit.getY() == y2) {
+            moveUnit(x1, y1);
+            selectedUnit.setPatrolTargetXY(x2,y2);
+        }
+        else {
+            moveUnit(x2, y2);
+            selectedUnit.setPatrolTargetXY(x1,y1);
+        }
+        return "patrol succesful";
     }
 
     public static boolean checkRange(int x1, int y1, int x2, int y2, int range) {
@@ -823,6 +844,13 @@ public class GameMenuController {
                     }
             }
         }
-        return "tool moved successfully";
+        return "tool moved successfully!";
+    }
+
+    public static String stopPatrolUnit() {
+        if(selectedUnit == null || selectedUnit.isPatrolling())
+            return "selected unit isn't in patrolling!";
+        selectedUnit.setPatrolling(false);
+        return "stop patrolling successful!";
     }
 }

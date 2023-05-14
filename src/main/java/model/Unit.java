@@ -20,6 +20,8 @@ public class Unit {
     private int power;
     private final int sightRange = 3;
     private boolean havePortableShield;
+    private boolean isPatrolling;
+    private int patrolTargetX,patrolTargetY;
     public Unit(int x , int y,Government government, String state, int hp) {
         this.x = x;
         this.y = y;
@@ -133,5 +135,26 @@ public class Unit {
 
     public boolean isHavePortableShield() {
         return havePortableShield;
+    }
+
+    public void setPatrolling(boolean patrolling) {
+        isPatrolling = patrolling;
+    }
+
+    public boolean isPatrolling() {
+        return isPatrolling;
+    }
+
+    public int getPatrolTargetX() {
+        return patrolTargetX;
+    }
+
+    public int getPatrolTargetY() {
+        return patrolTargetY;
+    }
+
+    public void setPatrolTargetXY(int patrolTargetX, int patrolTargetY) {
+        this.patrolTargetX = patrolTargetX;
+        this.patrolTargetY = patrolTargetY;
     }
 }

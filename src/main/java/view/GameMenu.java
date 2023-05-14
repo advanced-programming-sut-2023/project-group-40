@@ -5,8 +5,6 @@ import controller.ShopMenuController;
 import controller.TradeMenuController;
 import view.enums.Commands;
 
-import java.io.IOException;
-
 import java.util.regex.Matcher;
 
 public class GameMenu {
@@ -132,12 +130,17 @@ public class GameMenu {
     }
 
     public static String patrolUnit(Matcher matcher) {
-        int x1 = Integer.parseInt(matcher.group("x"));
-        int y1 = Integer.parseInt(matcher.group("y"));
-        int x2 = Integer.parseInt(matcher.group("x"));
-        int y2 = Integer.parseInt(matcher.group("y"));
+        int x1 = Integer.parseInt(matcher.group("x1"));
+        int y1 = Integer.parseInt(matcher.group("y1"));
+        int x2 = Integer.parseInt(matcher.group("x2"));
+        int y2 = Integer.parseInt(matcher.group("y2"));
         return GameMenuController.patrolUnit(x1, y1, x2, y2);
     }
+
+    public static String stopPatrolUnit(Matcher matcher) {
+        return GameMenuController.stopPatrolUnit();
+    }
+
 
     public static String setUnitState(Matcher matcher) {
         String state = matcher.group("state");

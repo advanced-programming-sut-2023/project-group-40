@@ -40,6 +40,8 @@ public enum Commands{
     AIR_ATTACK("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^attack( -[xy] \\S+){2}$", GameMenu.class,"airAttack"),
     POUR_OIL("pour oil -d (?<direction>\\w+)$", GameMenu.class,"pourOil"),
     MOVE_TOOL("(?=.* -toolX (?<toolX>\\d+))(?=.* -toolY (?<toolY>\\d+))(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^move tool( -((toolX)|(toolY)|(x)|(y)) ((\"[^\"]+\")|(\\S+))){4}$", GameMenu.class,"moveTool"),
+    PATROL_UNIT("(?=.* -x1 (?<x1>\\d+))(?=.* -y1 (?<y1>\\d+))(?=.* -x2 (?<x2>\\d+))(?=.* -y2 (?<y2>\\d+))^patrol unit( -((y1)|(y2)|(x1)|(x2)) (\\d+){4}$", GameMenu.class,"patrolUnit"),
+    STOP_PATROL("stop patrolling", GameMenu.class,"stopPatrolUnit"),
     SHOW_POPULARITY_FACTORS("show popularity factors", GameMenu.class, "showPopularityFactors"),
     SHOW_POPULARITY("show popularity", GameMenu.class, "showPopularity"),
     SHOW_FOOD_LIST("show food list", GameMenu.class, "showFoodList"),
@@ -74,7 +76,7 @@ public enum Commands{
     SHOW_TRADE_HISTORY("trade history", TradeMenu.class, "showTradeHistory"),
     SHOW_PRICE_LIST("show price list", ShopMenu.class, "showPriceList"),
     BUY("buy -i (?<name>\\S+) -a (?<amount>\\d+)", ShopMenu.class, "buy"),
-    sell("sell -i (?<name>\\S+) -a (?<amount>\\d+)", ShopMenu.class, "sell");
+    SELL("sell -i (?<name>\\S+) -a (?<amount>\\d+)", ShopMenu.class, "sell");
 
     private final String regex;
     private String methodName;
