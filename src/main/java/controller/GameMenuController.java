@@ -187,12 +187,13 @@ public class GameMenuController {
         return coordinate > 0 && coordinate <= Map.getSize();
     }
 
-    public static String dropBuilding(int x1, int y1, int x2, int y2, String type) {
+    public static String dropBuilding(int x, int y, String type) {
         //جنس زمین
         //دروازه بسازیم دیوار خراب شه
-        if (x1 > x2 || y1 > y2) return "your coordinates is incorrect!";
-        for (int i = x1; i < x2; i++)
-            for (int j = y1; j < y2; j++) {
+        Building targetBuilding = Buildings.getBuildingObjectByType(type);
+        if (targetBuilding == null) return "your building type is incorrect!";
+        for (int i = x; i < x + targetBuilding.getHeight(); i++)
+            for (int j = y; j < y + targetBuilding.getWidth(); j++) {
                 if (!Map.getMap()[i][j].isAvailable())
                     return "you can't drop building because this cell isn't available";
                 if (!isCoordinateValid(i) || !isCoordinateValid(j))
@@ -200,19 +201,15 @@ public class GameMenuController {
                 if (!Map.getMap()[i][j].getTexture().getType().equals("water"))
                     return "You can't drop  building because texture of this cell is water";
             }
-        Building targetBuilding = Buildings.getBuildingObjectByType(type);
-        if (targetBuilding == null) return "your building type is incorrect!";
-        if ((x2 - x1) != (targetBuilding.getX2() - targetBuilding.getX1()) || (y2 - y1) != (targetBuilding.getY2() - targetBuilding.getY1()))
-            return "your coordinates is incorrect!";
-        for (int i = x1; i < x2; i++)
-            for (int j = y1; j < y2; j++)
+        for (int i = x; i < x + targetBuilding.getHeight(); i++)
+            for (int j = y; j < y + targetBuilding.getWidth(); j++)
                 if (targetBuilding.checkTexture(Map.getMap()[i][j].getTexture()))
                     return "you can't drop " + targetBuilding.getName() + " in " + Map.getMap()[i][j].getTexture().getType();
         currentGovernment.decreaseAmountOfGood(Good.GOLD, targetBuilding.getCost()[0]);
         currentGovernment.decreaseAmountOfGood(Good.WOOD, targetBuilding.getCost()[1]);
         currentGovernment.decreaseAmountOfGood(Good.STONE, targetBuilding.getCost()[2]);
-        for (int i = x1; i < x2; i++)
-            for (int j = y1; j < y2; j++) {
+        for (int i = x; i < x + targetBuilding.getHeight(); i++)
+            for (int j = y; j < y + targetBuilding.getWidth(); j++) {
                 Map.getMap()[i][j].setBuilding(targetBuilding);
                 Map.getMap()[i][j].setAvailable(false);
                 Map.getMap()[i][j].setPassable(false);

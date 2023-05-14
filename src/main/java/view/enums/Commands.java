@@ -31,7 +31,7 @@ public enum Commands{
     SHOW_MAP("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^show map( -[xy] \\S+){2}$", MapMenu.class,"showMap"),
     CHANGE_SIGHT_AREA("map (?<left>left(\\s(?<leftNumber>\\d+))?)|(?<top>top(\\s(?<topNumber>\\d+))?)|(?<right>right(\\s(?<rightNumber>\\d+))?)|(?<down>down(\\s(?<downNumber>\\d+))?)", MapMenu.class,"changeSightArea"),
     SHOW_DETAILS("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^show details( -[xy] \\S+){2}$",MapMenu.class,"showDetails"),
-    DROP_BUILDING("(?=.* -x1 (?<x1>\\d+))(?=.* -y1 (?<y1>\\d+))(?=.* -x2 (?<x2>\\d+))(?=.* -y2 (?<y2>\\d+))(?=.* -t (?<type>((\"[^\"]+\")|(\\S+))))(?=.* -c (?<count>\\d+))^drop building( -((y1)|(y2)|(x1)|(x2)|(t)) ((\"[^\"]+\")|(\\S+))){4}$", GameMenu.class,"dropBuilding"),
+    DROP_BUILDING("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))(?=.* -t (?<type>((\"[^\"]+\")|(\\S+))))^drop building( -[xyt] ((\"[^\"]+\")|(\\S+))){3}$", GameMenu.class,"dropBuilding"),
     SELECT_BUILDING("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^select building( -[xy] \\S+){2}$)", GameMenu.class,"selectBuilding"),
     CREATE_UNIT("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))(?=.* -t (?<type>((\"[^\"]+\")|(\\S+))))(?=.* -c (?<count>\\d+))^create unit( -[xytc] ((\"[^\"]+\")|(\\S+))){4}$", GameMenu.class,"createUnit"),
     SHOW_POPULARITY_FACTORS("show popularity factors", GameMenu.class, "showPopularityFactors"),

@@ -12,10 +12,11 @@ public class Storage extends Building {
     private final int capacity;
     private String productType;
 
-    public Storage(String name, int height, int width, int hp, int[] cost, int capacity, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public Storage(String name, int height, int width, int hp, int[] cost, int capacity, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group, String productType) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
         this.capacity = capacity;
         GameMenuController.getCurrentGovernment().addStorage(this);
+        this.productType = productType;
     }
 
     public void addProduct(Good product, int number) {

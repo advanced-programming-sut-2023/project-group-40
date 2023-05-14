@@ -126,4 +126,12 @@ public class Building implements Serializable,BuildingAction {
     public BuildingGroups getGroup() {
         return group;
     }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
 }

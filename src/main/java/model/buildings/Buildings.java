@@ -15,7 +15,7 @@ public enum Buildings {
     DEFENCE_TURRENT("defence turrent", new Tower("defence turrent", 3,3, 1200, new int[]{0,0,15,0,0}, false, 10,5, new HashSet<>() , false, BuildingGroups.CASTLE)),
     SQUARE_TOWER("square tower", new Tower("square tower", 3,3,1600,new int[]{0,0,35,0,0}, true, 10,5, new HashSet<>() , false, BuildingGroups.CASTLE)),
     ROUND_TOWER("round tower", new Tower("round tower", 3,3,2000,new int[]{0,0,40,0,0}, true, 10,5, new HashSet<>() , false, BuildingGroups.CASTLE)),
-    ARMOURY("armoury", new Storage("armory", 3,3,500,new int[]{0,5,0,0,0}, 1000, new HashSet<>(), false, BuildingGroups.CASTLE)),
+    ARMOURY("armoury", new Storage("armory", 3,3,500,new int[]{0,5,0,0,0}, 1000, new HashSet<>(), false, BuildingGroups.CASTLE,"weapon")),
     BARRACK("barrack", new Barrack("barrack", 5,5,500, new int[]{0,0,15,0,0}, new HashSet<>(), false, BuildingGroups.CASTLE)),
     MERCENARY_POST("mercenary post", new Barrack("mercenary post", 4,4,500, new int[]{0,10,0,0,0}, new HashSet<>(), false, BuildingGroups.CASTLE)),
     ENGINEER_GUILD("engineer guild", new Building("engineer guild", 3,4,500, new int[]{100,10,0,0,0}, new HashSet<>(), false, BuildingGroups.CASTLE)),
@@ -27,7 +27,7 @@ public enum Buildings {
     OX_TETHER("ox tether", new Building("ox tether", 2,1,100, new int[]{0,5,0,0,0}, 1, new HashSet<>(), false, BuildingGroups.INDUSTRY)),
     PITCH_RIG("pitch rig", new Mine("pitch rig", 3,3,100, new int[]{0,10,0,0,0}, 1, Good.PITCH, 10, new HashSet<>(List.of(Texture.PLAIN)), true, BuildingGroups.INDUSTRY)),
     QUARRY("quarry", new Mine("quarry", 4,4,300, new int[]{0,20,0,0,0}, 3, Good.STONE, 25, new HashSet<>(List.of(Texture.STONE)), true, BuildingGroups.INDUSTRY)),
-    STOCKPILE("stockpile", new Storage("stockpile", 6, 6, 500, new int[]{0,0,0,0,0}, 2000, new HashSet<>(), false, BuildingGroups.INDUSTRY)),
+    STOCKPILE("stockpile", new Storage("stockpile", 6, 6, 500, new int[]{0,0,0,0,0}, 2000, new HashSet<>(), false, BuildingGroups.INDUSTRY,"material")),
     WOODCUTTER("woodcutter", new Mine("woodcutter",5,5,100, new int[]{0,3,0,0,0}, 1, Good.WOOD, 30, new HashSet<>(), false, BuildingGroups.INDUSTRY)),
     HOVEL("hovel", new Hovel("hovel", 3,3,100, new int[]{0,6,0,0,0}, new HashSet<>(), false, BuildingGroups.TOWN_BUILDING)),
     CHURCH("church", new Church("church", 3,5,800, new int[]{500,0,0,0,0}, new HashSet<>(), false, BuildingGroups.TOWN_BUILDING, 2)),
@@ -47,9 +47,9 @@ public enum Buildings {
     HOPS_FARMER("hops farmer", new FoodProcessing("hops farmer", 4,4,100, new int[]{0,15,0,0,0}, 1, null, Good.HOP, 20, new HashSet<>(List.of(Texture.GRASS, Texture.DENSE_GRASS_LAND)), true, BuildingGroups.FARM)),
     HUNTER_POST("hunter post", new FoodProcessing("hunter post", 5,5,300, new int[]{0,5,0,0,0}, 1, null, Good.MEAT, 15, new HashSet<>(List.of(Texture.GRASS, Texture.DENSE_GRASS_LAND)), true, BuildingGroups.FARM)),
     WHEAT_FARMER("wheat farmer", new FoodProcessing("wheat farmer", 4,4,300, new int[]{0,15,0,0,0}, 1, null, Good.WHEAT, 30, new HashSet<>(List.of(Texture.GRASS, Texture.DENSE_GRASS_LAND)), true, BuildingGroups.FARM)),
-    BAKERY("bakety", new FoodProcessing("bakery", 3,3,300,new int[]{0,10,0,0,}, 1, Good.FLOUR, Good.BREAD, 15, new HashSet<>(), false, BuildingGroups.FOOD_PROCESSING)),
+    BAKERY("bakery", new FoodProcessing("bakery", 3,3,300,new int[]{0,10,0,0,}, 1, Good.FLOUR, Good.BREAD, 15, new HashSet<>(), false, BuildingGroups.FOOD_PROCESSING)),
     BREWER("brewer", new FoodProcessing("brewer", 3,3,300, new int[]{0,10,0,0,0}, 1, Good.HOP, Good.BEER, 10, new HashSet<>(), false, BuildingGroups.FOOD_PROCESSING)),
-    GRANARY("granary", new Storage("Granary", 6,6,300, new int[]{0,5,0,0,0}, 2000, new HashSet<>(), false, BuildingGroups.FOOD_PROCESSING));
+    GRANARY("granary", new Storage("Granary", 6,6,300, new int[]{0,5,0,0,0}, 2000, new HashSet<>(), false, BuildingGroups.FOOD_PROCESSING,"food"));
     String fullName;
     Building buildingObject;
 

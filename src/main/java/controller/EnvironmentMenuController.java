@@ -1,6 +1,8 @@
 package controller;
 
 import model.*;
+import model.buildings.Building;
+import model.buildings.Buildings;
 import org.apache.commons.text.RandomStringGenerator;
 import view.GameMenu;
 
@@ -87,19 +89,35 @@ public class EnvironmentMenuController {
         return "tree successfully dropped";
     }
 
+    private static void dropStockpile(int x, int y, Government government){
+        Building targetBuilding = Buildings.getBuildingObjectByType("stockpile");
+        government.addBuilding(targetBuilding);
+        for (int i = x; i < x + targetBuilding.getHeight(); i++)
+            for (int j = y; j < y + targetBuilding.getWidth(); j++) {
+                Map.getMap()[i][j].setBuilding(targetBuilding);
+                Map.getMap()[i][j].setAvailable(false);
+                Map.getMap()[i][j].setPassable(false);
+            }
+    }
     public static void organizeCastles(int countOfPlayers) {
         int size = Map.getSize();
         Cell[][] map = Map.getMap();
         if(countOfPlayers == 2){
             placeCastle(Government.getGovernments().get(0), 40,40);
             placeCastle(Government.getGovernments().get(1), size - 40,size - 40);
+            dropStockpile(30,40,Government.getGovernments().get(0));
+            dropStockpile(size - 50,size - 40,Government.getGovernments().get(1));
         }
 
         if(countOfPlayers == 4){
             placeCastle(Government.getGovernments().get(0), 40,40);
-            placeCastle(Government.getGovernments().get(1), 40,size - 40);
+            placeCastle(Government.getGovernments().get(2), 40,size - 40);
             placeCastle(Government.getGovernments().get(2), size - 40,40);
             placeCastle(Government.getGovernments().get(3), size - 40,size - 40);
+            dropStockpile(30,40,Government.getGovernments().get(0));
+            dropStockpile(30,size - 40,Government.getGovernments().get(1));
+            dropStockpile(size - 50,40,Government.getGovernments().get(2));
+            dropStockpile(size - 50,size - 40,Government.getGovernments().get(3));
         }
 
         if(countOfPlayers == 4){
@@ -111,6 +129,14 @@ public class EnvironmentMenuController {
             placeCastle(Government.getGovernments().get(5), size - 40,40);
             placeCastle(Government.getGovernments().get(6), size - 40,size/2);
             placeCastle(Government.getGovernments().get(7), size - 40,size - 40);
+            dropStockpile(30,40,Government.getGovernments().get(0));
+            dropStockpile(30,size/2,Government.getGovernments().get(1));
+            dropStockpile(30,size - 40,Government.getGovernments().get(2));
+            dropStockpile(size/2 - 10,40,Government.getGovernments().get(3));
+            dropStockpile(size/2 - 10,size - 40,Government.getGovernments().get(4));
+            dropStockpile(size - 50,40,Government.getGovernments().get(5));
+            dropStockpile(size - 50,size/2,Government.getGovernments().get(6));
+            dropStockpile(size - 50,size - 40,Government.getGovernments().get(7));
         }
     }
 
