@@ -46,7 +46,8 @@ public class UserController {
     }
 
     public static boolean checkPasswordFormat(String password) {
-        return password.matches("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\\W)^.{6,}");
+        if(!password.matches("\\S+")) return false;
+        return password.matches("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9\\s])^.{6,}");
     }
 
     public static boolean checkEmailFormat(String email) {

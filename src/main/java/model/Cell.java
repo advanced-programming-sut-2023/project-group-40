@@ -119,4 +119,8 @@ public class Cell {
     public void removeUnit(Unit unit) {
         units.remove(unit);
     }
+
+    public void setCastle(Castle castle) {
+        this.castle = castle;
+    }
 }

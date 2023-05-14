@@ -5,6 +5,7 @@ import controller.EnvironmentMenuController;
 import controller.UserController;
 import view.enums.Commands;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 
 public class EnvironmentMenu {
@@ -108,6 +109,7 @@ public class EnvironmentMenu {
             } else System.out.println("username not exist!");
         }
         System.out.println("players successfully added");
+        EnvironmentMenuController.organizeCastles(countOfPlayers);
     }
 
     public static int setNumberOfPlayers() {

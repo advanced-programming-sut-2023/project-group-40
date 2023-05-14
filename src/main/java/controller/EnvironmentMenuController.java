@@ -86,4 +86,37 @@ public class EnvironmentMenuController {
         Map.getMap()[x][y].setAvailable(false);
         return "tree successfully dropped";
     }
+
+    public static void organizeCastles(int countOfPlayers) {
+        int size = Map.getSize();
+        Cell[][] map = Map.getMap();
+        if(countOfPlayers == 2){
+            placeCastle(Government.getGovernments().get(0), 40,40);
+            placeCastle(Government.getGovernments().get(1), size - 40,size - 40);
+        }
+
+        if(countOfPlayers == 4){
+            placeCastle(Government.getGovernments().get(0), 40,40);
+            placeCastle(Government.getGovernments().get(1), 40,size - 40);
+            placeCastle(Government.getGovernments().get(2), size - 40,40);
+            placeCastle(Government.getGovernments().get(3), size - 40,size - 40);
+        }
+
+        if(countOfPlayers == 4){
+            placeCastle(Government.getGovernments().get(0), 40,40);
+            placeCastle(Government.getGovernments().get(1), 40,size/2);
+            placeCastle(Government.getGovernments().get(2), 40,size - 40);
+            placeCastle(Government.getGovernments().get(3), size/2,40);
+            placeCastle(Government.getGovernments().get(4), size/2,size - 40);
+            placeCastle(Government.getGovernments().get(5), size - 40,40);
+            placeCastle(Government.getGovernments().get(6), size - 40,size/2);
+            placeCastle(Government.getGovernments().get(7), size - 40,size - 40);
+        }
+    }
+
+    public static void placeCastle(Government government, int x, int y){
+        for (int i = x; i <= x+4; i++)
+            for (int j = y; j < y+4; j++)
+                Map.getMap()[i][j].setCastle(government.getCastle());
+    }
 }
