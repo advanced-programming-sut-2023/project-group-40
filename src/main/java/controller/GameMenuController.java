@@ -192,7 +192,8 @@ public class GameMenuController {
                     return "you can't drop building because this cell isn't available";
                 if (!isCoordinateValid(i) || !isCoordinateValid(j))
                     return "your coordinates is incorrect!";
-
+                if(!Map.getMap()[i][j].getTexture().getType().equals("water"))
+                    return "You cannot drop  building because texture of this cell is water";
             }
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
         if (targetBuilding == null) return "your building type is incorrect!";
@@ -268,8 +269,6 @@ public class GameMenuController {
             else
                 currentGovernment.changeCountOfHorses(count);
         }
-        if(type.equals("LadderMan"))
-            currentGovernment.getCastle().increaseNumberOfLadderMan(count);
         if(type.equals("engineer guild"))
             currentGovernment.addEngineer(count);
         currentGovernment.getCastle().changePopulation(-1 * count);
@@ -325,9 +324,15 @@ public class GameMenuController {
     }
 
     public static String patrolUnit(int x1, int y1, int x2, int y2) {
+        Unit currentUnit;
+        int kashi;
+
         if (Map.getMap()[x1][y1].getTexture().getType().equals("water") || Map.getMap()[x2][y2].getTexture().getType().equals("water"))
             return "you can't go to water regions!";
         return "your unit stayed in x:" + selectedUnit.getX() + "y: " + selectedUnit.getY();
+    }
+    public static String patrolUnit() {
+
     }
 
     public static String attackEnemy(int x, int y) {
@@ -387,10 +392,6 @@ public class GameMenuController {
     }
 
     public static String dropUnit(int x, int y, String type, int count) {
-        return null;
-    }
-
-    public static String enterTrade() {
         return null;
     }
 

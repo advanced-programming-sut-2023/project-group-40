@@ -5,7 +5,8 @@ public class Castle {
     int cornerUpLeft;
     int cornerDownRight;
     private int population = 5;
-    private int numberOfLadderMan = 0;
+    private int numberOfWorker = 5;
+    private int numberOfActiveWorker = 0;
 
     public Castle(int hp, int cornerUpLeft, int cornerDownRight, int population) {
         this.hp = hp;
@@ -21,10 +22,13 @@ public class Castle {
     public void changePopulation(int amount){
         population += amount;
     }
-    public void increaseNumberOfLadderMan(int amount) {
-        this.numberOfLadderMan += amount;
+    public int getNumberOfWorker() {
+        return this.numberOfWorker;
     }
-    public int getNumberOfLadderMan() {
-        return this.numberOfLadderMan;
+    public int getNumberOfActiveWorker() {
+        return numberOfActiveWorker;
+    }
+    public void increaseNumberOfActiveWorker(int count) {
+        numberOfWorker += count;
     }
 }

@@ -1,23 +1,27 @@
 package model;
 
 public enum Good {
-    MACE(0,0,"weapon"),
-    SWORD(0,0,"weapon"),
-    BOW(0,0,"weapon"),
-    SPEAR(0,0,"weapon"),
-    ARMOR(0,0,"weapon"),
-    GOLD(0,0,"material"),
-    WOOD(0,0,"material"),
-    STONE(0,0,"material"),
-    IRON(0,0,"material"),
-    PITCH(0,0,"material"),
+    MACE(30,60,"weapon"),
+    SWORD(30,60,"weapon"),
+    BOW(20,40,"weapon"),
+    SPEAR(10,20,"weapon"),
+    ARMOR(20,40,"weapon"),
+    GOLD(1,1,"material"),
+    WOOD(5,10,"material"),
+    STONE(15,25,"material"),
+    IRON(25,40,"material"),
+    PITCH(30,45,"material"),
     STONE_BLOCK(0,0,"material"),
     MELTING_POT(0,0,"material"),
-    LEATHER_VEST(0,0,"material"),
-    FOOD1(0,0,"food"),
-    FOOD2(0,0,"food"),
-    FOOD3(0,0,"food"),
-    FOOD4(0,0,"food");
+    LEATHER_VEST(40,60,"material"),
+    FLOUR(5, 10, "food"), //ard
+    WHEAT(4, 6, "food"), //gandom
+    HOP(8, 13, "food"), //jo
+    BEER(20,30, "food"), //abjo
+    FOOD1(10, 10,"food"),
+    FOOD2(10,10,"food"),
+    FOOD3(10,10,"food"),
+    FOOD4(10,10,"food");
     private final int sellPrice, buyPrice;
     private final String type;
 

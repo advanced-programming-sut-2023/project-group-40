@@ -24,7 +24,8 @@ public class GameMenu {
         }
         while (true) {
             String command = MainController.scanner.nextLine();
-            System.out.println(Commands.regexFinder(command, GameMenu.class));
+            String result = Commands.regexFinder(command, GameMenu.class);
+            if(result != null) System.out.println(result);
         }
     }
 
@@ -97,7 +98,7 @@ public class GameMenu {
     }
 
     public static String repair(Matcher matcher) {
-        return null;
+        return GameMenuController.repair();
     }
 
     public static String selectUnit(Matcher matcher) {

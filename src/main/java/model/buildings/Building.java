@@ -18,7 +18,7 @@ public class Building implements BuildingAction {
     protected int[] cost;
     protected int height, width;
     protected Government owner;
-    protected int workersRequired = 0, engineersRequired = 0;
+    protected int workersRequired, engineersRequired;
 
     public Building(String name, int height, int width, int hp, int[] cost) {
         this.name = name;
