@@ -216,8 +216,10 @@ public class GameMenu {
             GameMenuController.checkPopulation();
             GameMenuController.StableAction();
         }
-        GameMenuController.setOnGovernment();
         GameMenuController.diggingDitch();
+        GameMenuController.handleAttacks();
+        GameMenuController.setOnGovernment();
+        GameMenuController.setDefaults();
         return null;
     }
 

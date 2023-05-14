@@ -11,7 +11,7 @@ public class LoginMenuController {
     public static String login(String username, String password, boolean isStayLoggedIn) {
         long millis = Clock.systemDefaultZone().millis();
         if (millis < endOfBanTime)
-            throw new RuntimeException("you are ban for " + (endOfBanTime - millis) / 1000 + "seconds");
+            throw new RuntimeException("you are ban for " + (endOfBanTime - millis) / 1000 + " seconds");
         User user = UserController.getUserByUsername(username);
         if (user == null) throw new RuntimeException("username or password is wrong!");
         if (!user.getPasswordHash().equals(UserController.generatePasswordHash(password))) {

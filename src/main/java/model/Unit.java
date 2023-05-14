@@ -8,16 +8,17 @@ import java.util.ArrayList;
 public class Unit {
     int x;
     int y;
-    private Government government;
+    private final Government government;
     boolean canDamage = true;
     private final ArrayList<Troop> troops = new ArrayList<>();
-    private final String state;
+    private String state;
     private int hp;
     private int velocity;
     private String type;
     private boolean canClimb = false;
     private int shootingRange;
     private int power;
+    private final int sightRange = 3;
     public Unit(int x , int y,Government government, String state, int hp) {
         this.x = x;
         this.y = y;
@@ -82,15 +83,15 @@ public class Unit {
     }
 
     public void changeX(int amount){
-        Map.getMap()[x][y].setUnit(null);
+        Map.getMap()[x][y].removeUnit(this);
         x += amount;
-        Map.getMap()[x][y].setUnit(this);
+        Map.getMap()[x][y].addUnit(this);
     }
 
     public void changeY(int amount){
-        Map.getMap()[x][y].setUnit(null);
+        Map.getMap()[x][y].removeUnit(this);
         y += amount;
-        Map.getMap()[x][y].setUnit(this);
+        Map.getMap()[x][y].addUnit(this);
     }
 
     public boolean isCanClimb() {
@@ -103,5 +104,25 @@ public class Unit {
 
     public void changePower(int rate) {
         power *= Math.round((1 + (rate * 5) / 100.0) * rate);
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public int getSightRange() {
+        return sightRange;
+    }
+
+    public int getShootingRange() {
+        return shootingRange;
+    }
+
+    public int getPower() {
+        return power;
+    }
+
+    public int getHp() {
+        return hp;
     }
 }

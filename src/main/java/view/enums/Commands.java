@@ -58,6 +58,8 @@ public enum Commands{
     START_DIGGING_DITCH("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^start digging ditch( -[xy] \\S+){2}$",GameMenu.class,"startDiggingDitch"),
     STOP_DIGGING_DITCH("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^start digging ditch( -[xy] \\S+){2}$",GameMenu.class,"stopDiggingDitch"),
     DELETE_DITCH("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^delete ditch( -[xy] \\S+){2}$",GameMenu.class,"deleteDitch"),
+    FILL_DITCH("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^fill ditch( -[xy] \\S+){2}$",GameMenu.class,"fillDitch"),
+    DIG_TUNNEL("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^dig tunnel( -[xy] \\S+){2}$",GameMenu.class,"digTunnel"),
     CAPTURE_GATE("(?=.* -x (?<x>\\d+))(?=.* -y (?<y>\\d+))^stop digging ditch( -[xy] \\S+){2}$",GameMenu.class,"captureTheGate"),
     ENTER_TRADE_MENU("enter trade menu", GameMenu.class, "trade"),
     SEND_REQUEST("trade -t (?<resourceType>\\S+) -a (?<resourceAmount>\\S+) -p (?<price>\\d+) -m (?<message>\\S+)", TradeMenu.class, "sendRequest"),

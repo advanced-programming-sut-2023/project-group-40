@@ -1,7 +1,6 @@
 package model;
 
 import model.buildings.Building;
-import model.troops.Troop;
 
 import java.util.ArrayList;
 
@@ -11,7 +10,7 @@ public class Cell {
     private Tree tree;
     private Rock rock;
     private Texture texture;
-    private Unit unit;
+    private ArrayList<Unit> units;
     private Wall wall;
     private boolean isStartDigging;
     private boolean haveDitch;
@@ -52,19 +51,6 @@ public class Cell {
 
     public Rock getRock() {
         return rock;
-    }
-
-    public void changeTroopsVelocity(int percent) {
-        for (Troop troop : unit.getTroops())
-            troop.changeVelocity(percent);
-    }
-
-    public Unit getUnit() {
-        return unit;
-    }
-
-    public void setUnit(Unit unit) {
-        this.unit = unit;
     }
 
     public void setTree(Tree tree) {
@@ -120,5 +106,17 @@ public class Cell {
 
     public Castle getCastle() {
         return castle;
+    }
+
+    public void addUnit(Unit unit){
+        units.add(unit);
+    }
+
+    public Unit getUnit() {
+        return units.get(0);
+    }
+
+    public void removeUnit(Unit unit) {
+        units.remove(unit);
     }
 }

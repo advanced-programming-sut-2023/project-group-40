@@ -26,6 +26,7 @@ public class Government {
     private int emptySpace = 0;
     private int numberOfEngineer;
 
+
     public Government(User owner) {
         this.owner = owner;
     }
@@ -312,6 +313,7 @@ public class Government {
         }
         return count;
     }
+
 
 
 }
