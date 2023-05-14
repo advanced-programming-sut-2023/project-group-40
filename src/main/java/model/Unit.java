@@ -19,6 +19,7 @@ public class Unit {
     private int shootingRange;
     private int power;
     private final int sightRange = 3;
+    private boolean havePortableShield;
     public Unit(int x , int y,Government government, String state, int hp) {
         this.x = x;
         this.y = y;
@@ -124,5 +125,13 @@ public class Unit {
 
     public int getHp() {
         return hp;
+    }
+
+    public void setHavePortableShield(boolean havePortableShield) {
+        this.havePortableShield = havePortableShield;
+    }
+
+    public boolean isHavePortableShield() {
+        return havePortableShield;
     }
 }

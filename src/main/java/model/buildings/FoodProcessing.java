@@ -47,7 +47,8 @@ public class FoodProcessing extends Building {
     @Override
     public void action() {
         Government government = GameMenuController.getCurrentGovernment();
-        if (government.getAmountOfGood(material) < productRate) return;
+        if (material != null && government.getAmountOfGood(material) < productRate) return;
+        if (government.getNumOfEmptySpace("food") < productRate) return;
         government.decreaseAmountOfGood(material,productRate);
         government.increaseAmountOfGood(product,productRate);
     }

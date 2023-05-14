@@ -391,12 +391,28 @@ public class GameMenuController {
         int shootingRange = selectedUnit.getShootingRange();
         int selectedUnitX = selectedUnit.getX();
         int selectedUnitY = selectedUnit.getY();
-        if (Map.getMap()[x][y].getUnit() == null)
-            return "there is no enemy in this cell!";
         if (!checkRange(x, y, selectedUnitX, selectedUnitY, shootingRange))
             return "you can't attack this enemy!";
         if (selectedUnit.getShootingRange() == 0)
             return "your unit not appropriate for this attack";
+        if (Map.getMap()[x][y].getUnit() == null) {
+            Building building = Map.getMap()[x][y].getBuilding();
+            if ( building == null)
+                return "there is no enemy in this cell!";
+            else {
+                while (building.getHp() == 0 || selectedUnit.getHp() == 0) {
+                    building.setHp(building.getHp() - selectedUnit.getPower());
+                    if (building instanceof Tower) {
+                        Tower tower = (Tower) building;
+                        if (selectedUnitX < tower.getX2() + tower.getDefenceRange() &&
+                                selectedUnitX > tower.getX1() - tower.getDefenceRange() &&
+                                selectedUnitY > tower.getY2() + tower.getDefenceRange() &&
+                                selectedUnitY < tower.getY1() - tower.getDefenceRange())
+                            selectedUnit.decreaseHpOfUnit(tower.getAttackRange());
+                    }
+                }
+            }
+        }
         Unit enemy = Map.getMap()[x][y].getUnit();
         while (enemy.getHp() <= 0 || selectedUnit.getHp() <= 0) {
             enemy.decreaseHpOfUnit(selectedUnit.getPower());
@@ -449,15 +465,13 @@ public class GameMenuController {
         return "tunnel digged successfully";
     }
 
-    public static String buildEquipments(String equipmentName) {
-        //فرض 1 : ساختمان انتتخابی برج است
-        //مهندس بسازه کم نمیشه ؟؟
+    public static String buildEquipments(String equipmentName,int unitX,int unitY,int x,int y) {
         if (!selectedUnit.getType().equals("Engineer"))
             return "you don't select Engineer Unit";
         Tool tool = Tool.getToolByName(equipmentName);
         if (tool == null)
             return "your equipment name is invalid!";
-        if (tool.getNumberOfEngineer() < currentGovernment.getNumberOfEngineer())
+        if (currentGovernment.getNumberOfEngineer() < tool.getNumberOfEngineer())
             return "you haven't enough engineer";
         if (!(selectedBuilding.getName().equals("normal tower")) && !(selectedBuilding instanceof Tower))
             return "you can't build equipment in this building";

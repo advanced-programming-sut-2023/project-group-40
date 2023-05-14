@@ -32,21 +32,11 @@ public class WeaponFactory extends Building {
     @Override
     public void action() {
         Government government = GameMenuController.getCurrentGovernment();
-        int gold = 0, wood = 0;
-        gold = government.getAmountOfGood(Good.GOLD);
-        wood = government.getAmountOfGood(Good.WOOD);
-        if (gold < cost[0]) return;
-//            return "you don't have enough gold";
-        if (wood < cost[1]) return;
-//            return "you don't have enough wood";
-        switch (name) {
-            case "armourer" -> government.increaseAmountOfGood(Good.ARMOR, produceRate);
-            case "blacksmith" -> {
-                government.increaseAmountOfGood(Good.SWORD, produceRate);
-                government.increaseAmountOfGood(Good.MACE, produceRate);
-            }
-            case "Fletcher" -> government.increaseAmountOfGood(Good.BOW, produceRate);
-            case "Poleturner" -> government.increaseAmountOfGood(Good.SPEAR, produceRate);
-        }
+        if (government.getAmountOfGood(material) < produceRate) return;
+        if (government.getNumOfEmptySpace("weapon") < produceRate) return;
+        government.decreaseAmountOfGood(material,produceRate);
+        government.increaseAmountOfGood(weapon,produceRate);
+        if (name.equals("blacksmith"))
+            government.increaseAmountOfGood(Good.MACE, produceRate);
     }
 }
