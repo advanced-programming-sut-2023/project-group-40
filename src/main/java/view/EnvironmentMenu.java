@@ -41,18 +41,18 @@ public class EnvironmentMenu {
         }
     }
     public static String setTexture(Matcher matcher) {
-        String type = matcher.group("type");
-//        if (matcher.group("x") != null) {
-//            int x = Integer.parseInt(matcher.group("x"));
-//            int y = Integer.parseInt(matcher.group("y"));
-//            return EnvironmentMenuController.setTexture(x, y, type);
-//        } else {
+        String type = Commands.eraseQuot(matcher.group("type"));
+        if (matcher.group("x") != null) {
+            int x = Integer.parseInt(matcher.group("x"));
+            int y = Integer.parseInt(matcher.group("y"));
+            return EnvironmentMenuController.setTexture(x, y, type);
+        } else {
             int x1 = Integer.parseInt(matcher.group("x1"));
             int x2 = Integer.parseInt(matcher.group("x2"));
             int y1 = Integer.parseInt(matcher.group("y1"));
             int y2 = Integer.parseInt(matcher.group("y2"));
             return EnvironmentMenuController.setTexture(x1, y1, x2, y2, type);
-//        }
+        }
     }
 
     public static String clearBlock(Matcher matcher) {
@@ -72,7 +72,7 @@ public class EnvironmentMenu {
     public static String dropTree(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        String type = matcher.group("type");
+        String type = Commands.eraseQuot(matcher.group("type"));
         return EnvironmentMenuController.dropTree(x,y,type);
     }
 

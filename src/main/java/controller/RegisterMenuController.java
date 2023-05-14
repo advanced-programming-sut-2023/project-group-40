@@ -10,20 +10,17 @@ public class RegisterMenuController {
     private final String confirmPassword;
     private final String email;
     private final String nickname;
-    private final boolean sloganExist;
     private String slogan;
     private User registeredUser;
     private boolean isPasswordRandom, isSloganRandom;
 
     public RegisterMenuController(String username, String password, String confirmPassword, String email,
-                                  String nickname,
-                                  boolean sloganExist, String slogan) {
+                                  String nickname, String slogan) {
         this.username = username;
         this.password = password;
         this.confirmPassword = confirmPassword;
         this.email = email;
         this.nickname = nickname;
-        this.sloganExist = sloganExist;
         this.slogan = slogan;
     }
 
@@ -41,7 +38,7 @@ public class RegisterMenuController {
         if (!UserController.checkPasswordFormat(password)) throw new RuntimeException("password is weak!");
         if (UserController.isEmailExists(email)) throw new RuntimeException("email is exists!");
         if (!UserController.checkEmailFormat(email)) throw new RuntimeException("email is invalid!");
-        if (sloganExist && slogan.equals("random")) {
+        if (slogan != null && slogan.equals("random")) {
             slogan = UserController.generateRandomSlogan();
             isSloganRandom = true;
         }
@@ -67,7 +64,6 @@ public class RegisterMenuController {
         if (confirmPassword == null || confirmPassword.equals("")) return "password confirmation is empty!";
         if (email == null || email.equals("")) return "email is empty!";
         if (nickname == null || nickname.equals("")) return "nickname is empty!";
-        if (sloganExist && slogan.equals("")) return "slogan is empty!";
         return null;
     }
 

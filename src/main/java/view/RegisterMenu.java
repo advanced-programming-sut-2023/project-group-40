@@ -46,15 +46,14 @@ public class RegisterMenu {
 
 
     private static RegisterMenuController initializeVariables(Matcher matcher) {
-        String username = matcher.group("username");
-        String password = matcher.group("password");
-        String passwordConfirmation = matcher.group("passwordConfirmation");
-        String nickname = matcher.group("nickname");
-        String email = matcher.group("email");
-        boolean sloganExist = matcher.group("sloganExist") != null;
-        String slogan = matcher.group("slogan");
+        String username = Commands.eraseQuot(matcher.group("username"));
+        String password = Commands.eraseQuot(matcher.group("password"));
+        String passwordConfirmation = Commands.eraseQuot(matcher.group("passwordConfirmation"));
+        String nickname = Commands.eraseQuot(matcher.group("nickname"));
+        String email = Commands.eraseQuot(matcher.group("email"));
+        String slogan = Commands.eraseQuot(matcher.group("slogan"));
         return new RegisterMenuController(username, password, passwordConfirmation,
-                email, nickname, sloganExist, slogan);
+                email, nickname, slogan);
     }
 
     private static void suggestUsername(RegisterMenuController registerMenuController) throws Exception {
@@ -99,8 +98,8 @@ public class RegisterMenu {
                 Matcher matcher = Commands.PICK_SECURITY_QUESTION.getMatcher(input);
                 matcher.find();
                 int securityQuestionNo = Integer.parseInt(matcher.group("securityQuestionNo"));
-                String answer = matcher.group("answer");
-                String answerConfirm = matcher.group("answerConfirm");
+                String answer = Commands.eraseQuot(matcher.group("answer"));
+                String answerConfirm = Commands.eraseQuot(matcher.group("answerConfirm"));
                 return registerMenuController.pickSecurityQuestion(securityQuestionNo, answer, answerConfirm);
             }
         }

@@ -87,7 +87,7 @@ public class GameMenu {
     }
 
     public static String createUnit(Matcher matcher) {
-        String type = matcher.group("type");
+        String type = Commands.eraseQuot(matcher.group("type"));
         int count = Integer.parseInt(matcher.group("count"));
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
@@ -150,7 +150,7 @@ public class GameMenu {
     }
 
     public static String buildEquipments(Matcher matcher) {
-        String equipmentName = matcher.group("equipmentName");
+        String equipmentName = Commands.eraseQuot(matcher.group("equipmentName"));
         return GameMenuController.buildEquipments(equipmentName);
     }
 

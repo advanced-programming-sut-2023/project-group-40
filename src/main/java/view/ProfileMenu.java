@@ -22,28 +22,28 @@ public class ProfileMenu {
     }
 
     public static String changeUsername(Matcher matcher) {
-        String username = matcher.group("username");
+        String username = Commands.eraseQuot(matcher.group("username"));
         return ProfileMenuController.changeUsername(username);
     }
 
     public static String changePassword(Matcher matcher) {
-        String oldPass = matcher.group("oldPassword");
-        String newPass = matcher.group("newPassword");
+        String oldPass = Commands.eraseQuot(matcher.group("oldPassword"));
+        String newPass = Commands.eraseQuot(matcher.group("newPassword"));
         return ProfileMenuController.changePassword(oldPass, newPass);
     }
 
     public static String changeNickname(Matcher matcher) {
-        String nickname = matcher.group("nickname");
+        String nickname = Commands.eraseQuot(matcher.group("nickname"));
         return ProfileMenuController.changeNickname(nickname);
     }
 
     public static String changeEmail(Matcher matcher) {
-        String email = matcher.group("email");
+        String email = Commands.eraseQuot(matcher.group("email"));
         return ProfileMenuController.changeEmail(email);
     }
 
     public static String changeSlogan(Matcher matcher) {
-        String slogan = matcher.group("slogan");
+        String slogan = Commands.eraseQuot(matcher.group("slogan"));
         return ProfileMenuController.changeSlogan(slogan);
     }
 

@@ -27,8 +27,8 @@ public class LoginMenu {
     }
 
     public static String login(Matcher matcher) throws ReflectiveOperationException {
-        String username = matcher.group("username");
-        String password = matcher.group("password");
+        String username = Commands.eraseQuot(matcher.group("username"));
+        String password = Commands.eraseQuot(matcher.group("password"));
         boolean isStayLoggedIn = matcher.group("stayLoggedIn") != null;
         try {
             System.out.println(LoginMenuController.login(username, password, isStayLoggedIn));
