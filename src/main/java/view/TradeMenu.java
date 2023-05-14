@@ -1,8 +1,6 @@
 package view;
 
 import controller.TradeMenuController;
-import controller.UserController;
-import model.Government;
 import view.enums.Commands;
 
 import java.util.regex.Matcher;

@@ -250,4 +250,22 @@ public class GameMenu {
         int y = Integer.parseInt(matcher.group("y"));
         return GameMenuController.moveTool(toolX,toolY,x, y);
     }
+
+    public static String dropStair(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.dropStair(x,y);
+    }
+
+    public static String attackTool(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.attackTool(x,y);
+    }
+
+    public static String attackTCastle(Matcher matcher){
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.attackCastle(x,y);
+    }
 }

@@ -31,14 +31,15 @@ public class Unit {
     }
 
     public void addTroop(Troop troop, int count) {
+        power += troop.getPowerOfAttack() * count;
         for (int i = 0; i < count; i++)
             troops.add(troop);
-        if (troop.getName().equals("Macemen") || troop.getName().equals("Spearmen"))
+        if (troop.getName().equals("Macemen") || troop.getName().equals("Spearmen") ||
+                troop.getName().equals("Assassins") || troop.getName().equals("Laddermen"))
             canClimb = true;
         velocity = troop.getVelocity();
         type = troop.getName();
         shootingRange = troop.getShootingRange();
-        power = troop.getPowerOfAttack();
     }
 
     public String getState() {

@@ -125,6 +125,7 @@ public class EnvironmentMenu {
                 System.out.print("please enter a number: ");
             }
         }
+        GameMenuController.setNumberOfPlayers(countOfPlayers);
         return countOfPlayers;
     }
 

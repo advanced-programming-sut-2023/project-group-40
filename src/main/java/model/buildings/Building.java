@@ -134,4 +134,8 @@ public class Building implements Serializable,BuildingAction {
     public int getWidth() {
         return width;
     }
+
+    public int getWorkersRequired() {
+        return workersRequired;
+    }
 }

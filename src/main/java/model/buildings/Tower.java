@@ -50,7 +50,15 @@ public class Tower extends Building {
                        unit.decreaseHpOfUnit(tool.getDamage());
                        if (unit.getHp() <= 0) Map.getMap()[x2+tool.getRange()][j].removeUnit(unit);
                    }
+                   Castle castle = Map.getMap()[x2+tool.getRange()][j].getCastle();
+                   if (castle != null) {
+                       if(tool == Tool.CATAPULT_WITH_BALANCE_WEIGHT) {
+                           castle.decreaseHp(tool.getDamage());
+                           castle.checkCastle();
+                       }
+                   }
                }
+
         }
 
     }

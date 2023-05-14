@@ -3,6 +3,8 @@ package model;
 import controller.UserController;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 public class User {
     private int highScore;
@@ -62,11 +64,15 @@ public class User {
 
 
     public void setHighScore(int highScore) {
-        this.highScore = highScore;
+        if(this.highScore < highScore)
+            this.highScore = highScore;
     }
 
-    public void setRank(int rank) {
-        this.rank = rank;
+    public static void updateRank() {
+        users = (ArrayList<User>) users.stream().sorted(Comparator.comparingInt(o -> o.highScore)).collect(Collectors.toList());
+        for (User user :users)
+            user.rank = users.size() - users.indexOf(user);
+        UserController.updateDatabase();
     }
 
     public void setSlogan(String slogan) {

@@ -17,6 +17,7 @@ public class GameMenuController {
     private static Government onGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;
+    private static int numberOfPlayers;
 
 
     public static void setMapSize(int size) {
@@ -184,8 +185,6 @@ public class GameMenuController {
     }
 
     public static String dropBuilding(int x, int y, String type) {
-        //جنس زمین
-        //دروازه بسازیم دیوار خراب شه
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
         if (targetBuilding == null) return "your building type is incorrect!";
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
@@ -197,6 +196,9 @@ public class GameMenuController {
                 if (!Map.getMap()[i][j].getTexture().getType().equals("water"))
                     return "You can't drop  building because texture of this cell is water";
             }
+        if(currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired())
+            return "you don't have enough workers!";
+        currentGovernment.getCastle().changeNumberOfActiveWorkers(-targetBuilding.getWorkersRequired());
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
             for (int j = y; j < y + targetBuilding.getWidth(); j++)
                 if (targetBuilding.checkTexture(Map.getMap()[i][j].getTexture()))
@@ -263,7 +265,7 @@ public class GameMenuController {
                 return "you don't have enough gold for create worker!";
             if (selectedBuilding.getName().equals("engineer guild"))
                 return "you can't create " + type + " in " + selectedBuilding.getName();
-            currentGovernment.getCastle().changeNumberOfWorkers(count);
+            currentGovernment.getCastle().changeNumberOfActiveWorkers(count);
             currentGovernment.decreaseAmountOfGood(Good.GOLD, 10 * count);
         } else {
             Troop troop = Troops.getTroopObjectByType(type);
@@ -478,6 +480,18 @@ public class GameMenuController {
         return "attack finished";
     }
 
+    public static void removeBuilding(int x,int y){
+        Building building = Map.getMap()[x][y].getBuilding();
+        if (building == null) return;
+        for (int i = building.getX1(); i <= building.getX2(); i++)
+            for (int j = building.getY1(); j < building.getY2(); j++) {
+                Map.getMap()[i][j].setBuilding(null);
+                Map.getMap()[i][j].setAvailable(true);
+                Map.getMap()[i][j].setPassable(true);
+            }
+        currentGovernment.getBuildings().remove(building);
+    }
+
     public static String airAttack(int x, int y) {
         int shootingRange = selectedUnit.getShootingRange();
         int selectedUnitX = selectedUnit.getX();
@@ -493,15 +507,20 @@ public class GameMenuController {
             else {
                 while (building.getHp() == 0 || selectedUnit.getHp() == 0) {
                     building.setHp(building.getHp() - selectedUnit.getPower());
-                    if (building instanceof Tower) {
-                        Tower tower = (Tower) building;
+                    if (building instanceof Tower tower) {
                         if (selectedUnitX < tower.getX2() + tower.getDefenceRange() &&
                                 selectedUnitX > tower.getX1() - tower.getDefenceRange() &&
                                 selectedUnitY > tower.getY2() + tower.getDefenceRange() &&
                                 selectedUnitY < tower.getY1() - tower.getDefenceRange())
                             selectedUnit.decreaseHpOfUnit(tower.getAttackRange());
                     }
+                    if(building.getName().equals("pitch ditch") && selectedUnit.getType().equals("Slaves"))
+                        for (int i = selectedBuilding.getX1() - 1; i <= selectedBuilding.getX2() + 1; i++)
+                            for (int j = selectedBuilding.getY1() - 1; j <= selectedBuilding.getY2() + 1; j++)
+                                removeBuilding(i,j);
                 }
+                if(building.getHp() <= 0) removeBuilding(x,y);
+                else Map.getMap()[selectedUnitX][selectedUnitY].removeUnit(selectedUnit);
             }
         }
         Unit enemy = Map.getMap()[x][y].getUnit();
@@ -550,6 +569,10 @@ public class GameMenuController {
     }
 
     public static String digTunnel(int x, int y) {
+        if(selectedUnit != null)
+            if (!selectedUnit.getType().equals("Tunneler"))
+                return "you should select Tunneler unit!";
+        else return "you didn't select any unit!";
         for (int i = x; i <= x + 3; i++) {
             Building targetBuilding = Map.getMap()[x][y].getBuilding();
             if (!targetBuilding.getName().equals("lookout tower") && !targetBuilding.getName().endsWith("turret"))
@@ -824,7 +847,6 @@ public class GameMenuController {
     }
 
     public static String moveTool(int toolX,int toolY,int x , int y){
-        // TODO: 5/14/2023
         Tool tool = Map.getMap()[toolX][toolY].getTool();
         if (tool == null)
             return "there is no tool in this cell!";
@@ -852,5 +874,49 @@ public class GameMenuController {
             return "selected unit isn't in patrolling!";
         selectedUnit.setPatrolling(false);
         return "stop patrolling successful!";
+    }
+
+    public static String dropStair(int x,int y){
+        if(!Map.getMap()[x][y].isAvailable())
+            return "you can't drop stair!";
+        for (int i = x - 1; i <= x + 1; i++)
+            for (int j = y - 1; j <= y + 1; j++)
+                if (Map.getMap()[i][j].getWall() != null) {
+                    Map.getMap()[i][j].setPassable(true);
+                    Map.getMap()[x][y].setStair(true);
+                }
+        if(!Map.getMap()[x][y].isStair())
+            return "you can't drop stair!";
+        return "stair dropped successfully!";
+    }
+
+    public static String attackTool(int x, int y) {
+        if(selectedUnit == null || !selectedUnit.getType().equals("Knight"))
+            return "you didn't select appropriate unit!";
+        Tool tool = Map.getMap()[x][y].getTool();
+        if (tool == null) return "there is no tool!";
+        Map.getMap()[x][y].setTool(null);
+        Map.getMap()[x][y].setPassable(true);
+        Map.getMap()[x][y].setAvailable(true);
+        return "tool destroyed!";
+    }
+
+    public static String attackCastle(int x, int y) {
+        if(selectedUnit == null || !selectedUnit.getType().equals("Slaves"))
+            return "you didn't select appropriate unit!";
+        Castle castle = Map.getMap()[x][y].getCastle();
+        if(castle == null)
+            return "there is no castle!";
+        castle.decreaseHp(Integer.MAX_VALUE);
+        castle.checkCastle();
+        return "castle destroyed";
+    }
+
+    public static void setNumberOfPlayers(int numberOfPlayers) {
+        GameMenuController.numberOfPlayers = numberOfPlayers;
+    }
+
+    public static int getNumberOfPlayers() {
+        return numberOfPlayers;
     }
 }

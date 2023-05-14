@@ -17,6 +17,7 @@ public class Cell {
     private Government ditchOwner;
     private Castle castle;
     private Tool tool;
+    private boolean isStair;
 
     public Cell(Texture texture) {
         this.texture = texture;
@@ -135,5 +136,13 @@ public class Cell {
 
     public void setCastle(Castle castle) {
         this.castle = castle;
+    }
+
+    public void setStair(boolean stair) {
+        isStair = stair;
+    }
+
+    public boolean isStair() {
+        return isStair;
     }
 }

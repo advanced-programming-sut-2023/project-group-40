@@ -1,11 +1,13 @@
 package model;
 
+import controller.GameMenuController;
+
 public class Castle {
     private int hp = 10000;
     private final int x1,y1,x2,y2;
     private int population = 5;
-    private int numberOfWorkers = 5;
-    private int numberOfActiveWorker;
+    private int numberOfActiveWorker = 5;
+    private Government government;
 
     public Castle(int x1, int y1, int x2, int y2) {
         this.x1 = x1;
@@ -22,18 +24,8 @@ public class Castle {
         population += amount;
     }
 
-    public void changeNumberOfWorkers(int amount) {
-        numberOfWorkers += amount;
-    }
-    public void setNumberOfActiveWorker(int amount) {
-        numberOfActiveWorker += amount;
-    }
     public int getNumberOfActiveWorker() {
         return numberOfActiveWorker;
-    }
-
-    public int getNumberOfWorkers() {
-        return numberOfWorkers;
     }
 
     public int getX1() {
@@ -50,5 +42,35 @@ public class Castle {
 
     public int getY2() {
         return y2;
+    }
+
+    public void setGovernment(Government government) {
+        this.government = government;
+    }
+
+    public Government getGovernment() {
+        return government;
+    }
+
+    public void decreaseHp(int amount){
+        hp -= amount;
+    }
+
+    public void checkCastle(){
+        if(hp <= 0){
+            Government.getGovernments().remove(government);
+            System.out.println(government.getOwner().getUsername() + "lose!");
+            if(Government.getGovernments().size() == 1){
+                User winner = Government.getGovernments().get(0).getOwner();
+                System.out.println(winner.getUsername() + " wins!");
+                winner.setHighScore(1000* GameMenuController.getNumberOfPlayers());
+                User.updateRank();
+                System.exit(0);
+            }
+        }
+    }
+
+    public void changeNumberOfActiveWorkers(int amount) {
+        numberOfActiveWorker += amount;
     }
 }

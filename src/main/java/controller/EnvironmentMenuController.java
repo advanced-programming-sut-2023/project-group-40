@@ -141,8 +141,11 @@ public class EnvironmentMenuController {
     }
 
     public static void placeCastle(Government government, int x, int y){
-        for (int i = x; i <= x+4; i++)
-            for (int j = y; j < y+4; j++)
+        Castle castle = new Castle(x, y, x + 12, y + 12);
+        government.setCastle(castle);
+        castle.setGovernment(government);
+        for (int i = x; i <= x+ 12; i++)
+            for (int j = y; j <= y+ 12; j++)
                 Map.getMap()[i][j].setCastle(government.getCastle());
     }
 }
