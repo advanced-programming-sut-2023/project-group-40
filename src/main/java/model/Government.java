@@ -24,8 +24,6 @@ public class Government {
     private Color color = null;
     private Castle castle;
     private int emptySpace = 0;
-    private int numberOfEngineer;
-
 
     public Government(User owner) {
         this.owner = owner;
@@ -291,17 +289,6 @@ public class Government {
     public void changeCountOfHorses(int amount) {
         countofhorses -= amount;
         numberOfKnight += amount;
-    }
-
-    public int getNumberOfEngineer() {
-        int count = 0;
-        for (Building building : buildings) {
-            if (building instanceof EngineerGuild) {
-                EngineerGuild engineerGuild = (EngineerGuild) building;
-                count += engineerGuild.getCostOfEngineer();
-            }
-        }
-        return count;
     }
 
     public int getNumOfEmptySpace(String type) {

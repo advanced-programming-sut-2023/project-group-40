@@ -1,9 +1,8 @@
 package model.buildings;
 
-import model.Map;
-import model.Texture;
-import model.Tool;
-import model.Unit;
+import controller.GameMenuController;
+import model.*;
+import view.GameMenu;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,6 +32,7 @@ public class Tower extends Building {
 
     @Override
     public void action() {
+        Government government = GameMenuController.getCurrentGovernment();
         if (name.equals("lookout tower")) {
             int amount = 3;
             for (int i = x1 - amount; i < x2 + amount; i++)
@@ -41,6 +41,16 @@ public class Tower extends Building {
                     if (unit != null && unit.getTroops().get(0).getName().startsWith("archer"))
                         unit.setCanDamage(true);
                 }
+        }
+        if (name.equals("square tower") || name.equals("round tower")) {
+            for (Tool tool : tools)
+               for (int j = y1; j <= y2;j++){
+                   Unit unit = Map.getMap()[x2+tool.getRange()][j].getUnit();
+                   if (unit != null && unit.getGovernment() != government) {
+                       unit.decreaseHpOfUnit(tool.getDamage());
+                       if (unit.getHp() <= 0) Map.getMap()[x2+tool.getRange()][j].removeUnit(unit);
+                   }
+               }
         }
 
     }

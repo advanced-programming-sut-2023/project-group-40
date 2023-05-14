@@ -16,6 +16,7 @@ public class Cell {
     private boolean haveDitch;
     private Government ditchOwner;
     private Castle castle;
+    private Tool tool;
 
     public Cell(Texture texture) {
         this.texture = texture;
@@ -118,6 +119,18 @@ public class Cell {
 
     public void removeUnit(Unit unit) {
         units.remove(unit);
+        if (units.size() == 0) {
+            this.setAvailable(true);
+            this.setPassable(true);
+        }
+    }
+
+    public void setTool(Tool tool) {
+        this.tool = tool;
+    }
+
+    public Tool getTool() {
+        return tool;
     }
 
     public void setCastle(Castle castle) {

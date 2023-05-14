@@ -344,11 +344,12 @@ public class GameMenuController {
             return "you can't go to water regions!";
         if (cell.getTexture() == Texture.SHALLOW_WATER)
             selectedUnit.decreaseVelocity(1);
-        move(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit);
+        move(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit,selectedUnit.getVelocity());
         return "unit move to x: " + selectedUnit.getX() + "and y: " + selectedUnit.getY() + "successfully";
     }
 
-    private static void move(int x1, int y1, int x2, int y2, Unit unit) {
+    private static int[] move(int x1, int y1, int x2, int y2, Object object,int velocity) {
+        return new int[0];
     }
 
     public static String setUnitState(String state) {
@@ -390,7 +391,7 @@ public class GameMenuController {
             return "you can't attack this enemy!";
         if (selectedUnit.getShootingRange() != 0)
             return "your unit not appropriate for this attack";
-        move(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit);
+        move(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit,selectedUnit.getVelocity());
         Unit enemy = Map.getMap()[x][y].getUnit();
         while (enemy.getHp() <= 0 || selectedUnit.getHp() <= 0) {
             enemy.decreaseHpOfUnit(selectedUnit.getPower());
@@ -442,6 +443,8 @@ public class GameMenuController {
             }
         }
         Unit enemy = Map.getMap()[x][y].getUnit();
+        if (enemy.isHavePortableShield())
+            return "your enemy has portable shield";
         while (enemy.getHp() <= 0 || selectedUnit.getHp() <= 0) {
             enemy.decreaseHpOfUnit(selectedUnit.getPower());
             if (!checkRange(selectedUnitX, selectedUnitY, x, y, enemy.getShootingRange()) && enemy.getShootingRange() != 0)
@@ -499,12 +502,39 @@ public class GameMenuController {
         Tool tool = Tool.getToolByName(equipmentName);
         if (tool == null)
             return "your equipment name is invalid!";
-        if (currentGovernment.getNumberOfEngineer() < tool.getNumberOfEngineer())
+        if (selectedUnit.getTroops().size() < tool.getNumberOfEngineer())
             return "you haven't enough engineer";
-        if (!(selectedBuilding.getName().equals("normal tower")) && !(selectedBuilding instanceof Tower))
-            return "you can't build equipment in this building";
-        Tower tower = (Tower) selectedBuilding;
-        tower.addTool(tool);
+        if (tool == Tool.PORTABLE_SHIELD) {
+            int[] coordinate = GameMenu.getCoordinate();
+            Unit unit = Map.getMap()[coordinate[0]][coordinate[1]].getUnit();
+            if (unit == null) return "there is no unit in this cell!";
+            if (currentGovernment.getAmountOfGood(Good.GOLD) < unit.getTroops().size() * tool.getPrice())
+                return "you haven't enough gold";
+            unit.setHavePortableShield(true);
+            return "portable shield successfully build";
+        }
+        if (currentGovernment.getAmountOfGood(Good.GOLD) < tool.getPrice())
+            return "you haven't enough gold";
+        if (tool == Tool.FIERY_STONE_THROWER || tool == Tool.CATAPULT_WITH_BALANCE_WEIGHT) {
+            if (!selectedBuilding.getName().equals("square tower") && !selectedBuilding.getName().equals("round tower"))
+                return "your building don't appropriate for build this equipment";
+            Tower tower = (Tower) selectedBuilding;
+            tower.addTool(tool);
+            return "your equipment build on the tower";
+        }
+        int [] coordinates = GameMenu.getCoordinate();
+        Cell cell = Map.getMap()[coordinates[0]][coordinates[1]];
+        if (!cell.isAvailable())
+            return "your cell isn't be available";
+        cell.setAvailable(false);
+        cell.setTool(tool);
+        if (tool == Tool.SIEGE_TOWER) {
+            for (int i = coordinates[0] - 1; i <= coordinates[0] + 1; i++)
+                for (int j = coordinates[0] - 1; j <= coordinates[1] + 1; j++)
+                    if (Map.getMap()[i][j].getWall() != null)
+                        Map.getMap()[i][j].setPassable(true);
+        }
+
         return "equipment successfully dropped";
     }
 
@@ -676,8 +706,6 @@ public class GameMenuController {
         return "ditch deleted successfully";
     }
 
-    ;
-
     public static String captureTheGate(int x, int y) {
         Cell cell = Map.getMap()[x][y];
         Building targetBuilding = cell.getBuilding();
@@ -738,5 +766,32 @@ public class GameMenuController {
     public static void setDefaults() {
         selectedBuilding = null;
         selectedUnit = null;
+    }
+
+    public static String moveTool(int toolX,int toolY,int x , int y){
+        // TODO: 5/14/2023
+        Tool tool = Map.getMap()[toolX][toolY].getTool();
+        if (tool == null)
+            return "there is no tool in this cell!";
+        int[] coordinates = move(toolX,toolY,x,y,tool,tool.getVelocity());
+        if (coordinates[0] == toolX && coordinates[1] == toolY)
+            return "you can't move your tool";
+        Map.getMap()[toolX][toolY].setTool(null);
+        Map.getMap()[toolX][toolY].setAvailable(true);
+        Map.getMap()[toolX][toolY].setPassable(true);
+        Map.getMap()[coordinates[0]][coordinates[1]].setTool(tool);
+        Building building = Map.getMap()[coordinates[0]][coordinates[1] + tool.getRange()].getBuilding();
+        if (building != null)  {
+            building.setHp(building.getHp() - tool.getDamage());
+            if (building.getHp() <= 0) {
+                for (int i = building.getX1() ; i <= building.getX2();i++)
+                    for (int j = building.getY1(); j < building.getY2(); j++) {
+                        Map.getMap()[i][j].setAvailable(true);
+                        Map.getMap()[i][j].setPassable(true);
+                        Map.getMap()[i][j].setBuilding(null);
+                    }
+            }
+        }
+        return "tool moved successfully";
     }
 }
