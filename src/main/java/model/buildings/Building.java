@@ -123,4 +123,7 @@ public class Building implements Serializable,BuildingAction {
     public void setHp(int hp) {
         this.hp = hp;
     }
+    public BuildingGroups getGroup() {
+        return group;
+    }
 }

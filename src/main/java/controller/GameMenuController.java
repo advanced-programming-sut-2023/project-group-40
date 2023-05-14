@@ -248,7 +248,13 @@ public class GameMenuController {
         }
         if (selectedBuilding instanceof CagedWarDogs cagedWarDogs)
             cagedWarDogs.setOpen(true);
-        return "target building selected";
+        String output = "target building selected";
+        if (selectedBuilding.getGroup().equals(BuildingGroups.CASTLE))
+            output += " (max hp = " + selectedBuilding.getMaxHp() + ", hp = " + selectedBuilding.getHp() + ")";
+        if (selectedBuilding.getGroup().equals(BuildingGroups.CASTLE) && selectedBuilding.getHp() < selectedBuilding.getMaxHp())
+            return GameMenu.repair(output);
+        else
+            return output;
     }
 
     public static String createUnit(int x, int y, String type, int count) {
@@ -304,7 +310,16 @@ public class GameMenuController {
     }
 
     public static String repair() {
-        return null;
+        for (int i = selectedBuilding.getX1() - 1; i < selectedBuilding.getX2() + 1; i++)
+            for (int j = selectedBuilding.getY1() - 1; j < selectedBuilding.getY2() + 1; j++) {
+                Unit unit = Map.getMap()[i][j].getUnit();
+                if (unit != null && !unit.getGovernment().equals(currentGovernment))
+                    return "enemy is near your building!";
+            }
+        int consumableStone = (int) Math.ceil((double) (selectedBuilding.getMaxHp() - selectedBuilding.getHp()) / 40);
+        selectedBuilding.getOwner().decreaseAmountOfGood(Good.STONE, consumableStone);
+        selectedBuilding.setHp(selectedBuilding.getMaxHp());
+        return "repair successful";
     }
 
     public static String selectUnit(int x, int y) {
