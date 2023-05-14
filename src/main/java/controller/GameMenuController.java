@@ -43,10 +43,10 @@ public class GameMenuController {
     public static String setFoodRate(int rate) {
         if (rate > 2 || rate < -2) return "rate-number is out of bound";
         currentGovernment.setFoodRate(rate);
-        int numberOfFoods = currentGovernment.getAmountOfGood(Good.FOOD1);
-        numberOfFoods += currentGovernment.getAmountOfGood(Good.FOOD2);
-        numberOfFoods += currentGovernment.getAmountOfGood(Good.FOOD3);
-        numberOfFoods += currentGovernment.getAmountOfGood(Good.FOOD4);
+        int numberOfFoods = currentGovernment.getAmountOfGood(Good.MEAT);
+        numberOfFoods += currentGovernment.getAmountOfGood(Good.APPLE);
+        numberOfFoods += currentGovernment.getAmountOfGood(Good.CHEESE);
+        numberOfFoods += currentGovernment.getAmountOfGood(Good.BREAD);
         switch (rate) {
             case -2:
                 currentGovernment.changePopularity(-8);
@@ -187,23 +187,36 @@ public class GameMenuController {
         return coordinate > 0 && coordinate <= Map.getSize();
     }
 
-    public static String dropBuilding(int x, int y, String type) {
+    public static String dropBuilding(int x1, int y1, int x2, int y2, String type) {
         //جنس زمین
         //دروازه بسازیم دیوار خراب شه
-        if (Map.getMap()[x][y].getRock() != null)
-            return "you can not drop building because there is a rock in this cell!";
-        if (!isCoordinateValid(x) || !isCoordinateValid(y)) return "your coordinates is incorrect!";
-        if (Map.getMap()[x][y].getBuilding() != null) return "There is already a building in your coordinates!";
+        if (x1 > x2 || y1 > y2) return "your coordinates is incorrect!";
+        for (int i = x1; i < x2; i++)
+            for (int j = y1; j < y2; j++) {
+                if (!Map.getMap()[i][j].isAvailable())
+                    return "you can't drop building because this cell isn't available";
+                if (!isCoordinateValid(i) || !isCoordinateValid(j))
+                    return "your coordinates is incorrect!";
+                if (!Map.getMap()[i][j].getTexture().getType().equals("water"))
+                    return "You can't drop  building because texture of this cell is water";
+            }
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
         if (targetBuilding == null) return "your building type is incorrect!";
-        if (targetBuilding.checkTexture(Map.getMap()[x][y].getTexture()))
-            return "you can not drop building to target cell!";
+        if ((x2 - x1) != (targetBuilding.getX2() - targetBuilding.getX1()) || (y2 - y1) != (targetBuilding.getY2() - targetBuilding.getY1()))
+            return "your coordinates is incorrect!";
+        for (int i = x1; i < x2; i++)
+            for (int j = y1; j < y2; j++)
+                if (targetBuilding.checkTexture(Map.getMap()[i][j].getTexture()))
+                    return "you can't drop " + targetBuilding.getName() + " in " + Map.getMap()[i][j].getTexture().getType();
         currentGovernment.decreaseAmountOfGood(Good.GOLD, targetBuilding.getCost()[0]);
         currentGovernment.decreaseAmountOfGood(Good.WOOD, targetBuilding.getCost()[1]);
         currentGovernment.decreaseAmountOfGood(Good.STONE, targetBuilding.getCost()[2]);
-        Map.getMap()[x][y].setBuilding(targetBuilding);
-        Map.getMap()[x][y].setAvailable(false);
-        Map.getMap()[x][y].setPassable(false);
+        for (int i = x1; i < x2; i++)
+            for (int j = y1; j < y2; j++) {
+                Map.getMap()[i][j].setBuilding(targetBuilding);
+                Map.getMap()[i][j].setAvailable(false);
+                Map.getMap()[i][j].setPassable(false);
+            }
         currentGovernment.addBuilding(targetBuilding);
         if (targetBuilding.getName().equals("Woodcutter")) {
             Mine mine = (Mine) targetBuilding;
@@ -397,7 +410,7 @@ public class GameMenuController {
             return "your unit not appropriate for this attack";
         if (Map.getMap()[x][y].getUnit() == null) {
             Building building = Map.getMap()[x][y].getBuilding();
-            if ( building == null)
+            if (building == null)
                 return "there is no enemy in this cell!";
             else {
                 while (building.getHp() == 0 || selectedUnit.getHp() == 0) {
@@ -465,7 +478,7 @@ public class GameMenuController {
         return "tunnel digged successfully";
     }
 
-    public static String buildEquipments(String equipmentName,int unitX,int unitY,int x,int y) {
+    public static String buildEquipments(String equipmentName) {
         if (!selectedUnit.getType().equals("Engineer"))
             return "you don't select Engineer Unit";
         Tool tool = Tool.getToolByName(equipmentName);
@@ -529,8 +542,8 @@ public class GameMenuController {
 
     public static void checkPopulation() {
         for (Government government : Government.getGovernments()) {
-            int amountOfFoods = government.getAmountOfGood(Good.FOOD1) + government.getAmountOfGood(Good.FOOD2)
-                    + government.getAmountOfGood(Good.FOOD3) + government.getAmountOfGood(Good.FOOD4);
+            int amountOfFoods = government.getAmountOfGood(Good.MEAT) + government.getAmountOfGood(Good.APPLE)
+                    + government.getAmountOfGood(Good.CHEESE) + government.getAmountOfGood(Good.BREAD);
             int additionalFood = amountOfFoods - government.getPopulation();
             int emptySpaces = government.getEmptySpaces();
             government.increasePopulation(Math.min(additionalFood, emptySpaces));

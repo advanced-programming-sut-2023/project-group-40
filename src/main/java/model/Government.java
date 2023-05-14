@@ -184,11 +184,13 @@ public class Government {
     }
 
     public void decreaseAmountOfFood(int amount) {
-        int remainFromFood1 = decreaseAmountOfOneFood(amount, Good.FOOD1);
+        int remainFromFood1 = decreaseAmountOfOneFood(amount, Good.APPLE);
         if (remainFromFood1 == 0) return;
-        int remainFromFood2 = decreaseAmountOfOneFood(remainFromFood1, Good.FOOD1);
+        int remainFromFood2 = decreaseAmountOfOneFood(remainFromFood1, Good.MEAT);
         if (remainFromFood2 == 0) return;
-        decreaseAmountOfOneFood(remainFromFood2, Good.FOOD1);
+        int remainFromFood3 = decreaseAmountOfOneFood(remainFromFood1, Good.BREAD);
+        if(remainFromFood3 == 0) return;
+        decreaseAmountOfOneFood(remainFromFood2, Good.BEER);
     }
 
     public int decreaseAmountOfOneFood(int amount, Good food) {
@@ -203,10 +205,10 @@ public class Government {
 
     public int getNumberOfFoodVariety() {
         int result = 0;
-        if (getAmountOfGood(Good.FOOD1) != 0) result++;
-        if (getAmountOfGood(Good.FOOD2) != 0) result++;
-        if (getAmountOfGood(Good.FOOD3) != 0) result++;
-        if (getAmountOfGood(Good.FOOD4) != 0) result++;
+        if (getAmountOfGood(Good.MEAT) != 0) result++;
+        if (getAmountOfGood(Good.APPLE) != 0) result++;
+        if (getAmountOfGood(Good.CHEESE) != 0) result++;
+        if (getAmountOfGood(Good.BREAD) != 0) result++;
         if (result == 0) result = 1;
         return result;
     }

@@ -74,10 +74,12 @@ public class GameMenu {
     }
 
     public static String dropBuilding(Matcher matcher) {
-        int x = Integer.parseInt(matcher.group("x"));
-        int y = Integer.parseInt(matcher.group("y"));
+        int x1 = Integer.parseInt(matcher.group("x1"));
+        int y1 = Integer.parseInt(matcher.group("y1"));
+        int x2 = Integer.parseInt(matcher.group("x2"));
+        int y2 = Integer.parseInt(matcher.group("y2"));
         String type = matcher.group("type");
-        return GameMenuController.dropBuilding(x, y, type);
+        return GameMenuController.dropBuilding(x1, y1, x2, y2, type);
     }
 
     public static String selectBuilding(Matcher matcher) throws ReflectiveOperationException {
