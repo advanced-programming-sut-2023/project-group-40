@@ -12,7 +12,7 @@ public enum Buildings {
     DRAW_BRIDGE("drawbridge", new Bridge("drawbridge", 3,3,3000, new int[]{0,10,0,0,0}, new HashSet<>(), false, BuildingGroups.CASTLE)),
     LOOKOUT_TOWER("lookout tower", new Tower("lookout tower", 2,2, 1300, new int[]{0,0,10,0,0}, false, 10,5, new HashSet<>() , false, BuildingGroups.CASTLE)),
     PERIMETER_TOWER("perimeter tower", new Tower("perimeter tower", 3,3,1000, new int[]{0,0,10,0,0}, false, 10,5, new HashSet<>() , false, BuildingGroups.CASTLE)),
-    DEFENCE_TURRENT("defence turrent", new Tower("defence turrent", 3,3, 1200, new int[]{0,0,15,0,0}, false, 10,5, new HashSet<>() , false, BuildingGroups.CASTLE)),
+    DEFENCE_TURRET("defence turret", new Tower("defence turret", 3,3, 1200, new int[]{0,0,15,0,0}, false, 10,5, new HashSet<>() , false, BuildingGroups.CASTLE)),
     SQUARE_TOWER("square tower", new Tower("square tower", 3,3,1600,new int[]{0,0,35,0,0}, true, 10,5, new HashSet<>() , false, BuildingGroups.CASTLE)),
     ROUND_TOWER("round tower", new Tower("round tower", 3,3,2000,new int[]{0,0,40,0,0}, true, 10,5, new HashSet<>() , false, BuildingGroups.CASTLE)),
     ARMOURY("armoury", new Storage("armory", 3,3,500,new int[]{0,5,0,0,0}, 1000, new HashSet<>(), false, BuildingGroups.CASTLE,"weapon")),

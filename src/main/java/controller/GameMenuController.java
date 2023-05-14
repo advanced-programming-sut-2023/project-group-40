@@ -2,7 +2,6 @@ package controller;
 
 import model.*;
 import model.Color;
-import model.Turret;
 import model.buildings.*;
 import model.troops.Troop;
 import model.troops.Troops;
@@ -10,6 +9,7 @@ import view.*;
 import model.buildings.Buildings;
 import view.enums.Commands;
 
+import javax.imageio.metadata.IIOMetadataFormat;
 import java.lang.reflect.Field;
 
 enum Direction {
@@ -282,9 +282,9 @@ public class GameMenuController {
                 return "you don't have enough armor for create this unit";
             if (troop.getName().equals("Black Monk") && !selectedBuilding.getName().equals("Cathedral"))
                 return "you can make Black Monk only in Cathedral";
-            if (type.equals("european") && selectedBuilding.getName().equals("Mercenary Post"))
+            if (troop.getRegion().equals("european") && selectedBuilding.getName().equals("Mercenary Post"))
                 return "you can't create european in Mercenary Post";
-            if (type.equals("arabian") && selectedBuilding.getName().equals("barrack"))
+            if (troop.getRegion().equals("arabian") && selectedBuilding.getName().equals("barrack"))
                 return "you can't create arabian in barrack";
             if (type.equals("engineer") && selectedBuilding.getName().equals("engineer guild"))
                 return "you can create engineer unit only in engineer guild";
@@ -467,19 +467,32 @@ public class GameMenuController {
     }
 
     public static String pourOil(String direction) {
-        return null;
+        if (!selectedUnit.getType().equals("engineer"))
+            return "you should choose engineer unit!";
+        if (selectedUnit.getTroops().size() > currentGovernment.getAmountOfGood(Good.MELTING_POT))
+            return "you don't have enough oil";
+        int x = selectedUnit.getX();
+        int y = selectedUnit.getY();
+        switch (direction) {
+            case "top" : y--;
+            case "right": x++;
+            case "bottom" : y++;
+            case "left" : x--;
+        }
+        Unit unit = Map.getMap()[x][y].getUnit();
+        if (unit != null) unit.decreaseHpOfUnit(200);
+        return "oil successfully poured";
     }
 
     public static String digTunnel(int x, int y) {
-        Building targetBuilding = Map.getMap()[x][y].getBuilding();
-        if (targetBuilding instanceof Tower && !targetBuilding.getName().equals("lookout tower") ||
-                targetBuilding instanceof Turret && !targetBuilding.getName().equals("turret"))
-            return "you can't dig tunnel under this building";
-        if (Map.getMap()[x][y].getTexture().getType().equals("water"))
-            return "you can't dig tunnel on water regions";
-        if (Map.getMap()[x][y].isStartDigging() || Map.getMap()[x][y].isHaveDitch())
-            return "you can't dig tunnel on ditch";
-        for (int i = x; i < x + 3; i++) {
+        for (int i = x; i <= x + 3; i++) {
+            Building targetBuilding = Map.getMap()[x][y].getBuilding();
+            if (!targetBuilding.getName().equals("lookout tower") && !targetBuilding.getName().endsWith("turret"))
+                return "you can't dig tunnel under this building";
+            if (Map.getMap()[x][y].getTexture().getType().equals("water"))
+                return "you can't dig tunnel on water regions";
+            if (Map.getMap()[x][y].isStartDigging() || Map.getMap()[x][y].isHaveDitch())
+                return "you can't dig tunnel on ditch";
             targetBuilding = Map.getMap()[i][y].getBuilding();
             currentGovernment.getBuildings().remove(targetBuilding);
             for (int j = targetBuilding.getX1(); j <= targetBuilding.getX2(); j++) {
@@ -655,26 +668,6 @@ public class GameMenuController {
                 Map.getMap()[x][i].setPassable(false);
             }
         return "wall dropped successfully";
-    }
-
-    public static String dropTower(int x, int y) {
-        Cell cell = Map.getMap()[x][y];
-        if (!cell.isAvailable())
-            return "this cell not available!";
-        cell.setAvailable(false);
-        cell.setPassable(false);
-        currentGovernment.addBuilding(new Turret("normal tower", 5, 10, 1000, new int[]{0, 0, 20, 0, 0}, 20));
-        return "normal tower dropped successfully";
-    }
-
-    public static String dropTurret(int x, int y) {
-        Cell cell = Map.getMap()[x][y];
-        if (!cell.isAvailable())
-            return "this cell not available!";
-        currentGovernment.addBuilding(new Turret("normal tower", 2, 5, 500, new int[]{0, 0, 10, 0, 0}, 10));
-        cell.setAvailable(false);
-        cell.setPassable(false);
-        return "turret dropped successfully";
     }
 
     public static String startDiggingDitch(int x, int y) {

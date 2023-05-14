@@ -2,28 +2,22 @@ package model.troops;
 
 
 import model.Good;
-import model.Government;
 
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
-public class Troop implements Serializable {
-    private String name;
-    private Good weapon;
-    private int hp;
-    private Government owner;
+public class Troop {
+    private final String name;
     private final String region;
-    private int velocity,powerOfAttack;
-    private final int powerOfDefence,value;
+    private final Good weapon;
+    private final int powerOfAttack,value,shootingRange,hp;
     private final boolean hasArmor;
-    private int shootingRange;
+    private int velocity;
 
-    public Troop(String name, String region, int velocity, int powerOfAttack, int powerOfDefence, int value, boolean hasArmor, int shootingRange,Good weapon) {
+    public Troop(String name, String region, int velocity, int powerOfAttack, int hp, int value, boolean hasArmor, int shootingRange,Good weapon) {
+        this.name = name;
         this.region = region;
         this.velocity = velocity;
         this.powerOfAttack = powerOfAttack;
-        this.powerOfDefence = powerOfDefence;
+        this.hp = 10 * hp;
         this.value = value;
         this.hasArmor = hasArmor;
         this.shootingRange = shootingRange;
@@ -42,9 +36,6 @@ public class Troop implements Serializable {
         return powerOfAttack;
     }
 
-    public int getPowerOfDefence() {
-        return powerOfDefence;
-    }
 
     public int getValue() {
         return value;
@@ -56,18 +47,6 @@ public class Troop implements Serializable {
 
     public int getShootingRange() {
         return shootingRange;
-    }
-
-    public void setShootingRange(int shootingRange) {
-        this.shootingRange = shootingRange;
-    }
-
-    public Government getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Government owner) {
-        this.owner = owner;
     }
 
     public void changeVelocity(int percent){

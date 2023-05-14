@@ -140,23 +140,31 @@ public class GameMenu {
     }
 
     public static String setUnitState(Matcher matcher) {
-        return null;
+        String state = matcher.group("state");
+        return GameMenuController.setUnitState(state);
     }
 
     public static String attackEnemy(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.attackEnemy(x,y);
     }
 
     public static String airAttack(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.airAttack(x,y);
     }
 
     public static String pourOil(Matcher matcher) {
-        return null;
+        String direction = matcher.group("direction");
+        return GameMenuController.pourOil(direction);
     }
 
     public static String digTunnel(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.digTunnel(x,y);
     }
 
     public static String buildEquipments(Matcher matcher) {
@@ -165,15 +173,7 @@ public class GameMenu {
     }
 
     public static String disbandUnit(Matcher matcher) {
-        return null;
-    }
-
-    public static String dropUnit(Matcher matcher) {
-        return null;
-    }
-
-    public static String enterTrade(Matcher matcher) {
-        return null;
+        return GameMenuController.disbandUnit();
     }
 
     public static String dropWall(Matcher matcher) {
@@ -183,18 +183,6 @@ public class GameMenu {
         int height = Integer.parseInt(matcher.group("height"));
         String direction = matcher.group("direction");
         return GameMenuController.dropWall(x, y, thickness, height, direction);
-    }
-
-    public static String dropTower(Matcher matcher) {
-        int x = Integer.parseInt(matcher.group("x"));
-        int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.dropTower(x, y);
-    }
-
-    public static String dropTurret(Matcher matcher) {
-        int x = Integer.parseInt(matcher.group("x"));
-        int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.dropTurret(x, y);
     }
 
     public static String startDiggingDitch(Matcher matcher) {
@@ -250,5 +238,13 @@ public class GameMenu {
         coordinates[0] = Commands.scanner.nextInt();
         coordinates[1] = Commands.scanner.nextInt();
         return coordinates;
+    }
+
+    public String moveTool(Matcher matcher){
+        int toolX = Integer.parseInt(matcher.group("toolX"));
+        int toolY = Integer.parseInt(matcher.group("toolY"));
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.moveTool(toolX,toolY,x, y);
     }
 }
