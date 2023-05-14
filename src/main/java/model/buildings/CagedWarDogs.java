@@ -1,6 +1,9 @@
 package model.buildings;
 
+import controller.GameMenuController;
+import model.Map;
 import model.Texture;
+import model.Unit;
 
 import java.util.HashSet;
 
@@ -18,7 +21,15 @@ public class CagedWarDogs extends Building {
     @Override
     public void action() {
         if (isOpen) {
-            // TODO: 5/11/2023
+            Unit unit = GameMenuController.findNearestUnit(4,(x1+x2)/2,(y1+y2)/2);
+            if (unit != null) {
+                unit.decreaseHpOfUnit(300);
+                if (unit.getHp() < 0) {
+                    Map.getMap()[unit.getX()][unit.getY()].removeUnit(unit);
+                    Map.getMap()[unit.getX()][unit.getY()].setPassable(true);
+                    Map.getMap()[unit.getX()][unit.getY()].setAvailable(true);
+                }
+            }
         }
     }
 }

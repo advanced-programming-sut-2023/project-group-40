@@ -3,8 +3,10 @@ package model.troops;
 
 import model.Good;
 
+import java.io.Serializable;
 
-public class Troop {
+
+public class Troop implements Serializable {
     private final String name;
     private final String region;
     private final Good weapon;

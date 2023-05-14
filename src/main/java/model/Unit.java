@@ -83,17 +83,17 @@ public class Unit {
         return velocity;
     }
 
-    public void changeX(int amount){
+    public void changeXY(int newX, int newY){
         Map.getMap()[x][y].removeUnit(this);
-        x += amount;
+        Map.getMap()[x][y].setAvailable(true);
+        Map.getMap()[x][y].setPassable(true);
+        x = newX;
+        y = newY;
         Map.getMap()[x][y].addUnit(this);
+        Map.getMap()[x][y].setAvailable(false);
+        Map.getMap()[x][y].setPassable(false);
     }
 
-    public void changeY(int amount){
-        Map.getMap()[x][y].removeUnit(this);
-        y += amount;
-        Map.getMap()[x][y].addUnit(this);
-    }
 
     public boolean isCanClimb() {
         return canClimb;

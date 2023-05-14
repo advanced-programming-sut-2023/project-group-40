@@ -9,12 +9,8 @@ import view.*;
 import model.buildings.Buildings;
 import view.enums.Commands;
 
-import javax.imageio.metadata.IIOMetadataFormat;
 import java.lang.reflect.Field;
 
-enum Direction {
-
-}
 
 public class GameMenuController {
     private static Government currentGovernment;
@@ -327,10 +323,9 @@ public class GameMenuController {
     }
 
     public static String moveUnit(int x, int y) {
-        //add to dfs
-        //بعد خروج اب سرعتشون زیاد شه
-        //توی move unit بذاریم سربازا برن تو برج و برجک ؟؟
         Cell cell = Map.getMap()[x][y];
+        if(!checkRange(selectedUnit.getX(),selectedUnit.getY(),x,y,selectedUnit.getVelocity()))
+            return "out of range!";
         if (!cell.isPassable() && (!(cell.getBuilding() instanceof GateHouse) || selectedUnit.getGovernment() != currentGovernment))
             return "you can't pass this cell;";
         if (!cell.isAvailable() && cell.getWall() == null)
@@ -341,12 +336,61 @@ public class GameMenuController {
             return "you can't go to water regions!";
         if (cell.getTexture() == Texture.SHALLOW_WATER)
             selectedUnit.decreaseVelocity(1);
-        move(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit,selectedUnit.getVelocity());
+        if(!checkMove(selectedUnit.getX(),selectedUnit.getY(),x,y,selectedUnit,selectedUnit.getVelocity()))
+            return "no path found!";
+        selectedUnit.changeXY(x,y);
         return "unit move to x: " + selectedUnit.getX() + "and y: " + selectedUnit.getY() + "successfully";
     }
 
-    private static int[] move(int x1, int y1, int x2, int y2, Object object,int velocity) {
-        return new int[0];
+    private static boolean canPass(int x, int y){
+        Cell cell = Map.getMap()[x][y];
+        if (!cell.isPassable() && (!(cell.getBuilding() instanceof GateHouse) || selectedUnit.getGovernment() != currentGovernment))
+            return false;
+        if (!cell.isAvailable() && cell.getWall() == null)
+            return false;
+        if (!cell.isAvailable() && cell.getWall() != null && !selectedUnit.isCanClimb())
+            return false;
+        return !cell.getTexture().getType().equals("water");
+    }
+
+    private static boolean isPathExists(boolean[][] passableCells, int x1,int y1, int x2, int y2){
+        System.out.println(x1 + "    " + y1);
+        int maxX = passableCells.length;
+        int maxY = passableCells[0].length;
+        if(x1 == x2 && y1 == y2) return true;
+        if(x1 > 0 && passableCells[x1 - 1][y1]) {
+            passableCells[x1][y1] = false;
+            if (isPathExists(passableCells, x1 - 1, y1, x2, y2)) return true;
+            passableCells[x1][y1] = true;
+        }
+        if(y1 > 0 && passableCells[x1][y1 - 1]) {
+            passableCells[x1][y1] = false;
+            if (isPathExists(passableCells, x1, y1 - 1, x2, y2)) return true;
+            passableCells[x1][y1] = true;
+        }
+        if(x1 < maxX - 1 && passableCells[x1 + 1][y1]) {
+            passableCells[x1][y1] = false;
+            if (isPathExists(passableCells, x1 + 1, y1, x2, y2)) return true;
+            passableCells[x1][y1] = true;
+        }
+        if(y1 < maxY - 1 && passableCells[x1][y1 + 1]) {
+            passableCells[x1][y1] = false;
+            if (isPathExists(passableCells, x1, y1 + 1, x2, y2)) return true;
+            passableCells[x1][y1] = true;
+        }
+        return false;
+    }
+
+    private static boolean checkMove(int x1, int y1, int x2, int y2, Object object, int velocity) {
+        boolean [][] passableCells = new boolean[Math.min(Map.getSize() - 1,x1 + velocity) - Math.max(0, x1 - velocity)]
+                [Math.min(Map.getSize() - 1, y1 + velocity) - Math.max(0, y1 - velocity)];
+        for (int i = Math.max(0, x1 - velocity); i < Math.min(Map.getSize() - 1,x1 + velocity); i++) {
+            for (int j = Math.max(0, y1 - velocity); j < Math.min(Map.getSize() - 1, y1 + velocity); j++) {
+                passableCells[i - Math.max(0, x1 - velocity)][j - Math.max(0, y1 - velocity)] = canPass(i,j);
+            }
+        }
+        return isPathExists(passableCells,x1 - Math.max(0, x1 - velocity),y1 - Math.max(0, y1 - velocity)
+                ,x2 - Math.max(0, x1 - velocity), y2 - Math.max(0, y1 - velocity));
     }
 
     public static String setUnitState(String state) {
@@ -388,7 +432,7 @@ public class GameMenuController {
             return "you can't attack this enemy!";
         if (selectedUnit.getShootingRange() != 0)
             return "your unit not appropriate for this attack";
-        move(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit,selectedUnit.getVelocity());
+        checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit,selectedUnit.getVelocity());
         Unit enemy = Map.getMap()[x][y].getUnit();
         while (enemy.getHp() <= 0 || selectedUnit.getHp() <= 0) {
             enemy.decreaseHpOfUnit(selectedUnit.getPower());
@@ -763,14 +807,11 @@ public class GameMenuController {
         Tool tool = Map.getMap()[toolX][toolY].getTool();
         if (tool == null)
             return "there is no tool in this cell!";
-        int[] coordinates = move(toolX,toolY,x,y,tool,tool.getVelocity());
-        if (coordinates[0] == toolX && coordinates[1] == toolY)
-            return "you can't move your tool";
         Map.getMap()[toolX][toolY].setTool(null);
         Map.getMap()[toolX][toolY].setAvailable(true);
         Map.getMap()[toolX][toolY].setPassable(true);
-        Map.getMap()[coordinates[0]][coordinates[1]].setTool(tool);
-        Building building = Map.getMap()[coordinates[0]][coordinates[1] + tool.getRange()].getBuilding();
+        Map.getMap()[x][y].setTool(tool);
+        Building building = Map.getMap()[x][y + tool.getRange()].getBuilding();
         if (building != null)  {
             building.setHp(building.getHp() - tool.getDamage());
             if (building.getHp() <= 0) {
