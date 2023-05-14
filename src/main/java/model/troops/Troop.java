@@ -4,10 +4,11 @@ package model.troops;
 import model.Good;
 import model.Government;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class Troop{
+public class Troop implements Serializable {
     private String name;
     private Good weapon;
     private int hp;

@@ -3,9 +3,11 @@ package model.buildings;
 import model.Government;
 import model.Texture;
 import model.Unit;
+
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class Building implements BuildingAction {
+public class Building implements Serializable,BuildingAction {
     protected int x1, y1, x2, y2;
     private boolean isIllegal;
     protected BuildingGroups group;

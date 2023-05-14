@@ -1,6 +1,7 @@
 package model.troops;
 
 import model.Good;
+import org.apache.commons.lang3.SerializationUtils;
 
 public enum Troops {
     ARCHER("archer", new Troop("archer", "european", 9, 4, 5, 12, false, 5, Good.BOW)),
@@ -33,7 +34,7 @@ public enum Troops {
     public static Troop getTroopObjectByType(String type) {
         for (Troops troop : values())
             if (troop.fullName.equals(type))
-                return troop.troopObject;
+                return SerializationUtils.clone(troop.troopObject);
         return null;
     }
 }
