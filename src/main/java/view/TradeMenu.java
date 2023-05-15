@@ -24,15 +24,19 @@ public class TradeMenu {
         }
         while (true) {
             String command = Commands.scanner.nextLine();
+            if(command.equals("return")){
+                System.out.println("you are in game menu");
+                return;
+            }
             System.out.println(Commands.regexFinder(command, TradeMenu.class));
         }
     }
 
     public static String sendRequest(Matcher matcher) {
-        String resourceType = matcher.group("resourceType");
+        String resourceType = Commands.eraseQuot(matcher.group("resourceType"));
         int resourceAmount = Integer.parseInt(matcher.group("resourceAmount"));
         int price = Integer.parseInt(matcher.group("price"));
-        String message = matcher.group("message");
+        String message = Commands.eraseQuot(matcher.group("message"));
         return TradeMenuController.sendRequest(resourceType, resourceAmount, price, message, targetUsername);
     }
 
@@ -42,7 +46,7 @@ public class TradeMenu {
 
     public static String acceptTrade(Matcher matcher) {
         int id = Integer.parseInt(matcher.group("id"));
-        String message = matcher.group("message");
+        String message = Commands.eraseQuot(matcher.group("message"));
         return TradeMenuController.acceptTrade(id, message);
     }
 

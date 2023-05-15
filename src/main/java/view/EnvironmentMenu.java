@@ -43,7 +43,7 @@ public class EnvironmentMenu {
     }
     public static String setTexture(Matcher matcher) {
         String type = Commands.eraseQuot(matcher.group("type"));
-        if (matcher.group("x") != null) {
+        if (matcher.groupCount() == 10) {
             int x = Integer.parseInt(matcher.group("x"));
             int y = Integer.parseInt(matcher.group("y"));
             return EnvironmentMenuController.setTexture(x, y, type);
@@ -129,7 +129,4 @@ public class EnvironmentMenu {
         return countOfPlayers;
     }
 
-    public static void nextTurn(Matcher matcher) throws ReflectiveOperationException {
-        LoginMenu.run();
-    }
 }

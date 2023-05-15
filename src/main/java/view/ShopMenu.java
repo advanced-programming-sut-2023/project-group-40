@@ -10,7 +10,11 @@ public class ShopMenu {
         System.out.println("you are in shop menu!");
         while (true) {
             String command = Commands.scanner.nextLine();
-            System.out.println(Commands.regexFinder(command, TradeMenu.class));
+            if(command.equals("return")){
+                System.out.println("you are in game menu");
+                return;
+            }
+            System.out.println(Commands.regexFinder(command, ShopMenu.class));
         }
     }
 

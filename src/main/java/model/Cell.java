@@ -10,7 +10,7 @@ public class Cell {
     private Tree tree;
     private Rock rock;
     private Texture texture;
-    private ArrayList<Unit> units;
+    private final ArrayList<Unit> units = new ArrayList<>();
     private Wall wall;
     private boolean isStartDigging;
     private boolean haveDitch;
@@ -115,6 +115,8 @@ public class Cell {
     }
 
     public Unit getUnit() {
+        if(units.size() == 0)
+            return null;
         return units.get(0);
     }
 

@@ -61,6 +61,8 @@ public class ShopMenuController {
             if (count > currentGovernment.getAmountOfGood(good)) {
                 return "you haven't enough " + name;
             }
+            if (price > currentGovernment.getNumOfEmptySpace(Good.GOLD.getType()))
+                return "you haven't enough space for gold";
             currentGovernment.increaseAmountOfGood(Good.GOLD, price);
             currentGovernment.decreaseAmountOfGood(good, count);
             return "sell successful";

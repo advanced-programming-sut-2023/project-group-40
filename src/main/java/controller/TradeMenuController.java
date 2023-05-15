@@ -14,15 +14,15 @@ public class TradeMenuController {
     private static Government currentGovernment, targetGovernment;
 
     public static String showNotification() {
-        String output = "Notifications: \n";
+        StringBuilder output = new StringBuilder("Notifications: \n");
         for (TradeRequest request : currentGovernment.getRequests()) {
             if (!request.getHasSeen()) {
                 String username = request.getSender().getOwner().getUsername();
-                output += request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
+                output.append(request.getId()).append(") username: ").append(username).append("\n   count: ").append(request.getCount()).append("\n   price: ").append(request.getPrice()).append("\n   ").append(username).append("'s message: ").append(request.getSenderMessage()).append("\n");
                 request.setHasSeen(true);
             }
         }
-        return output;
+        return output.toString();
     }
 
     public static String sendRequest(String type, int amount, int price, String message, String username) {
@@ -36,16 +36,18 @@ public class TradeMenuController {
     }
 
     public static String showTradeList() {
-        String output = "Unaccepted Requests:";
+        StringBuilder output = new StringBuilder("Unaccepted Requests:");
         for (TradeRequest request : currentGovernment.getRequests()) {
             if (!request.getAccepted()) {
                 String username = request.getSender().getOwner().getUsername();
-                output += "\n" + request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n" + "   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
+                output.append("\n").append(request.getId()).append(") username: ").append(username).append("\n   count: ")
+                        .append(request.getCount()).append("\n").append("   price: ").append(request.getPrice())
+                        .append("\n   ").append(username).append("'s message: ").append(request.getSenderMessage()).append("\n");
             }
         }
-        if(!output.contains("count"))
+        if(!output.toString().contains("count"))
             return "no exist unaccepted requests";
-        return output;
+        return output.toString();
     }
 
     public static String acceptTrade(int id, String message) {
@@ -72,33 +74,30 @@ public class TradeMenuController {
     }
 
     public static String showTradeHistory() {
-        String output = "All Request:";
+        StringBuilder output = new StringBuilder("All Request:");
         for (TradeRequest request : currentGovernment.getRequests()) {
             String username = request.getSender().getOwner().getUsername();
-            output += "\n" + request.getId() + ") username: " + username + "\n   count: " + request.getCount() + "\n   price: " + request.getPrice() + "\n   " + username + "'s message: " + request.getSenderMessage();
-            if (request.getReceiverMessage() != null) output += "\n   your message: " + request.getReceiverMessage();
+            output.append("\n").append(request.getId()).append(") username: ").append(username).append("\n   count: ").append(request.getCount()).append("\n   price: ").append(request.getPrice()).append("\n   ").append(username).append("'s message: ").append(request.getSenderMessage());
+            if (request.getReceiverMessage() != null) output.append("\n   your message: ").append(request.getReceiverMessage());
         }
-        if(!output.contains("count"))
+        if(!output.toString().contains("count"))
             return "no exist request";
-        return output;
+        return output.toString();
     }
 
     public static void setCurrentGovernment(Government currentGovernment) {
         TradeMenuController.currentGovernment = currentGovernment;
     }
 
-    public static void setTargetGovernment(Government targetGovernment) {
-        TradeMenuController.targetGovernment = targetGovernment;
-    }
 
     public static String showGovernment() {
-        String output = "Governments : \n";
+        StringBuilder output = new StringBuilder("Governments : \n");
         for (Government government : Government.getGovernments()) {
             if (!government.equals(currentGovernment)) {
-                output += " " + government.getOwner().getUsername() + "\n";
+                output.append(" ").append(government.getOwner().getUsername()).append("\n");
             }
         }
-        return output;
+        return output.toString();
     }
     public static Boolean isGovernmentValid(String username) {
         return (targetGovernment = Government.getGovernmentByUser(UserController.getUserByUsername(username))) != null;

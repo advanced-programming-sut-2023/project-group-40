@@ -20,10 +20,14 @@ public class GameMenu {
             System.out.println("It is not your turn");
             return;
         }
+        GameMenuController.setOnGovernment();
         while (true) {
             String command = Commands.scanner.nextLine();
             String result = Commands.regexFinder(command, GameMenu.class);
-            if (result != null) System.out.println(result);
+            if (result != null) {
+                if(result.equals("you are in main menu!")) MainMenu.run();
+                else System.out.println(result);
+            }
         }
     }
 
@@ -228,7 +232,7 @@ public class GameMenu {
         GameMenuController.handleAttacks();
         GameMenuController.setOnGovernment();
         GameMenuController.setDefaults();
-        return null;
+        return "you are in main menu!";
     }
 
     public static void setGameStarted(boolean b) {

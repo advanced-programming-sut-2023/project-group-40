@@ -1,5 +1,4 @@
 import controller.UserController;
-import model.User;
 import view.LoginMenu;
 
 
