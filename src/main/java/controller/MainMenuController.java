@@ -5,7 +5,8 @@ import model.User;
 
 public class MainMenuController {
     private static User currentUser;
-    public static String logout(){
+
+    public static String logout() {
         return "log out!";
     }
 
@@ -18,14 +19,14 @@ public class MainMenuController {
         return currentUser;
     }
 
-    public static String enterGameMenu(){
+    public static String enterGameMenu() {
         Government governmentByUser = Government.getGovernmentByUser(currentUser);
-        if(Government.getGovernments().size() == 0){
+        if (Government.getGovernments().size() == 0) {
             Government.addGovernment(currentUser.getUsername());
             GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(currentUser));
             return "you entered a new game!";
         }
-        if(governmentByUser == null)
+        if (governmentByUser == null)
             throw new RuntimeException("game in progress and you can't access game");
         GameMenuController.setCurrentGovernment(governmentByUser);
         return "you entered in progress game";

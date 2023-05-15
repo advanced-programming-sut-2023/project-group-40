@@ -5,7 +5,7 @@ import org.apache.commons.lang3.SerializationUtils;
 
 public enum Troops {
     ARCHER("archer", new Troop("archer", "european", 9, 4, 5, 12, false, 5, Good.BOW)),
-    CROSSBOWMEN("Crossbowmen", new Troop("Crossbowmen", "european", 6, 7, 7, 20, false,3, Good.BOW)),
+    CROSSBOWMEN("Crossbowmen", new Troop("Crossbowmen", "european", 6, 7, 7, 20, false, 3, Good.BOW)),
     SPEARMEN("Spearmen", new Troop("Spearmen", "european", 6, 5, 2, 8, false, 0, Good.BOW)),
     PICKMEN("Pikemen", new Troop("Pikemen", "european", 5, 6, 8, 20, true, 0, Good.SPEAR)),
     MACEMEN("Macemen", new Troop("Macemen", "european", 7, 8, 7, 20, false, 0, Good.MACE)),
@@ -21,8 +21,7 @@ public enum Troops {
     ASSASSINS("Assassins", new Troop("Assassins", "arabian", 7, 7, 7, 60, false, 0, Good.MACE)),
     HORSE_ARCHERS("Horse Archers", new Troop("Horse Archers", "arabian", 10, 4, 6, 80, false, 5, Good.BOW)),
     ARABIAN_SWORDSMEN("Arabian Swordsmen", new Troop("Arabian Swordsmen", "arabian", 4, 9, 9, 80, false, 0, Good.SWORD)),
-    FIRE_THROWERS("Fire Throwers", new Troop("Fire Throwers", "arabian", 9, 8, 4, 100, false, 5,null));
-    ;
+    FIRE_THROWERS("Fire Throwers", new Troop("Fire Throwers", "arabian", 9, 8, 4, 100, false, 5, null));
     String fullName;
     Troop troopObject;
 

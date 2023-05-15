@@ -4,7 +4,6 @@ import model.Good;
 import model.Government;
 
 
-
 public class ShopMenuController {
     private static Government currentGovernment;
 

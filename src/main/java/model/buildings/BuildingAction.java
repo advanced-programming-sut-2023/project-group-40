@@ -4,5 +4,4 @@ public interface BuildingAction {
     default void action() {
     }
 
-    ;
 }

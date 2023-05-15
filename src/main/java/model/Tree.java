@@ -1,9 +1,5 @@
 package model;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 public enum Tree {
     DESERT_SHRUB("desert shrub"),
     CHERRY_PALM("cherry  palm"),

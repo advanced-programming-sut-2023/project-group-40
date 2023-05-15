@@ -12,7 +12,7 @@ public enum Color {
     BROWN("brown"),
     GREY("grey");
 
-    private String colorName;
+    private final String colorName;
     private Government government;
 
     Color(String colorName) {

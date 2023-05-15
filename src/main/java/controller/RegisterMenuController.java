@@ -2,8 +2,6 @@ package controller;
 
 import model.User;
 
-import java.util.Random;
-
 public class RegisterMenuController {
     private String username;
     private String password;
@@ -48,7 +46,7 @@ public class RegisterMenuController {
     }
 
     public String pickSecurityQuestion(int securityQuestionNo, String answer, String answerConfirm) {
-        if(securityQuestionNo > 3) throw new RuntimeException("invalid number!");
+        if (securityQuestionNo > 3) throw new RuntimeException("invalid number!");
         if (!answer.equals(answerConfirm)) {
             User.removeUser(registeredUser);
             throw new RuntimeException("confirm answer doesn't match with answer!");

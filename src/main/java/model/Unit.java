@@ -21,8 +21,9 @@ public class Unit {
     private final int sightRange = 3;
     private boolean havePortableShield;
     private boolean isPatrolling;
-    private int patrolTargetX,patrolTargetY;
-    public Unit(int x , int y,Government government, String state, int hp) {
+    private int patrolTargetX, patrolTargetY;
+
+    public Unit(int x, int y, Government government, String state, int hp) {
         this.x = x;
         this.y = y;
         this.government = government;
@@ -66,7 +67,7 @@ public class Unit {
         return government;
     }
 
-    public void decreaseVelocity(int amount){
+    public void decreaseVelocity(int amount) {
         velocity -= amount;
     }
 
@@ -86,7 +87,7 @@ public class Unit {
         return velocity;
     }
 
-    public void changeXY(int newX, int newY){
+    public void changeXY(int newX, int newY) {
         Map.getMap()[x][y].removeUnit(this);
         Map.getMap()[x][y].setAvailable(true);
         Map.getMap()[x][y].setPassable(true);
@@ -103,7 +104,7 @@ public class Unit {
     }
 
     public void increaseShootingRange(int percent) {
-        this.shootingRange *= (1 + (percent/100));
+        this.shootingRange *= (1 + (percent / 100));
     }
 
     public void changePower(int rate) {

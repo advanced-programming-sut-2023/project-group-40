@@ -24,7 +24,7 @@ public class TradeMenu {
         }
         while (true) {
             String command = Commands.scanner.nextLine();
-            if(command.equals("return")){
+            if (command.equals("return")) {
                 System.out.println("you are in game menu");
                 return;
             }

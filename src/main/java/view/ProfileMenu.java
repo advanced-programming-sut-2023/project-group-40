@@ -10,7 +10,7 @@ public class ProfileMenu {
     public static void run() throws ReflectiveOperationException {
         while (true) {
             String command = Commands.scanner.nextLine();
-            if(command.equals("return")){
+            if (command.equals("return")) {
                 ProfileMenuController.setCurrentUser(null);
                 System.out.println("you are in main menu");
                 return;

@@ -1,7 +1,9 @@
 package model;
 
 import controller.UserController;
-import model.buildings.*;
+import model.buildings.Building;
+import model.buildings.GateHouse;
+import model.buildings.Hovel;
 import model.buildings.Storage;
 
 import java.util.ArrayList;
@@ -187,7 +189,7 @@ public class Government {
         int remainFromFood2 = decreaseAmountOfOneFood(remainFromFood1, Good.MEAT);
         if (remainFromFood2 == 0) return;
         int remainFromFood3 = decreaseAmountOfOneFood(remainFromFood1, Good.BREAD);
-        if(remainFromFood3 == 0) return;
+        if (remainFromFood3 == 0) return;
         decreaseAmountOfOneFood(remainFromFood2, Good.BEER);
     }
 
@@ -302,7 +304,6 @@ public class Government {
         }
         return count;
     }
-
 
 
 }

@@ -8,7 +8,6 @@ import model.User;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.text.RandomStringGenerator;
 import view.MainMenu;
-import view.enums.Commands;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -38,7 +37,7 @@ public class UserController {
     }
 
     public static String generateRandomSlogan() {
-        return DefaultSlogans.values()[new Random().nextInt(0,DefaultSlogans.values().length)].getSlogan();
+        return DefaultSlogans.values()[new Random().nextInt(0, DefaultSlogans.values().length)].getSlogan();
     }
 
     public static boolean checkUsernameFormat(String username) {
@@ -46,7 +45,7 @@ public class UserController {
     }
 
     public static boolean checkPasswordFormat(String password) {
-        if(!password.matches("\\S+")) return false;
+        if (!password.matches("\\S+")) return false;
         return password.matches("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9\\s])^.{6,}");
     }
 
@@ -78,9 +77,8 @@ public class UserController {
     public static void updateDatabase() {
         File file = new File(User.getPATH());
         try {
-        if (!file.exists()) file.createNewFile();
-        }
-        catch (IOException e){
+            if (!file.exists()) file.createNewFile();
+        } catch (IOException e) {
             System.out.println("update database failed");
         }
         try (FileWriter writer = new FileWriter(User.getPATH(), false)) {

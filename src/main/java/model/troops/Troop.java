@@ -10,11 +10,12 @@ public class Troop implements Serializable {
     private final String name;
     private final String region;
     private final Good weapon;
-    private final int powerOfAttack,value,shootingRange,hp;
+    private final int powerOfAttack, value, shootingRange, hp;
     private final boolean hasArmor;
     private int velocity;
 
-    public Troop(String name, String region, int velocity, int powerOfAttack, int hp, int value, boolean hasArmor, int shootingRange,Good weapon) {
+    public Troop(String name, String region, int velocity, int powerOfAttack, int hp, int value, boolean hasArmor,
+                 int shootingRange, Good weapon) {
         this.name = name;
         this.region = region;
         this.velocity = velocity;
@@ -51,7 +52,7 @@ public class Troop implements Serializable {
         return shootingRange;
     }
 
-    public void changeVelocity(int percent){
+    public void changeVelocity(int percent) {
         velocity *= percent;
     }
 
@@ -62,6 +63,7 @@ public class Troop implements Serializable {
     public int getHp() {
         return hp;
     }
+
     public String getName() {
         return name;
     }

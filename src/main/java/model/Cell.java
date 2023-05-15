@@ -110,12 +110,12 @@ public class Cell {
         return castle;
     }
 
-    public void addUnit(Unit unit){
+    public void addUnit(Unit unit) {
         units.add(unit);
     }
 
     public Unit getUnit() {
-        if(units.size() == 0)
+        if (units.size() == 0)
             return null;
         return units.get(0);
     }

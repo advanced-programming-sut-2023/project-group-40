@@ -64,13 +64,13 @@ public class User {
 
 
     public void setHighScore(int highScore) {
-        if(this.highScore < highScore)
+        if (this.highScore < highScore)
             this.highScore = highScore;
     }
 
     public static void updateRank() {
         users = (ArrayList<User>) users.stream().sorted(Comparator.comparingInt(o -> o.highScore)).collect(Collectors.toList());
-        for (User user :users)
+        for (User user : users)
             user.rank = users.size() - users.indexOf(user);
         UserController.updateDatabase();
     }

@@ -11,9 +11,10 @@ public class Mine extends Building {
     private Good material;
     private int productRate;
     private int storage;
-    private int maxStorage = 0;
+    private final int maxStorage = 0;
 
-    public Mine(String name, int height, int width, int hp, int[] cost, int workersRequired, Good material, int productRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public Mine(String name, int height, int width, int hp, int[] cost, int workersRequired, Good material,
+                int productRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
         super(name, height, width, hp, cost, workersRequired, textures, isIllegal, group);
         this.material = material;
         this.productRate = productRate;
@@ -38,7 +39,6 @@ public class Mine extends Building {
     public int getStorage() {
         return storage;
     }
-
 
 
     @Override

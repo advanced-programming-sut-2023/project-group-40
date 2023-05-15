@@ -9,7 +9,8 @@ import java.util.HashSet;
 public class Barrack extends Building {
     private final ArrayList<Troop> troopsList = new ArrayList<>();
 
-    public Barrack(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public Barrack(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal,
+                   BuildingGroups group) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
     }
 

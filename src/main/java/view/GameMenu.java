@@ -25,7 +25,7 @@ public class GameMenu {
             String command = Commands.scanner.nextLine();
             String result = Commands.regexFinder(command, GameMenu.class);
             if (result != null) {
-                if(result.equals("you are in main menu!")) MainMenu.run();
+                if (result.equals("you are in main menu!")) MainMenu.run();
                 else System.out.println(result);
             }
         }
@@ -154,13 +154,13 @@ public class GameMenu {
     public static String attackEnemy(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.attackEnemy(x,y);
+        return GameMenuController.attackEnemy(x, y);
     }
 
     public static String airAttack(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.airAttack(x,y);
+        return GameMenuController.airAttack(x, y);
     }
 
     public static String pourOil(Matcher matcher) {
@@ -171,7 +171,7 @@ public class GameMenu {
     public static String digTunnel(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.digTunnel(x,y);
+        return GameMenuController.digTunnel(x, y);
     }
 
     public static String buildEquipments(Matcher matcher) {
@@ -210,15 +210,11 @@ public class GameMenu {
         return GameMenuController.deleteDitch(x, y);
     }
 
-    ;
-
     public static String captureTheGate(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
         return GameMenuController.captureTheGate(x, y);
     }
-
-    ;
 
     public static String nextTurn(Matcher matcher) {
         if (GameMenuController.isLastGovernment()) {
@@ -247,29 +243,29 @@ public class GameMenu {
         return coordinates;
     }
 
-    public String moveTool(Matcher matcher){
+    public String moveTool(Matcher matcher) {
         int toolX = Integer.parseInt(matcher.group("toolX"));
         int toolY = Integer.parseInt(matcher.group("toolY"));
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.moveTool(toolX,toolY,x, y);
+        return GameMenuController.moveTool(toolX, toolY, x, y);
     }
 
-    public static String dropStair(Matcher matcher){
+    public static String dropStair(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.dropStair(x,y);
+        return GameMenuController.dropStair(x, y);
     }
 
-    public static String attackTool(Matcher matcher){
+    public static String attackTool(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.attackTool(x,y);
+        return GameMenuController.attackTool(x, y);
     }
 
-    public static String attackTCastle(Matcher matcher){
+    public static String attackTCastle(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.attackCastle(x,y);
+        return GameMenuController.attackCastle(x, y);
     }
 }

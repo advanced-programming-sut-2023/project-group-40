@@ -1,11 +1,10 @@
 package view;
 
-import controller.GameMenuController;
 import controller.EnvironmentMenuController;
+import controller.GameMenuController;
 import controller.UserController;
 import view.enums.Commands;
 
-import java.util.Map;
 import java.util.regex.Matcher;
 
 public class EnvironmentMenu {
@@ -15,8 +14,7 @@ public class EnvironmentMenu {
             chooseMapSize();
             setPlayers();
             chooseColor();
-        }
-        else {
+        } else {
             if (EnvironmentMenuController.isCurrentGovernmentChoseColor(GameMenuController.getCurrentGovernment().getOwner()))
                 return "you choose your color wait for starting game!";
             chooseColor();
@@ -41,6 +39,7 @@ public class EnvironmentMenu {
             }
         }
     }
+
     public static String setTexture(Matcher matcher) {
         String type = Commands.eraseQuot(matcher.group("type"));
         if (matcher.groupCount() == 10) {
@@ -59,7 +58,7 @@ public class EnvironmentMenu {
     public static String clearBlock(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
-        return EnvironmentMenuController.clearBlock(x,y);
+        return EnvironmentMenuController.clearBlock(x, y);
     }
 
     public static String dropRock(Matcher matcher) {
@@ -74,19 +73,18 @@ public class EnvironmentMenu {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
         String type = Commands.eraseQuot(matcher.group("type"));
-        return EnvironmentMenuController.dropTree(x,y,type);
+        return EnvironmentMenuController.dropTree(x, y, type);
     }
 
     public static void chooseMapSize() {
         System.out.print("choose your size for map A) 200 X 200 B) 400 X 400 : ");
-        while (true){
+        while (true) {
             String response = Commands.scanner.nextLine();
             int size = response.equalsIgnoreCase("A") ? 200 : response.equalsIgnoreCase("B") ? 400 : 0;
-            if(size != 0) {
+            if (size != 0) {
                 GameMenuController.setMapSize(size);
                 break;
-            }
-            else System.out.println("enter valid value: ");
+            } else System.out.println("enter valid value: ");
         }
     }
 

@@ -1,8 +1,10 @@
 package controller;
 
-import model.*;
+import model.Cell;
+import model.Good;
+import model.Map;
+import model.Texture;
 import model.buildings.Storage;
-import view.GameMenu;
 
 public class MapMenuController {
     private static int centerX;
@@ -26,15 +28,15 @@ public class MapMenuController {
     public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
 
     public static String showMap(int x, int y) {
-        setCenters(x,y);
+        setCenters(x, y);
         StringBuilder result = new StringBuilder();
         int size = Map.getSize();
         result.append("    ");
         for (int j = Math.max(0, y - 20); j < Math.min(size - 1, y + 20); j++)
-            result.append(String.format("%03d ",j));
+            result.append(String.format("%03d ", j));
         result.append("\n");
         for (int i = Math.max(0, x - 6); i < Math.min(size - 1, x + 6); i++) {
-            result.append(String.format("%03d ",i));
+            result.append(String.format("%03d ", i));
             for (int j = Math.max(0, y - 20); j < Math.min(size - 1, y + 20); j++) {
                 Cell cell = Map.getMap()[i][j];
                 String text = "   ";
@@ -42,7 +44,7 @@ public class MapMenuController {
                 if (cell.getTree() != null) text = " T ";
                 if (cell.getBuilding() != null) text = " B ";
                 if (cell.getUnit() != null) text = " S ";
-                if(cell.getCastle() != null) text = " C ";
+                if (cell.getCastle() != null) text = " C ";
                 result.append(texture.getBackGroundColor())
                         .append(texture.getTextColor()).append(text).append(ANSI_RESET).append("|");
             }
@@ -74,13 +76,13 @@ public class MapMenuController {
             result += "wood :";
             result += storage.getProducts().get(Good.WOOD) + "\n";
             result += "iron :";
-            result += storage.getProducts().get(Good.IRON)+ "\n";
+            result += storage.getProducts().get(Good.IRON) + "\n";
             result += "stone :";
-            result += storage.getProducts().get(Good.STONE)+ "\n";
+            result += storage.getProducts().get(Good.STONE) + "\n";
         }
         if (Map.getMap()[x][y].getUnit() != null) {
             result += "troops type: " + Map.getMap()[x][y].getUnit().getType();
-            result += "troop count: "+ Map.getMap()[x][y].getUnit().getTroops().size();
+            result += "troop count: " + Map.getMap()[x][y].getUnit().getTroops().size();
         }
         if (Map.getMap()[x][y].getBuilding() != null) {
             result += "building: " + Map.getMap()[x][y].getBuilding().getName();

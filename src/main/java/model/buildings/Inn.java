@@ -7,7 +7,8 @@ import java.util.HashSet;
 public class Inn extends Building {
     private int popularityRate, wineUsage, rate;
 
-    public Inn(String name, int height, int width, int hp, int[] cost, int workersRequired, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public Inn(String name, int height, int width, int hp, int[] cost, int workersRequired, HashSet<Texture> textures,
+               boolean isIllegal, BuildingGroups group) {
         super(name, height, width, hp, cost, workersRequired, textures, isIllegal, group);
     }
 

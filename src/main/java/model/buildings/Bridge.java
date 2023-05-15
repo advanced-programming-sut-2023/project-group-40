@@ -9,7 +9,8 @@ import java.util.HashSet;
 public class Bridge extends Building {
     boolean isUp = false;
 
-    public Bridge(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public Bridge(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal,
+                  BuildingGroups group) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
     }
 
@@ -19,13 +20,11 @@ public class Bridge extends Building {
 
     @Override
     public void action() {
-        if (isUp){
+        if (isUp) {
             for (int i = x1; i <= x2; i++)
                 for (int j = y1; j <= y2; j++)
                     Map.getMap()[i][j].setPassable(false);
-        }
-
-        else {
+        } else {
             for (int i = x1; i <= x2; i++) {
                 for (int j = y1; j <= y2; j++) {
                     Unit unit = Map.getMap()[i][j].getUnit();

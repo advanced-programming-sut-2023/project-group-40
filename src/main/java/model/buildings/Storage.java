@@ -1,7 +1,8 @@
 package model.buildings;
 
 import controller.GameMenuController;
-import model.*;
+import model.Good;
+import model.Texture;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +13,8 @@ public class Storage extends Building {
     private final int capacity;
     private String productType;
 
-    public Storage(String name, int height, int width, int hp, int[] cost, int capacity, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group, String productType) {
+    public Storage(String name, int height, int width, int hp, int[] cost, int capacity, HashSet<Texture> textures,
+                   boolean isIllegal, BuildingGroups group, String productType) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
         this.capacity = capacity;
         GameMenuController.getCurrentGovernment().addStorage(this);

@@ -10,7 +10,8 @@ import java.util.HashSet;
 public class CagedWarDogs extends Building {
     private boolean isOpen = false;
 
-    public CagedWarDogs(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public CagedWarDogs(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures,
+                        boolean isIllegal, BuildingGroups group) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
     }
 
@@ -21,7 +22,7 @@ public class CagedWarDogs extends Building {
     @Override
     public void action() {
         if (isOpen) {
-            Unit unit = GameMenuController.findNearestUnit(4,(x1+x2)/2,(y1+y2)/2);
+            Unit unit = GameMenuController.findNearestUnit(4, (x1 + x2) / 2, (y1 + y2) / 2);
             if (unit != null) {
                 unit.decreaseHpOfUnit(300);
                 if (unit.getHp() < 0) {

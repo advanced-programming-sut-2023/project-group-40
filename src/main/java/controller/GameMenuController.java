@@ -1,12 +1,11 @@
 package controller;
 
 import model.*;
-import model.Color;
 import model.buildings.*;
 import model.troops.Troop;
 import model.troops.Troops;
-import view.*;
-import model.buildings.Buildings;
+import view.GameMenu;
+import view.ShopMenu;
 import view.enums.Commands;
 
 import java.lang.reflect.Field;
@@ -34,7 +33,12 @@ public class GameMenuController {
     }
 
     public static String showFoodList() {
-        return null;
+        String result = "";
+        result += "meat: " + currentGovernment.getAmountOfGood(Good.MEAT) + "\n";
+        result += "apple: " + currentGovernment.getAmountOfGood(Good.APPLE) + "\n";
+        result += "cheese: " + currentGovernment.getAmountOfGood(Good.CHEESE) + "\n";
+        result += "bread: " + currentGovernment.getAmountOfGood(Good.BREAD);
+        return result;
     }
 
     public static String setFoodRate(int rate) {
@@ -72,7 +76,6 @@ public class GameMenuController {
                 currentGovernment.changePopularity(8);
             }
         }
-        ;
         return "set rate-number is successful";
     }
 
@@ -144,7 +147,6 @@ public class GameMenuController {
                 currentGovernment.changePopularity(-24);
             }
         }
-        ;
         return "set rate-number is successful";
     }
 
@@ -196,7 +198,7 @@ public class GameMenuController {
                 if (!Map.getMap()[i][j].getTexture().getType().equals("water"))
                     return "You can't drop  building because texture of this cell is water";
             }
-        if(currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired())
+        if (currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired())
             return "you don't have enough workers!";
         currentGovernment.getCastle().changeNumberOfActiveWorkers(-targetBuilding.getWorkersRequired());
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
@@ -321,16 +323,16 @@ public class GameMenuController {
         if (Map.getMap()[x][y].getUnit() == null)
             return "there is no unit in this cell!";
         selectedUnit = Map.getMap()[x][y].getUnit();
-        if(selectedUnit.isPatrolling()){
-            selectedUnit.setPatrolTargetXY(x,y);
-            moveUnit(selectedUnit.getPatrolTargetX(),selectedUnit.getPatrolTargetY());
+        if (selectedUnit.isPatrolling()) {
+            selectedUnit.setPatrolTargetXY(x, y);
+            moveUnit(selectedUnit.getPatrolTargetX(), selectedUnit.getPatrolTargetY());
         }
         return "unit successfully selected";
     }
 
     public static String moveUnit(int x, int y) {
         Cell cell = Map.getMap()[x][y];
-        if(!checkRange(selectedUnit.getX(),selectedUnit.getY(),x,y,selectedUnit.getVelocity()))
+        if (!checkRange(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit.getVelocity()))
             return "out of range!";
         if (!cell.isPassable() && (!(cell.getBuilding() instanceof GateHouse) || selectedUnit.getGovernment() != currentGovernment))
             return "you can't pass this cell;";
@@ -342,13 +344,13 @@ public class GameMenuController {
             return "you can't go to water regions!";
         if (cell.getTexture() == Texture.SHALLOW_WATER)
             selectedUnit.decreaseVelocity(1);
-        if(!checkMove(selectedUnit.getX(),selectedUnit.getY(),x,y,selectedUnit,selectedUnit.getVelocity()))
+        if (!checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity()))
             return "no path found!";
-        selectedUnit.changeXY(x,y);
+        selectedUnit.changeXY(x, y);
         return "unit move to x: " + selectedUnit.getX() + "and y: " + selectedUnit.getY() + "successfully";
     }
 
-    private static boolean canPass(int x, int y){
+    private static boolean canPass(int x, int y) {
         Cell cell = Map.getMap()[x][y];
         if (!cell.isPassable() && (!(cell.getBuilding() instanceof GateHouse) || selectedUnit.getGovernment() != currentGovernment))
             return false;
@@ -359,27 +361,27 @@ public class GameMenuController {
         return !cell.getTexture().getType().equals("water");
     }
 
-    private static boolean isPathExists(boolean[][] passableCells, int x1,int y1, int x2, int y2){
+    private static boolean isPathExists(boolean[][] passableCells, int x1, int y1, int x2, int y2) {
         System.out.println(x1 + "    " + y1);
         int maxX = passableCells.length;
         int maxY = passableCells[0].length;
-        if(x1 == x2 && y1 == y2) return true;
-        if(x1 > 0 && passableCells[x1 - 1][y1]) {
+        if (x1 == x2 && y1 == y2) return true;
+        if (x1 > 0 && passableCells[x1 - 1][y1]) {
             passableCells[x1][y1] = false;
             if (isPathExists(passableCells, x1 - 1, y1, x2, y2)) return true;
             passableCells[x1][y1] = true;
         }
-        if(y1 > 0 && passableCells[x1][y1 - 1]) {
+        if (y1 > 0 && passableCells[x1][y1 - 1]) {
             passableCells[x1][y1] = false;
             if (isPathExists(passableCells, x1, y1 - 1, x2, y2)) return true;
             passableCells[x1][y1] = true;
         }
-        if(x1 < maxX - 1 && passableCells[x1 + 1][y1]) {
+        if (x1 < maxX - 1 && passableCells[x1 + 1][y1]) {
             passableCells[x1][y1] = false;
             if (isPathExists(passableCells, x1 + 1, y1, x2, y2)) return true;
             passableCells[x1][y1] = true;
         }
-        if(y1 < maxY - 1 && passableCells[x1][y1 + 1]) {
+        if (y1 < maxY - 1 && passableCells[x1][y1 + 1]) {
             passableCells[x1][y1] = false;
             if (isPathExists(passableCells, x1, y1 + 1, x2, y2)) return true;
             passableCells[x1][y1] = true;
@@ -388,15 +390,15 @@ public class GameMenuController {
     }
 
     private static boolean checkMove(int x1, int y1, int x2, int y2, Object object, int velocity) {
-        boolean [][] passableCells = new boolean[Math.min(Map.getSize() - 1,x1 + velocity) - Math.max(0, x1 - velocity)]
+        boolean[][] passableCells = new boolean[Math.min(Map.getSize() - 1, x1 + velocity) - Math.max(0, x1 - velocity)]
                 [Math.min(Map.getSize() - 1, y1 + velocity) - Math.max(0, y1 - velocity)];
-        for (int i = Math.max(0, x1 - velocity); i < Math.min(Map.getSize() - 1,x1 + velocity); i++) {
+        for (int i = Math.max(0, x1 - velocity); i < Math.min(Map.getSize() - 1, x1 + velocity); i++) {
             for (int j = Math.max(0, y1 - velocity); j < Math.min(Map.getSize() - 1, y1 + velocity); j++) {
-                passableCells[i - Math.max(0, x1 - velocity)][j - Math.max(0, y1 - velocity)] = canPass(i,j);
+                passableCells[i - Math.max(0, x1 - velocity)][j - Math.max(0, y1 - velocity)] = canPass(i, j);
             }
         }
-        return isPathExists(passableCells,x1 - Math.max(0, x1 - velocity),y1 - Math.max(0, y1 - velocity)
-                ,x2 - Math.max(0, x1 - velocity), y2 - Math.max(0, y1 - velocity));
+        return isPathExists(passableCells, x1 - Math.max(0, x1 - velocity), y1 - Math.max(0, y1 - velocity)
+                , x2 - Math.max(0, x1 - velocity), y2 - Math.max(0, y1 - velocity));
     }
 
     public static String setUnitState(String state) {
@@ -407,24 +409,23 @@ public class GameMenuController {
     }
 
     public static String patrolUnit(int x1, int y1, int x2, int y2) {
-        if(selectedUnit == null)
+        if (selectedUnit == null)
             return "no selected unit found!";
-        if (!canPass(x1,y1) || !canPass(x2,y2)) {
+        if (!canPass(x1, y1) || !canPass(x2, y2)) {
             return "you can't patrol between two points!";
         }
-        if(checkMove(selectedUnit.getX(),selectedUnit.getY(),x1,y1,selectedUnit,selectedUnit.getVelocity()))
+        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x1, y1, selectedUnit, selectedUnit.getVelocity()))
             return "you cant go to your first coordinate";
-        if(checkMove(selectedUnit.getX(),selectedUnit.getY(),x2,y2,selectedUnit,selectedUnit.getVelocity()))
+        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x2, y2, selectedUnit, selectedUnit.getVelocity()))
             return "you cant go to your second coordinate";
         selectedUnit.setPatrolling(true);
 
-        if(selectedUnit.getX() == x2 && selectedUnit.getY() == y2) {
+        if (selectedUnit.getX() == x2 && selectedUnit.getY() == y2) {
             moveUnit(x1, y1);
-            selectedUnit.setPatrolTargetXY(x2,y2);
-        }
-        else {
+            selectedUnit.setPatrolTargetXY(x2, y2);
+        } else {
             moveUnit(x2, y2);
-            selectedUnit.setPatrolTargetXY(x1,y1);
+            selectedUnit.setPatrolTargetXY(x1, y1);
         }
         return "patrol succesful";
     }
@@ -455,7 +456,7 @@ public class GameMenuController {
             return "you can't attack this enemy!";
         if (selectedUnit.getShootingRange() != 0)
             return "your unit not appropriate for this attack";
-        checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit,selectedUnit.getVelocity());
+        checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity());
         Unit enemy = Map.getMap()[x][y].getUnit();
         while (enemy.getHp() <= 0 || selectedUnit.getHp() <= 0) {
             enemy.decreaseHpOfUnit(selectedUnit.getPower());
@@ -480,7 +481,7 @@ public class GameMenuController {
         return "attack finished";
     }
 
-    public static void removeBuilding(int x,int y){
+    public static void removeBuilding(int x, int y) {
         Building building = Map.getMap()[x][y].getBuilding();
         if (building == null) return;
         for (int i = building.getX1(); i <= building.getX2(); i++)
@@ -514,12 +515,12 @@ public class GameMenuController {
                                 selectedUnitY < tower.getY1() - tower.getDefenceRange())
                             selectedUnit.decreaseHpOfUnit(tower.getAttackRange());
                     }
-                    if(building.getName().equals("pitch ditch") && selectedUnit.getType().equals("Slaves"))
+                    if (building.getName().equals("pitch ditch") && selectedUnit.getType().equals("Slaves"))
                         for (int i = selectedBuilding.getX1() - 1; i <= selectedBuilding.getX2() + 1; i++)
                             for (int j = selectedBuilding.getY1() - 1; j <= selectedBuilding.getY2() + 1; j++)
-                                removeBuilding(i,j);
+                                removeBuilding(i, j);
                 }
-                if(building.getHp() <= 0) removeBuilding(x,y);
+                if (building.getHp() <= 0) removeBuilding(x, y);
                 else Map.getMap()[selectedUnitX][selectedUnitY].removeUnit(selectedUnit);
             }
         }
@@ -558,10 +559,14 @@ public class GameMenuController {
         int x = selectedUnit.getX();
         int y = selectedUnit.getY();
         switch (direction) {
-            case "top" : y--;
-            case "right": x++;
-            case "bottom" : y++;
-            case "left" : x--;
+            case "top":
+                y--;
+            case "right":
+                x++;
+            case "bottom":
+                y++;
+            case "left":
+                x--;
         }
         Unit unit = Map.getMap()[x][y].getUnit();
         if (unit != null) unit.decreaseHpOfUnit(200);
@@ -569,10 +574,10 @@ public class GameMenuController {
     }
 
     public static String digTunnel(int x, int y) {
-        if(selectedUnit != null)
+        if (selectedUnit != null)
             if (!selectedUnit.getType().equals("Tunneler"))
                 return "you should select Tunneler unit!";
-        else return "you didn't select any unit!";
+            else return "you didn't select any unit!";
         for (int i = x; i <= x + 3; i++) {
             Building targetBuilding = Map.getMap()[x][y].getBuilding();
             if (!targetBuilding.getName().equals("lookout tower") && !targetBuilding.getName().endsWith("turret"))
@@ -620,7 +625,7 @@ public class GameMenuController {
             tower.addTool(tool);
             return "your equipment build on the tower";
         }
-        int [] coordinates = GameMenu.getCoordinate();
+        int[] coordinates = GameMenu.getCoordinate();
         Cell cell = Map.getMap()[coordinates[0]][coordinates[1]];
         if (!cell.isAvailable())
             return "your cell isn't be available";
@@ -846,7 +851,7 @@ public class GameMenuController {
         selectedUnit = null;
     }
 
-    public static String moveTool(int toolX,int toolY,int x , int y){
+    public static String moveTool(int toolX, int toolY, int x, int y) {
         Tool tool = Map.getMap()[toolX][toolY].getTool();
         if (tool == null)
             return "there is no tool in this cell!";
@@ -855,10 +860,10 @@ public class GameMenuController {
         Map.getMap()[toolX][toolY].setPassable(true);
         Map.getMap()[x][y].setTool(tool);
         Building building = Map.getMap()[x][y + tool.getRange()].getBuilding();
-        if (building != null)  {
+        if (building != null) {
             building.setHp(building.getHp() - tool.getDamage());
             if (building.getHp() <= 0) {
-                for (int i = building.getX1() ; i <= building.getX2();i++)
+                for (int i = building.getX1(); i <= building.getX2(); i++)
                     for (int j = building.getY1(); j < building.getY2(); j++) {
                         Map.getMap()[i][j].setAvailable(true);
                         Map.getMap()[i][j].setPassable(true);
@@ -870,14 +875,14 @@ public class GameMenuController {
     }
 
     public static String stopPatrolUnit() {
-        if(selectedUnit == null || selectedUnit.isPatrolling())
+        if (selectedUnit == null || selectedUnit.isPatrolling())
             return "selected unit isn't in patrolling!";
         selectedUnit.setPatrolling(false);
         return "stop patrolling successful!";
     }
 
-    public static String dropStair(int x,int y){
-        if(!Map.getMap()[x][y].isAvailable())
+    public static String dropStair(int x, int y) {
+        if (!Map.getMap()[x][y].isAvailable())
             return "you can't drop stair!";
         for (int i = x - 1; i <= x + 1; i++)
             for (int j = y - 1; j <= y + 1; j++)
@@ -885,13 +890,13 @@ public class GameMenuController {
                     Map.getMap()[i][j].setPassable(true);
                     Map.getMap()[x][y].setStair(true);
                 }
-        if(!Map.getMap()[x][y].isStair())
+        if (!Map.getMap()[x][y].isStair())
             return "you can't drop stair!";
         return "stair dropped successfully!";
     }
 
     public static String attackTool(int x, int y) {
-        if(selectedUnit == null || !selectedUnit.getType().equals("Knight"))
+        if (selectedUnit == null || !selectedUnit.getType().equals("Knight"))
             return "you didn't select appropriate unit!";
         Tool tool = Map.getMap()[x][y].getTool();
         if (tool == null) return "there is no tool!";
@@ -902,10 +907,10 @@ public class GameMenuController {
     }
 
     public static String attackCastle(int x, int y) {
-        if(selectedUnit == null || !selectedUnit.getType().equals("Slaves"))
+        if (selectedUnit == null || !selectedUnit.getType().equals("Slaves"))
             return "you didn't select appropriate unit!";
         Castle castle = Map.getMap()[x][y].getCastle();
-        if(castle == null)
+        if (castle == null)
             return "there is no castle!";
         castle.decreaseHp(Integer.MAX_VALUE);
         castle.checkCastle();

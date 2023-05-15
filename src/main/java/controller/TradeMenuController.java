@@ -5,11 +5,6 @@ import model.Good;
 import model.Government;
 import model.TradeRequest;
 
-import java.util.Optional;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-
 public class TradeMenuController {
     private static Government currentGovernment, targetGovernment;
 
@@ -45,7 +40,7 @@ public class TradeMenuController {
                         .append("\n   ").append(username).append("'s message: ").append(request.getSenderMessage()).append("\n");
             }
         }
-        if(!output.toString().contains("count"))
+        if (!output.toString().contains("count"))
             return "no exist unaccepted requests";
         return output.toString();
     }
@@ -78,9 +73,10 @@ public class TradeMenuController {
         for (TradeRequest request : currentGovernment.getRequests()) {
             String username = request.getSender().getOwner().getUsername();
             output.append("\n").append(request.getId()).append(") username: ").append(username).append("\n   count: ").append(request.getCount()).append("\n   price: ").append(request.getPrice()).append("\n   ").append(username).append("'s message: ").append(request.getSenderMessage());
-            if (request.getReceiverMessage() != null) output.append("\n   your message: ").append(request.getReceiverMessage());
+            if (request.getReceiverMessage() != null)
+                output.append("\n   your message: ").append(request.getReceiverMessage());
         }
-        if(!output.toString().contains("count"))
+        if (!output.toString().contains("count"))
             return "no exist request";
         return output.toString();
     }
@@ -99,6 +95,7 @@ public class TradeMenuController {
         }
         return output.toString();
     }
+
     public static Boolean isGovernmentValid(String username) {
         return (targetGovernment = Government.getGovernmentByUser(UserController.getUserByUsername(username))) != null;
     }

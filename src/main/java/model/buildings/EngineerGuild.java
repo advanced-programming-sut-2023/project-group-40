@@ -8,7 +8,8 @@ public class EngineerGuild extends Building {
     private final int costOfLadderMan = 0, costOfEngineer = 0;
     private int numberOfEngineer, numberOfLadderMan;
 
-    public EngineerGuild(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public EngineerGuild(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures,
+                         boolean isIllegal, BuildingGroups group) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
     }
 

@@ -4,7 +4,7 @@ import controller.GameMenuController;
 
 public class Castle {
     private int hp = 10000;
-    private final int x1,y1,x2,y2;
+    private final int x1, y1, x2, y2;
     private int population = 5;
     private int numberOfActiveWorker = 5;
     private Government government;
@@ -52,18 +52,18 @@ public class Castle {
         return government;
     }
 
-    public void decreaseHp(int amount){
+    public void decreaseHp(int amount) {
         hp -= amount;
     }
 
-    public void checkCastle(){
-        if(hp <= 0){
+    public void checkCastle() {
+        if (hp <= 0) {
             Government.getGovernments().remove(government);
             System.out.println(government.getOwner().getUsername() + "lose!");
-            if(Government.getGovernments().size() == 1){
+            if (Government.getGovernments().size() == 1) {
                 User winner = Government.getGovernments().get(0).getOwner();
                 System.out.println(winner.getUsername() + " wins!");
-                winner.setHighScore(1000* GameMenuController.getNumberOfPlayers());
+                winner.setHighScore(1000 * GameMenuController.getNumberOfPlayers());
                 User.updateRank();
                 System.exit(0);
             }

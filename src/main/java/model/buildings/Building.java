@@ -7,7 +7,7 @@ import model.Unit;
 import java.io.Serializable;
 import java.util.HashSet;
 
-public class Building implements Serializable,BuildingAction {
+public class Building implements Serializable, BuildingAction {
     protected int x1, y1, x2, y2;
     private boolean isIllegal;
     protected BuildingGroups group;
@@ -30,7 +30,8 @@ public class Building implements Serializable,BuildingAction {
         this.cost = cost;
     }
 
-    public Building(String name, int height, int width, int hp, int[] cost, int workersRequired, int engineersRequired, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public Building(String name, int height, int width, int hp, int[] cost, int workersRequired, int engineersRequired,
+                    HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
         this.name = name;
         this.height = height;
         this.width = width;
@@ -44,7 +45,8 @@ public class Building implements Serializable,BuildingAction {
         this.group = group;
     }
 
-    public Building(String name, int height, int width, int hp, int[] cost, int workersRequired, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public Building(String name, int height, int width, int hp, int[] cost, int workersRequired,
+                    HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
         this.name = name;
         this.height = height;
         this.width = width;
@@ -57,7 +59,8 @@ public class Building implements Serializable,BuildingAction {
         this.group = group;
     }
 
-    public Building(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public Building(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures,
+                    boolean isIllegal, BuildingGroups group) {
         this.name = name;
         this.height = height;
         this.width = width;
@@ -123,6 +126,7 @@ public class Building implements Serializable,BuildingAction {
     public void setHp(int hp) {
         this.hp = hp;
     }
+
     public BuildingGroups getGroup() {
         return group;
     }

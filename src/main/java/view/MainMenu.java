@@ -1,6 +1,5 @@
 package view;
 
-import controller.GameMenuController;
 import controller.MainMenuController;
 import controller.ProfileMenuController;
 import controller.UserController;
@@ -31,7 +30,7 @@ public class MainMenu {
             System.out.println(MainMenuController.enterGameMenu());
             GameMenu.run();
             return null;
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             return e.getMessage();
         }
     }
@@ -39,7 +38,7 @@ public class MainMenu {
     public static String logout(Matcher matcher) throws ReflectiveOperationException {
         System.out.println("user logged out successfully!");
         MainMenuController.setCurrentUser(null);
-        if(UserController.getStayedLoginUser() != null) UserController.getStayedLoginUser().setStayLoggedIn(false);
+        if (UserController.getStayedLoginUser() != null) UserController.getStayedLoginUser().setStayLoggedIn(false);
         LoginMenu.run();
         return null;
     }
