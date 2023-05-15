@@ -7,24 +7,21 @@ public class ProfileMenuController {
 
     public static String changeUsername(String username) {
         if (username == null || username.equals("")) return "username is empty!";
-        if (!User.checkUsernameFormat(username)) return "username is invalid!";
-        if (User.isUsernameExists(username)) return "username is exists!";
+        if (!UserController.checkUsernameFormat(username)) return "username is invalid!";
+        if (UserController.isUsernameExists(username)) return "username is exists!";
         currentUser.setUsername(username);
         return "username changed!";
     }
 
     public static String changePassword(String oldPassword, String newPassword) {
-        if (oldPassword == null || oldPassword.equals("")) return "old-password is empty!";
-        if (newPassword == null || newPassword.equals("")) return "new-password is empty!";
-        if (!currentUser.checkPassword(oldPassword)) return "old-password is incorrect!";
-        if (oldPassword.equals(newPassword)) return "Please enter a new password!";
-        if (!User.checkPasswordFormat(newPassword)) return "new-password is weak!";
-
-        System.out.print("Please enter your new password again: ");
-        if (MainController.scanner.nextLine().equals(newPassword)) {
-            currentUser.setPasswordHash(User.generatePasswordHash(newPassword));
-            return "password changed!";
-        } else return "new-password is wrong!";
+        if (oldPassword == null || oldPassword.equals("")) return "old password is empty!";
+        if (newPassword == null || newPassword.equals("")) return "new password is empty!";
+        if (!currentUser.getPasswordHash().equals(UserController.generatePasswordHash(oldPassword)))
+            return "old password is incorrect!";
+        if (oldPassword.equals(newPassword)) return "new password is equal to your current password!";
+        if (!UserController.checkPasswordFormat(newPassword)) return "new password is weak!";
+        currentUser.setPassword(newPassword);
+        return "password changed!";
     }
 
     public static String changeNickname(String nickname) {
@@ -35,8 +32,8 @@ public class ProfileMenuController {
 
     public static String changeEmail(String email) {
         if (email == null || email.equals("")) return "email is empty!";
-        if (!User.checkEmailFormat(email)) return "email is invalid!";
-        if (User.isEmailExists(email)) return "email is exists!";
+        if (!UserController.checkEmailFormat(email)) return "email is invalid!";
+        if (UserController.isEmailExists(email)) return "email is exists!";
         currentUser.setEmail(email);
         return "email changed!";
     }

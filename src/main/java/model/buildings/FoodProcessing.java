@@ -1,16 +1,20 @@
 package model.buildings;
 
-import java.util.HashSet;
-
+import controller.GameMenuController;
 import model.Good;
+import model.Government;
 import model.Texture;
+
+import java.util.HashSet;
 
 public class FoodProcessing extends Building {
     private Good material;
     private Good product;
     private Integer productRate;
 
-    public FoodProcessing(String name, int height, int width, int hp, int[] cost, int workersRequired, Good material, Good product, Integer productRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public FoodProcessing(String name, int height, int width, int hp, int[] cost, int workersRequired, Good material,
+                          Good product, Integer productRate, HashSet<Texture> textures, boolean isIllegal,
+                          BuildingGroups group) {
         super(name, height, width, hp, cost, workersRequired, textures, isIllegal, group);
         this.material = material;
         this.product = product;
@@ -39,5 +43,14 @@ public class FoodProcessing extends Building {
 
     public void setProductRate(Integer productRate) {
         this.productRate = productRate;
+    }
+
+    @Override
+    public void action() {
+        Government government = GameMenuController.getCurrentGovernment();
+        if (material != null && government.getAmountOfGood(material) < productRate) return;
+        if (government.getNumOfEmptySpace("food") < productRate) return;
+        government.decreaseAmountOfGood(material, productRate);
+        government.increaseAmountOfGood(product, productRate);
     }
 }

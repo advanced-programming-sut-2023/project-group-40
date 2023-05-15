@@ -1,7 +1,6 @@
 package model.buildings;
 
 import model.Texture;
-import view.GameMenu;
 
 import java.util.HashSet;
 
@@ -9,7 +8,8 @@ public class GateHouse extends Building {
     private final int maxCapacity;
     private int capacity = 0;
 
-    public GateHouse(String name, int height, int width, int hp, int[] cost, int maxCapacity, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public GateHouse(String name, int height, int width, int hp, int[] cost, int maxCapacity, HashSet<Texture> textures,
+                     boolean isIllegal, BuildingGroups group) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
         this.maxCapacity = maxCapacity;
     }

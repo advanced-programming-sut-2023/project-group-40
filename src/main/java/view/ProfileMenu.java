@@ -1,45 +1,54 @@
 package view;
 
-import controller.MainController;
 import controller.ProfileMenuController;
+import controller.UserController;
 import view.enums.Commands;
 
-import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class ProfileMenu {
     public static void run() throws ReflectiveOperationException {
         while (true) {
-            System.out.println("you are in profile menu!");
-            String command = MainController.scanner.nextLine();
+            String command = Commands.scanner.nextLine();
+            if (command.equals("return")) {
+                ProfileMenuController.setCurrentUser(null);
+                System.out.println("you are in main menu");
+                return;
+            }
             String result = Commands.regexFinder(command, ProfileMenu.class);
-            if (command != null) System.out.println(result);
+            UserController.updateDatabase();
+            if (result != null) System.out.println(result);
         }
     }
-    public static String changeUsername(Matcher matcher){
-        String username = matcher.group("username");
+
+    public static String changeUsername(Matcher matcher) {
+        String username = Commands.eraseQuot(matcher.group("username"));
         return ProfileMenuController.changeUsername(username);
     }
 
     public static String changePassword(Matcher matcher) {
-        String oldPass = matcher.group("oldPassword");
-        String newPass = matcher.group("newPassword");
+        String oldPass = Commands.eraseQuot(matcher.group("oldPassword"));
+        String newPass = Commands.eraseQuot(matcher.group("newPassword"));
         return ProfileMenuController.changePassword(oldPass, newPass);
     }
 
     public static String changeNickname(Matcher matcher) {
-        String nickname = matcher.group("nickname");
+        String nickname = Commands.eraseQuot(matcher.group("nickname"));
         return ProfileMenuController.changeNickname(nickname);
     }
 
     public static String changeEmail(Matcher matcher) {
-        String email = matcher.group("email");
+        String email = Commands.eraseQuot(matcher.group("email"));
         return ProfileMenuController.changeEmail(email);
     }
 
     public static String changeSlogan(Matcher matcher) {
-        String slogan = matcher.group("slogan");
+        String slogan = Commands.eraseQuot(matcher.group("slogan"));
         return ProfileMenuController.changeSlogan(slogan);
+    }
+
+    public static String removeSlogan(Matcher matcher) {
+        return ProfileMenuController.removeSlogan();
     }
 
     public static String displayHighScore(Matcher matcher) {
@@ -58,7 +67,4 @@ public class ProfileMenu {
         return ProfileMenuController.displayProfile();
     }
 
-    public static String removeSlogan() {
-        return ProfileMenuController.removeSlogan();
-    }
 }

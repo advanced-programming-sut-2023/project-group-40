@@ -1,56 +1,38 @@
 package view;
 
 import controller.GameMenuController;
-import controller.MainController;
-import org.apache.commons.lang3.StringUtils;
+import controller.ShopMenuController;
+import controller.TradeMenuController;
 import view.enums.Commands;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 
 public class GameMenu {
     private static boolean gameStarted = false;
 
     public static void run() throws ReflectiveOperationException {
-        if (!gameStarted) System.out.println(MapMenu.run());
         System.out.println("you are in game menu!");
+        if (!gameStarted) {
+            System.out.println(EnvironmentMenu.run());
+            return;
+        }
+        if (GameMenuController.getCurrentGovernment() != GameMenuController.getOnGovernment()) {
+            System.out.println("It is not your turn");
+            return;
+        }
+        GameMenuController.setOnGovernment();
         while (true) {
-            String command = MainController.scanner.nextLine();
+            String command = Commands.scanner.nextLine();
             String result = Commands.regexFinder(command, GameMenu.class);
-            if(result != null)
-                System.out.println(result);
+            if (result != null) {
+                if (result.equals("you are in main menu!")) MainMenu.run();
+                else System.out.println(result);
+            }
         }
     }
 
-    public static String showMap(Matcher matcher) throws IOException {
-        int x = Integer.parseInt(matcher.group("x"));
-        int y = Integer.parseInt(matcher.group("y"));
-        return GameMenuController.showMap(x, y);
-    }
-    public static String trade(Matcher matcher) throws ReflectiveOperationException {
-        GameMenuController.trade();
-        return null;
-    }
-    public static String shop() throws ReflectiveOperationException {
-        GameMenuController.shop();
-        return null;
-    }
-    public static String changeSightArea(Matcher matcher) {
-        //left in another first
-        while (matcher.find()) {
-            int leftNumber = StringUtils.isNotBlank(matcher.group("leftNumber")) ? Integer.parseInt(matcher.group("leftNumber")) : 1;
-            int topNumber = StringUtils.isNotBlank(matcher.group("topNumber")) ? Integer.parseInt(matcher.group("topNumber")) : 1;
-            int rightNumber = StringUtils.isNotBlank(matcher.group("rightNumber")) ? Integer.parseInt(matcher.group("rightNumber")) : 1;
-            int downNumber = StringUtils.isNotBlank(matcher.group("downNumber")) ? Integer.parseInt(matcher.group("downNumber")) : 1;
-            if (matcher.group("left") != null) GameMenuController.increaseX(-1 * leftNumber);
-            if (matcher.group("top") != null) GameMenuController.increaseY(topNumber);
-            if (matcher.group("right") != null) GameMenuController.increaseX(rightNumber);
-            if (matcher.group("down") != null) GameMenuController.increaseY(-1 * downNumber);
-        }
-        return "sight area changed!";
-    }
-
-    public static String showDetails(Matcher matcher) {
+    public static String enterMapMenu(Matcher matcher) throws ReflectiveOperationException {
+        MapMenu.run();
         return null;
     }
 
@@ -100,87 +82,190 @@ public class GameMenu {
         return GameMenuController.dropBuilding(x, y, type);
     }
 
-    public static String selectBuilding(Matcher matcher) {
+    public static String selectBuilding(Matcher matcher) throws ReflectiveOperationException {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));
         return GameMenuController.selectBuilding(x, y);
     }
 
     public static String createUnit(Matcher matcher) {
-        String type = matcher.group("type");
+        String type = Commands.eraseQuot(matcher.group("type"));
         int count = Integer.parseInt(matcher.group("count"));
-        return GameMenuController.createUnit(type, count);
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.createUnit(x, y, type, count);
     }
 
-    public static String repair(Matcher matcher) {
+    public static String trade(Matcher matcher) throws ReflectiveOperationException {
+        TradeMenuController.setCurrentGovernment(GameMenuController.getCurrentGovernment());
+        TradeMenu.run();
         return null;
+    }
+
+    public static String shop(Matcher matcher) throws ReflectiveOperationException {
+        ShopMenuController.setCurrentGovernment(GameMenuController.getCurrentGovernment());
+        ShopMenu.run();
+        return null;
+    }
+
+    public static String repair(String message) {
+        System.out.println(message);
+        while (true) {
+            System.out.print("do you want to repair this building?" + "\n confirm [Y/N]: ");
+            String response = Commands.scanner.nextLine();
+            if (response.equalsIgnoreCase("N"))
+                return null;
+            else if (response.equalsIgnoreCase("Y")) {
+                return GameMenuController.repair();
+            } else System.out.println("invalid command!");
+        }
     }
 
     public static String selectUnit(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.selectUnit(x, y);
     }
 
     public static String moveUnit(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.moveUnit(x, y);
     }
 
+    public static String patrolUnit(Matcher matcher) {
+        int x1 = Integer.parseInt(matcher.group("x1"));
+        int y1 = Integer.parseInt(matcher.group("y1"));
+        int x2 = Integer.parseInt(matcher.group("x2"));
+        int y2 = Integer.parseInt(matcher.group("y2"));
+        return GameMenuController.patrolUnit(x1, y1, x2, y2);
+    }
+
+    public static String stopPatrolUnit(Matcher matcher) {
+        return GameMenuController.stopPatrolUnit();
+    }
+
+
     public static String setUnitState(Matcher matcher) {
-        return null;
+        String state = matcher.group("state");
+        return GameMenuController.setUnitState(state);
     }
 
     public static String attackEnemy(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.attackEnemy(x, y);
     }
 
     public static String airAttack(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.airAttack(x, y);
     }
 
     public static String pourOil(Matcher matcher) {
-        return null;
+        String direction = matcher.group("direction");
+        return GameMenuController.pourOil(direction);
     }
 
     public static String digTunnel(Matcher matcher) {
-        return null;
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.digTunnel(x, y);
     }
 
     public static String buildEquipments(Matcher matcher) {
-        return null;
+        String equipmentName = Commands.eraseQuot(matcher.group("equipmentName"));
+        return GameMenuController.buildEquipments(equipmentName);
     }
 
     public static String disbandUnit(Matcher matcher) {
-        return null;
+        return GameMenuController.disbandUnit();
     }
 
-    public static String setTexture(Matcher matcher) {
-        return null;
+    public static String dropWall(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        int thickness = Integer.parseInt(matcher.group("thickness"));
+        int height = Integer.parseInt(matcher.group("height"));
+        String direction = matcher.group("direction");
+        return GameMenuController.dropWall(x, y, thickness, height, direction);
     }
 
-    public static String clearBlock(Matcher matcher) {
-        return null;
+    public static String startDiggingDitch(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.startDiggingDitch(x, y);
     }
 
-    public static String dropBlock(Matcher matcher) {
-        return null;
+    public static String stopDiggingDitch(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.stopDiggingDitch(x, y);
     }
 
-    public static String dropTree(Matcher matcher) {
-        return null;
+    public static String deleteDitch(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.deleteDitch(x, y);
     }
 
-    public static String dropUnit(Matcher matcher) {
-        return null;
-    }
-
-    public static String enterTrade(Matcher matcher) {
-        return null;
+    public static String captureTheGate(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.captureTheGate(x, y);
     }
 
     public static String nextTurn(Matcher matcher) {
-        return null;
+        if (GameMenuController.isLastGovernment()) {
+            GameMenuController.foodVarietyAction();
+            GameMenuController.runBuildings();
+            GameMenuController.oxTetherAction();
+            GameMenuController.checkPopulation();
+            GameMenuController.StableAction();
+        }
+        GameMenuController.diggingDitch();
+        GameMenuController.handleAttacks();
+        GameMenuController.setOnGovernment();
+        GameMenuController.setDefaults();
+        return "you are in main menu!";
     }
 
     public static void setGameStarted(boolean b) {
         GameMenu.gameStarted = b;
+    }
+
+    public static int[] getCoordinate() {
+        System.out.println("type your coordinate :");
+        int[] coordinates = new int[2];
+        coordinates[0] = Commands.scanner.nextInt();
+        coordinates[1] = Commands.scanner.nextInt();
+        return coordinates;
+    }
+
+    public String moveTool(Matcher matcher) {
+        int toolX = Integer.parseInt(matcher.group("toolX"));
+        int toolY = Integer.parseInt(matcher.group("toolY"));
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.moveTool(toolX, toolY, x, y);
+    }
+
+    public static String dropStair(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.dropStair(x, y);
+    }
+
+    public static String attackTool(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.attackTool(x, y);
+    }
+
+    public static String attackTCastle(Matcher matcher) {
+        int x = Integer.parseInt(matcher.group("x"));
+        int y = Integer.parseInt(matcher.group("y"));
+        return GameMenuController.attackCastle(x, y);
     }
 }

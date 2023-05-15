@@ -2,33 +2,29 @@ package model.troops;
 
 
 import model.Good;
-import model.Government;
-import model.People;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Troop extends People {
-    private Good weapon;
-    private int hp;
-    private Government owner;
-    private String region;
+
+public class Troop implements Serializable {
+    private final String name;
+    private final String region;
+    private final Good weapon;
+    private final int powerOfAttack, value, shootingRange, hp;
+    private final boolean hasArmor;
     private int velocity;
-    private int powerOfAttack;
-    private int powerOfDefence;
-    private int value;
-    private boolean hasArmor, canPushLadder, canDigMoat, isHidden, canClimb;
-    private int shootingRange;
 
-    public Troop(String region, int velocity, int powerOfAttack, int powerOfDefence, int value, boolean hasArmor, boolean canDigMoat, int shootingRange) {
+    public Troop(String name, String region, int velocity, int powerOfAttack, int hp, int value, boolean hasArmor,
+                 int shootingRange, Good weapon) {
+        this.name = name;
         this.region = region;
         this.velocity = velocity;
         this.powerOfAttack = powerOfAttack;
-        this.powerOfDefence = powerOfDefence;
+        this.hp = 10 * hp;
         this.value = value;
         this.hasArmor = hasArmor;
-        this.canDigMoat = canDigMoat;
         this.shootingRange = shootingRange;
+        this.weapon = weapon;
     }
 
     public String getRegion() {
@@ -43,75 +39,20 @@ public class Troop extends People {
         return powerOfAttack;
     }
 
-    public int getPowerOfDefence() {
-        return powerOfDefence;
-    }
 
     public int getValue() {
         return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
     }
 
     public boolean isHasArmor() {
         return hasArmor;
     }
 
-    public void setHasArmor(boolean hasArmor) {
-        this.hasArmor = hasArmor;
-    }
-
-    public boolean isCanPushLadder() {
-        return canPushLadder;
-    }
-
-    public void setCanPushLadder(boolean canPushLadder) {
-        this.canPushLadder = canPushLadder;
-    }
-
-    public boolean isCanDigMoat() {
-        return canDigMoat;
-    }
-
-    public void setCanDigMoat(boolean canDigMoat) {
-        this.canDigMoat = canDigMoat;
-    }
-
-    public boolean isHidden() {
-        return isHidden;
-    }
-
-    public void setHidden(boolean hidden) {
-        isHidden = hidden;
-    }
-
-    public boolean isCanClimb() {
-        return canClimb;
-    }
-
-    public void setCanClimb(boolean canClimb) {
-        this.canClimb = canClimb;
-    }
-
     public int getShootingRange() {
         return shootingRange;
     }
 
-    public void setShootingRange(int shootingRange) {
-        this.shootingRange = shootingRange;
-    }
-
-    public Government getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Government owner) {
-        this.owner = owner;
-    }
-
-    public void changeVelocity(int percent){
+    public void changeVelocity(int percent) {
         velocity *= percent;
     }
 
@@ -121,5 +62,9 @@ public class Troop extends People {
 
     public int getHp() {
         return hp;
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -9,12 +9,14 @@ import java.util.HashSet;
 public class Barrack extends Building {
     private final ArrayList<Troop> troopsList = new ArrayList<>();
 
-    public Barrack(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {
+    public Barrack(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal,
+                   BuildingGroups group) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
     }
 
-    public void addTroop(Troop troop) {
-        troopsList.add(troop);
+    public void addTroop(Troop troop, int count) {
+        for (int i = 0; i < count; i++)
+            troopsList.add(troop);
     }
 
     public void removeTroop(Troop troop) {

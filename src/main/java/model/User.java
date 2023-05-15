@@ -1,30 +1,10 @@
 package model;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.text.RandomStringGenerator;
+import controller.UserController;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-enum DefaultSlogans {
-    ;
-
-    DefaultSlogans(String slogan) {
-        this.slogan = slogan;
-    }
-
-    private String slogan;
-}
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 public class User {
     private int highScore;
@@ -35,64 +15,24 @@ public class User {
     private String email;
     private String slogan;
     private String securityAnswer;
-    private int securityQuestionNumber;
+    private int securityQuestionNo;
     private static final String PATH = "src/main/resources/users.json";
     private static ArrayList<User> users = new ArrayList<>();
     private boolean isStayLoggedIn;
 
     public User(String username, String password, String nickname, String email, String slogan) {
         this.username = username;
-        this.passwordHash = generatePasswordHash(password);
+        this.passwordHash = UserController.generatePasswordHash(password);
         this.nickname = nickname;
         this.email = email;
         this.slogan = slogan;
     }
 
-    public static String generateRandomPassword() {
-        String chars = "abcdefghijklmnopqrstuvwxyz";
-        chars += chars.toUpperCase();
-        chars += "0123456789!@#$%";
-        RandomStringGenerator passwordGenerator = new RandomStringGenerator.Builder().selectFrom(chars.toCharArray()).build();
-        String password;
-        while (true) {
-            password = passwordGenerator.generate(16);
-            if (checkPasswordFormat(password)) return password;
-        }
+    public void setPassword(String password) {
+        this.passwordHash = UserController.generatePasswordHash(password);
     }
 
-    public static String generateRandomSlogan() {
-        return null;
-    }
-
-    public static boolean checkUsernameFormat(String username) {
-        return username.matches("\\w+");
-    }
-
-    public static boolean checkPasswordFormat(String password) {
-        return password.matches("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\\W)^.{6,}");
-    }
-
-    public static boolean checkEmailFormat(String email) {
-        Matcher matcher = Pattern.compile("([0-9a-zA-Z_.]*)@([0-9a-zA-Z_.]*)\\.([0-9a-zA-Z_.]*)").matcher(email);
-        if (!matcher.matches()) return false;
-        for (int i = 1; i <= 3; i++) if (matcher.group(i).equals("")) return false;
-        return true;
-    }
-
-    public void setPasswordHash(String password) {
-        this.passwordHash = generatePasswordHash(password);
-    }
-
-    public static boolean isUsernameExists(String username) {
-        return users.stream().anyMatch(user -> user.username.equals(username));
-    }
-
-    public static boolean isEmailExists(String email) {
-        return users.stream().anyMatch(user -> user.email.equalsIgnoreCase(email));
-    }
-
-
-    public ArrayList<User> getUsers() {
+    public static ArrayList<User> getUsers() {
         return users;
     }
 
@@ -100,14 +40,8 @@ public class User {
         users.add(user);
     }
 
-    public void removeUser(User user) {
+    public static void removeUser(User user) {
         users.remove(user);
-    }
-
-    public static User getUserByUsername(String username) {
-        Stream<User> stream = users.stream().filter(user -> user.username.equals(username));
-        Optional<User> user = stream.findAny();
-        return user.orElse(null);
     }
 
 
@@ -115,32 +49,6 @@ public class User {
         return securityAnswer;
     }
 
-    public static User getStayedLoginUser() {
-        Stream<User> stream = users.stream().filter(user -> user.isStayLoggedIn = true);
-        Optional<User> user = stream.findAny();
-        return user.orElse(null);
-    }
-
-    public static void fetchDatabase() {
-        if (!new File(PATH).exists()) return;
-        try (FileReader reader = new FileReader(PATH)) {
-            ArrayList<User> copy = new Gson().fromJson(reader, new TypeToken<List<User>>() {
-            }.getType());
-            if (copy != null) users = copy;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void updateDatabase() throws IOException {
-        File file = new File(PATH);
-        if (!file.exists()) file.createNewFile();
-        try (FileWriter writer = new FileWriter(PATH, false)) {
-            writer.write(new Gson().toJson(users));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void setUsername(String username) {
         this.username = username;
@@ -156,11 +64,15 @@ public class User {
 
 
     public void setHighScore(int highScore) {
-        this.highScore = highScore;
+        if (this.highScore < highScore)
+            this.highScore = highScore;
     }
 
-    public void setRank(int rank) {
-        this.rank = rank;
+    public static void updateRank() {
+        users = (ArrayList<User>) users.stream().sorted(Comparator.comparingInt(o -> o.highScore)).collect(Collectors.toList());
+        for (User user : users)
+            user.rank = users.size() - users.indexOf(user);
+        UserController.updateDatabase();
     }
 
     public void setSlogan(String slogan) {
@@ -195,15 +107,31 @@ public class User {
         return slogan;
     }
 
-    public static String generatePasswordHash(String password) {
-        return new DigestUtils("SHA3-256").digestAsHex(password);
+    public static String getPATH() {
+        return PATH;
+    }
+
+    public void setSecurityAnswer(String securityAnswer) {
+        this.securityAnswer = securityAnswer;
+    }
+
+    public void setSecurityQuestionNo(int securityQuestionNo) {
+        this.securityQuestionNo = securityQuestionNo;
+    }
+
+    public static void setUsers(ArrayList<User> users) {
+        User.users = users;
     }
 
     public void setStayLoggedIn(boolean stayLoggedIn) {
         isStayLoggedIn = stayLoggedIn;
     }
 
-    public boolean checkPassword(String password) {
-        return generatePasswordHash(password).equals(this.passwordHash);
+    public boolean isStayLoggedIn() {
+        return isStayLoggedIn;
+    }
+
+    public int getSecurityQuestionNo() {
+        return securityQuestionNo;
     }
 }

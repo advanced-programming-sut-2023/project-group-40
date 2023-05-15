@@ -1,7 +1,5 @@
 package model;
 
-import com.google.gson.internal.bind.SerializationDelegatingTypeAdapter;
-
 public class Map {
     private static int size;
     private static Cell[][] map;
