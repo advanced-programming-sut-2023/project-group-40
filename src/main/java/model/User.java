@@ -16,7 +16,7 @@ public class User {
     private String slogan;
     private String securityAnswer;
     private int securityQuestionNo;
-    private static final String PATH = "src/main/resources/users.json";
+    private static final String PATH = "src/main/resources/database/users.json";
     private static ArrayList<User> users = new ArrayList<>();
     private boolean isStayLoggedIn;
 

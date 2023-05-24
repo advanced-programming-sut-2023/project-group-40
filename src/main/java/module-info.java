@@ -5,8 +5,9 @@ module project.group {
     requires org.apache.commons.codec;
     requires org.apache.commons.text;
     requires com.google.gson;
-    requires org.apache.commons.lang3;
+    requires commons.lang3;
 
     exports view;
     opens view to javafx.fxml;
+    opens model to com.google.gson;
 }
