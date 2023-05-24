@@ -36,6 +36,7 @@ public class RegisterMenu extends Application {
     private Button register = new Button("register"), login;
     private CheckBox sloganCheckBox = new CheckBox("activate slogan");
     private Bounds usernameBounds, passwordLabelBounds, emailBounds;
+    private boolean isSuccessful = false;
 
     {
         generateRandomSlogan.setVisible(false);
@@ -132,6 +133,7 @@ public class RegisterMenu extends Application {
             slogan.setText(UserController.generateRandomSlogan());
         });
         register.setOnMouseClicked(mouseEvent -> {
+            isSuccessful = true;
             checkUsername();
             checkPassword();
             checkEmail();
@@ -142,6 +144,7 @@ public class RegisterMenu extends Application {
 
     private void checkUsername() {
         if (username.getText().length() == 0) {
+            isSuccessful = false;
             usernameError.setText("username is empty!");
             if (usernameHBox.getChildren().size() == 2)
                 usernameHBox.getChildren().add(usernameError);
@@ -153,6 +156,7 @@ public class RegisterMenu extends Application {
 
     private void checkPassword() {
         if (password.getText().length() == 0) {
+            isSuccessful = false;
             passwordError.setText("password is empty!");
             if (passwordHBox.getChildren().size() == 3)
                 passwordHBox.getChildren().add(passwordError);
@@ -161,6 +165,7 @@ public class RegisterMenu extends Application {
 
     private void checkSlogan() {
         if (slogan.getText().length() == 0) {
+            isSuccessful = false;
             if (sloganHBox.getChildren().size() == 2)
                 sloganHBox.getChildren().add(sloganError);
         }
@@ -169,6 +174,7 @@ public class RegisterMenu extends Application {
 
     private void checkNickname() {
         if (nickname.getText().length() == 0) {
+            isSuccessful = false;
             if (nicknameHBox.getChildren().size() == 2)
                 nicknameHBox.getChildren().add(nicknameError);
         }
@@ -177,9 +183,16 @@ public class RegisterMenu extends Application {
 
     private void checkEmail() {
         if (email.getText().length() == 0 ) {
+            isSuccessful = false;
+            emailError.setText("email is empty!");
             if (emailHBox.getChildren().size() == 2) emailHBox.getChildren().add(emailError);
             emailHBox.getChildren().get(2).setTranslateX(usernameBounds.getWidth() - emailBounds.getWidth());
-        } else emailHBox.getChildren().remove(emailError);
+        }else if(UserController.isEmailExists(email.getText())){
+            emailError.setText("email is exists!");
+            if (emailHBox.getChildren().size() == 2) emailHBox.getChildren().add(emailError);
+            emailHBox.getChildren().get(2).setTranslateX(usernameBounds.getWidth() - emailBounds.getWidth());
+        }
+        else emailHBox.getChildren().remove(emailError);
     }
 
     private void setSizes() {
