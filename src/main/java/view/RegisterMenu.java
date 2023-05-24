@@ -39,7 +39,7 @@ public class RegisterMenu {
             return e.getMessage();
         }
 
-        return LoginMenu.handleCaptcha();
+        return "success!";
     }
 
 

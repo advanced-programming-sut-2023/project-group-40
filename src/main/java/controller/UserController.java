@@ -9,8 +9,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.text.RandomStringGenerator;
 import view.MainMenu;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -111,30 +110,6 @@ public class UserController {
         return result.toString();
     }
 
-    public static String generateCaptcha(int randomNum) {
-        StringBuilder result = new StringBuilder();
-        BufferedImage bufferedImage = new BufferedImage(39, 14, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics2D = bufferedImage.createGraphics();
-        graphics2D.setColor(Color.WHITE);
-        graphics2D.fillRect(0, 0, 39, 14);
-        graphics2D.setColor(Color.BLACK);
-        graphics2D.setFont(new Font("Arial", Font.BOLD, 16));
-        String randomNumString = Integer.toString(randomNum);
-        graphics2D.drawString(randomNumString, 2, 13);
-        for (int i = 0; i < bufferedImage.getHeight(); i++) {
-            for (int j = 0; j < bufferedImage.getWidth(); j++) {
-                String chars = "QWERTY";
-                String noise = ".-`',";
-                int index = (Integer.parseInt(randomNumString) + i + j) % 5;
-                if (bufferedImage.getRGB(j, i) == Color.BLACK.getRGB())
-                    result.append(chars.charAt(index));
-                else
-                    result.append(noise.charAt(index));
-            }
-            result.append("\n");
-        }
-        return result.toString();
-    }
 
     public static void autoLogin() throws ReflectiveOperationException {
         User stayedLoginUser = UserController.getStayedLoginUser();
