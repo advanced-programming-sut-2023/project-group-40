@@ -15,7 +15,7 @@ public class App extends Application {
         primaryStage.setFullScreen(true);
         primaryStage.setFullScreenExitHint("");
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-        new RegisterMenu().start(primaryStage);
+        new LoginMenu().start(primaryStage);
     }
 
     public static void setWindowSize(double width, double height) {
