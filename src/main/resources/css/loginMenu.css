@@ -1,8 +1,9 @@
-Label{
+Label {
     -fx-font-size: 30;
     -fx-font-weight: bold;
 }
-TextField , PasswordField,Button,CheckBox{
+
+TextField, PasswordField, Button, CheckBox {
     -fx-font-size: 30;
     -fx-font-weight: bold;
 }

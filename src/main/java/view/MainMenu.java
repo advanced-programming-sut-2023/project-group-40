@@ -35,11 +35,5 @@ public class MainMenu {
         }
     }
 
-    public static String logout(Matcher matcher) throws ReflectiveOperationException {
-        System.out.println("user logged out successfully!");
-        MainMenuController.setCurrentUser(null);
-        if (UserController.getStayedLoginUser() != null) UserController.getStayedLoginUser().setStayLoggedIn(false);
-        LoginMenu.run();
-        return null;
-    }
+
 }
