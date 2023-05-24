@@ -1,6 +1,7 @@
 package view;
 
 import controller.LoginMenuController;
+import controller.RegisterMenuController;
 import controller.UserController;
 import javafx.application.Application;
 import javafx.geometry.Bounds;
@@ -14,27 +15,41 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.SecurityQuestions;
 
+import java.io.File;
 import java.util.Objects;
+import java.util.Random;
 
 public class LoginMenu extends Application {
     private Pane root;
     private TextField username,password,securityAnswer;
     VBox loginVbox;
-    private HBox usernameHBox, passwordHBox,buttonHBox,securityQuestionsHBox,securityAnswerHBox;
+    private HBox usernameHBox, passwordHBox,buttonHBox,securityQuestionsHBox,securityAnswerHBox,captchaHBox;
     private Image hideIconImage;
     private Image showIconImage;
+    private Image captchaImage;
+    private ImageView captchaImageView;
+    private final File captchaDirectory = new File(RegisterMenu.class.getResource("/captcha/").toExternalForm().substring(6));
+
     private final Label usernameError = new Label("username is empty!");
     private final Label passwordError = new Label("password is empty!");
     private final Label securityQuestionError = new Label("security question is incorrect!");
     private final Label securityAnswerError = new Label("security answer is incorrect!");
+    private final Label captchaError = new Label("captcha is incorrect!");
+    private final TextField captchaAnswerTextField = new TextField();
+    private final Image reloadCaptchaImage = new Image(Objects.requireNonNull(RegisterMenu
+            .class.getResource("/images/reloadCaptchaIcon.png")).toExternalForm());
+    private final ImageView captchaRefreshImageView = new ImageView(reloadCaptchaImage);
     private ImageView eyeIcon;
-    private Button login = new Button("login");
-    private ToggleButton forgetMyPassword = new ToggleButton("forget my password");
+    private final Button login = new Button("login");
+    private final ToggleButton forgetMyPassword = new ToggleButton("forget my password");
+    private final Button signup = new Button("signup");
     private boolean isSuccessful = false;
     private ComboBox<String> securityQuestions;
     private Label passwordLabel;
+    private Stage primaryStage;
     @Override
     public void start(Stage primaryStage) throws Exception {
+        this.primaryStage = primaryStage;
         root = new Pane();
         Scene scene = new Scene(root);
         scene.getStylesheets().add(Objects
@@ -52,11 +67,19 @@ public class LoginMenu extends Application {
         securityQuestions.getItems().add(SecurityQuestions.NO_3.getQuestion());
         securityQuestionsHBox = new HBox(new Label("security question :"),securityQuestions);
         securityAnswerHBox = new HBox(new Label("security answer"),securityAnswer);
-        buttonHBox = new HBox(forgetMyPassword, login);
-        loginVbox.getChildren().addAll(usernameHBox, passwordHBox, buttonHBox);
+        captchaImage = new Image("file:/" + Objects.
+                requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
+        captchaImageView = new ImageView(captchaImage);
+        captchaRefreshImageView.setPreserveRatio(true);
+        captchaRefreshImageView.setFitHeight(captchaImage.getHeight());
+        captchaHBox = new HBox(captchaAnswerTextField,captchaImageView, captchaRefreshImageView);
+        captchaHBox.setSpacing(20);
+        buttonHBox = new HBox(forgetMyPassword, login,signup);
+        loginVbox.getChildren().addAll(usernameHBox, passwordHBox, captchaHBox,buttonHBox);
         root.getChildren().addAll(loginVbox);
         primaryStage.setScene(scene);
         primaryStage.show();
+        App.setupStage(primaryStage);
         App.setWindowSize(primaryStage.getWidth(), primaryStage.getHeight());
         setSizes();
         setActions();
@@ -83,6 +106,8 @@ public class LoginMenu extends Application {
         passwordError.setStyle("-fx-text-fill: red");
         securityQuestionError.setStyle("-fx-text-fill: red");
         securityAnswerError.setStyle("-fx-text-fill: red");
+        captchaError.setStyle("-fx-text-fill: red");
+
         eyeIcon = new ImageView(hideIconImage);
         passwordHBox.getChildren().addAll(eyeIcon);
         username.textProperty().addListener((observableValue, s, t1) -> {
@@ -120,7 +145,8 @@ public class LoginMenu extends Application {
             isSuccessful = true;
             checkUsername();
             checkPassword();
-            checkSecurityAnswer();
+            checkSecurity();
+            checkCaptcha();
             if (isSuccessful) System.out.println("login successful");
         });
         forgetMyPassword.setOnMouseClicked(mouseEvent -> {
@@ -134,9 +160,35 @@ public class LoginMenu extends Application {
                 loginVbox.getChildren().remove(securityAnswerHBox);
             }
         });
+        signup.setOnMouseClicked(mouseEvent -> {
+            try {
+                new RegisterMenu().start(primaryStage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        captchaRefreshImageView.setOnMouseClicked(event -> {
+            captchaImage = new Image("file:/" + Objects.
+                    requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
+            captchaImageView.setImage(captchaImage);
+        });
     }
 
-    private void checkSecurityAnswer() {
+    private void checkCaptcha() {
+        String url = captchaImage.getUrl();
+        if (url.substring(url.length() - 8, url.length() - 4).equals(captchaAnswerTextField.getText())) {
+            captchaHBox.getChildren().remove(captchaError);
+        }
+        else{
+            if (captchaHBox.getChildren().size() == 3) captchaHBox.getChildren().add(captchaError);
+            captchaImage = new Image("file:/" + Objects.
+                    requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
+            captchaImageView.setImage(captchaImage);
+            isSuccessful = false;
+        }
+    }
+
+    private void checkSecurity() {
         if (!forgetMyPassword.isSelected()) return;
         if (!UserController.isUsernameExists(username.getText())) return;
         if (securityQuestions.getItems().indexOf(securityQuestions.getValue()) + 1
@@ -144,7 +196,7 @@ public class LoginMenu extends Application {
             if (securityQuestionsHBox.getChildren().size() == 2)
                 securityQuestionsHBox.getChildren().add(securityQuestionError);
         }
-        if (securityAnswer.getText().equals(LoginMenuController.getSecurityAnswer(username.getText()))) {
+        if (!securityAnswer.getText().equals(LoginMenuController.getSecurityAnswer(username.getText()))) {
             if (securityAnswerHBox.getChildren().size() == 2)
                 securityAnswerHBox.getChildren().add(securityAnswerError);
         }

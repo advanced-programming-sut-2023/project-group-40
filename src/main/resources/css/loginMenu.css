@@ -1,9 +1,4 @@
-Label {
-    -fx-font-size: 30;
-    -fx-font-weight: bold;
-}
-
-TextField, PasswordField, Button, CheckBox ,ComboBox , ToggleButton{
+TextField, PasswordField, Button, CheckBox ,ComboBox , ToggleButton , Label{
     -fx-font-size: 30;
     -fx-font-weight: bold;
 }

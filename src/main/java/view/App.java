@@ -11,11 +11,15 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         UserController.fetchDatabase();
+        setupStage(primaryStage);
+        new LoginMenu().start(primaryStage);
+    }
+
+    public static void setupStage(Stage primaryStage) {
         primaryStage.setResizable(false);
         primaryStage.setFullScreen(true);
         primaryStage.setFullScreenExitHint("");
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-        new LoginMenu().start(primaryStage);
     }
 
     public static void setWindowSize(double width, double height) {
