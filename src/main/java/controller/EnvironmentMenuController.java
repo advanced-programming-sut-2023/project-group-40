@@ -141,6 +141,12 @@ public class EnvironmentMenuController {
             dropStockpile(size - 50, size / 2, Government.getGovernments().get(6));
             dropStockpile(size - 50, size - 40, Government.getGovernments().get(7));
         }
+
+        for (Government government : Government.getGovernments()) {
+            government.increaseAmountOfGood(Good.GOLD, 100);
+            government.increaseAmountOfGood(Good.IRON, 100);
+            government.increaseAmountOfGood(Good.STONE, 100);
+        }
     }
 
     public static void placeCastle(Government government, int x, int y) {

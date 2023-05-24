@@ -45,7 +45,7 @@ public enum Commands {
     SHOW_POPULARITY_FACTORS("show popularity factors", GameMenu.class, "showPopularityFactors"),
     SHOW_POPULARITY("show popularity", GameMenu.class, "showPopularity"),
     SHOW_FOOD_LIST("show food list", GameMenu.class, "showFoodList"),
-    SET_FOOD_RATE("food rate -r (?<rateNumber>\\d+)", GameMenu.class, "setFoodRate"),
+    SET_FOOD_RATE("food rate -r (?<rateNumber>[-0-9]+)", GameMenu.class, "setFoodRate"),
     SET_TAX_RATE("tax rate -r (?<rateNumber>\\d+)", GameMenu.class, "setTaxRate"),
     SET_FEAR_RATE("fear rate -r (?<rateNumber>\\d+)", GameMenu.class, "fearTaxRate"),
     SHOW_FOOD_RATE("food rate show", GameMenu.class, "showFoodRate"),

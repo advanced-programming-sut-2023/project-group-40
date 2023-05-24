@@ -69,7 +69,7 @@ public class MapMenuController {
     public static String showDetails(int x, int y) {
         String result = "";
         result += "Texture: " + Map.getMap()[x][y].getTexture().name().toLowerCase();
-        if (Map.getMap()[x][y].getBuilding().getName().equals("Stockpile")) {
+        if (Map.getMap()[x][y].getBuilding() != null && Map.getMap()[x][y].getBuilding().getName().equals("Stockpile")) {
             Storage storage = (Storage) Map.getMap()[x][y].getBuilding();
             result += "gold :";
             result += storage.getProducts().get(Good.GOLD) + "\n";

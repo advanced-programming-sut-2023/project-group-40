@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 public class Government {
     private static final ArrayList<Government> governments = new ArrayList<>();
     private final ArrayList<TradeRequest> requests = new ArrayList<>();
-    private final ArrayList<Storage> storages = new ArrayList<>();
     private final ArrayList<Building> buildings = new ArrayList<>();
     private int countofhorses = 0;
     private int numberOfKnight = 0;
@@ -31,12 +30,35 @@ public class Government {
         this.owner = owner;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public static Government getGovernmentByUser(User user) {
+        Stream<Government> stream = governments.stream().filter(government -> government.owner == user);
+        Optional<Government> government = stream.findAny();
+        return government.orElse(null);
+    }
+
+    public static boolean checkAllGovernmentsChoseColor() {
+        return governments.stream().noneMatch(government -> government.getColor() == null);
+    }
+
+    public static void addGovernment(String username) {
+        Government government = new Government(UserController.getUserByUsername(username));
+        governments.add(government);
+    }
+
+    public static int getGovernmentsSize() {
+        return governments.size();
+    }
+
+    public static ArrayList<Government> getGovernments() {
+        return governments;
     }
 
     public User getOwner() {
         return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public int getFoodRate() {
@@ -71,46 +93,20 @@ public class Government {
         this.popularity += amount;
     }
 
-    public void addStorage(Storage storage) {
-        storages.add(storage);
-    }
-
-    public ArrayList<Storage> getMaterialStorages() {
-        return storages;
-    }
-
-    public static Government getGovernmentByUser(User user) {
-        Stream<Government> stream = governments.stream().filter(government -> government.owner == user);
-        Optional<Government> government = stream.findAny();
-        return government.orElse(null);
-    }
-
-    public static boolean checkAllGovernmentsChoseColor() {
-        return governments.stream().noneMatch(government -> government.getColor() == null);
-    }
-
-    public static void addGovernment(String username) {
-        Government government = new Government(UserController.getUserByUsername(username));
-        governments.add(government);
-    }
-
-    public static int getGovernmentsSize() {
-        return governments.size();
+    public Color getColor() {
+        return color;
     }
 
     public void setColor(Color color) {
         this.color = color;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
     public int getAmountOfGood(Good good) {
         int count = 0;
-        for (Storage storage : this.storages) {
-            if (storage.getProducts().get(good) != null) {
-                count += storage.getProducts().get(good);
+        for (Building building : buildings) {
+            if (building instanceof Storage storage) {
+                Integer currentGoodCount = storage.getProducts().get(good);
+                if (currentGoodCount != null) count += currentGoodCount;
             }
         }
         return count;
@@ -120,48 +116,55 @@ public class Government {
         return castle;
     }
 
+    public void setCastle(Castle castle) {
+        this.castle = castle;
+    }
+
     public String decreaseAmountOfGood(Good good, int count) {
         int deletedMaterials = count;
         int sumOfInventories = 0;
-        for (Storage storage : storages)
-            sumOfInventories += storage.getSumOfProducts(good);
-        if (count > sumOfInventories) return "you haven't enough" + good.name().toLowerCase();
-        for (Storage storage : storages) {
-            if (deletedMaterials == 0) break;
-            if (deletedMaterials < storage.getSumOfProducts(good)) {
-                storage.decreaseAmountOfProduct(good, count);
-                break;
-            } else {
-                deletedMaterials -= storage.getSumOfProducts(good);
-                storage.removeProduct(good);
+
+        for (Building building : buildings)
+            if (building instanceof Storage storage && storage.getProductType().equals(good.getType()))
+                sumOfInventories += storage.getCurrentAmount();
+
+        if (count > sumOfInventories) return "you haven't enough " + good.name().toLowerCase();
+
+        for (Building building : buildings)
+            if (building instanceof Storage storage && storage.getProductType().equals(good.getType())) {
+                if (deletedMaterials == 0) break;
+                if (deletedMaterials < storage.getCurrentAmount()) {
+                    storage.decreaseAmountOfProduct(good, count);
+                    break;
+                } else {
+                    deletedMaterials -= storage.getCurrentAmount();
+                    storage.removeProduct(good);
+                }
             }
-        }
-        return "you moved " + good.name().toLowerCase() + "successfully";
+
+        return "you moved " + good.name().toLowerCase() + " successfully";
     }
 
     public String increaseAmountOfGood(Good good, int count) {
-        int addedFoods = count;
-        int sumOfEmptyCapacities = 0;
-        for (Storage storage : storages) {
-            sumOfEmptyCapacities += storage.getCapacity() - storage.getSumOfProducts(good);
-        }
-        if (addedFoods > sumOfEmptyCapacities) return "you can't produce" + good.name().toLowerCase();
-        for (Storage storage : storages) {
-            if (addedFoods == 0) break;
-            int emptyCapacity = storage.getCapacity() - storage.getSumOfProducts(good);
-            if (addedFoods < emptyCapacity) {
-                storage.addProduct(good, addedFoods);
-                break;
-            } else {
-                addedFoods -= emptyCapacity;
-                storage.addProduct(good, emptyCapacity);
-            }
-        }
-        return "you successfully produce" + good.name().toLowerCase();
-    }
+        int addedGoods = count;
+        int sumOfEmptyCapacities = getNumOfEmptySpace(good.getType());
 
-    public static ArrayList<Government> getGovernments() {
-        return governments;
+        if (addedGoods > sumOfEmptyCapacities) return "you can't save " + good.name().toLowerCase();
+
+        for (Building building : buildings)
+            if (building instanceof Storage storage && storage.getProductType().equals(good.getType())) {
+                if (addedGoods == 0) break;
+                int emptyCapacity = storage.getCapacity() - storage.getCurrentAmount();
+                if (addedGoods < emptyCapacity) {
+                    storage.addProduct(good, addedGoods);
+                    break;
+                } else {
+                    addedGoods -= emptyCapacity;
+                    storage.addProduct(good, emptyCapacity);
+                }
+            }
+
+        return "you successfully save " + good.name().toLowerCase();
     }
 
     public void addRequest(TradeRequest tradeRequest) {
@@ -211,10 +214,6 @@ public class Government {
         if (getAmountOfGood(Good.BREAD) != 0) result++;
         if (result == 0) result = 1;
         return result;
-    }
-
-    public void setCastle(Castle castle) {
-        this.castle = castle;
     }
 
     public void addBuilding(Building building) {
@@ -295,13 +294,11 @@ public class Government {
 
     public int getNumOfEmptySpace(String type) {
         int count = 0;
-        List<Storage> filteredStorages = storages.stream().filter(storage -> storage.getProductType().equals(type)).toList();
-        for (Storage storage : filteredStorages) {
-            for (Integer value : storage.getProducts().values()) {
-                count += value;
-            }
-            count = storage.getCapacity() - count;
-        }
+
+        for (Building building : buildings)
+            if(building instanceof Storage storage && storage.getProductType().equals(type))
+                count += storage.getCapacity() - storage.getCurrentAmount();
+
         return count;
     }
 

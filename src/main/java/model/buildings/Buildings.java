@@ -2,6 +2,7 @@ package model.buildings;
 
 import model.Good;
 import model.Texture;
+import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +61,7 @@ public enum Buildings {
 
     public static Building getBuildingObjectByType(String type) {
         for (Buildings building : values())
-            if (building.fullName.equals(type)) return building.buildingObject;
+            if (building.fullName.equals(type)) return SerializationUtils.clone(building.buildingObject);
         return null;
     }
 }

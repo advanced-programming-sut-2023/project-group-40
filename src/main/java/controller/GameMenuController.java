@@ -49,27 +49,26 @@ public class GameMenuController {
         numberOfFoods += currentGovernment.getAmountOfGood(Good.CHEESE);
         numberOfFoods += currentGovernment.getAmountOfGood(Good.BREAD);
         switch (rate) {
-            case -2:
-                currentGovernment.changePopularity(-8);
-            case -1: {
+            case -2 -> currentGovernment.changePopularity(-8);
+            case -1 -> {
                 if (currentGovernment.getPopulation() > 2 * numberOfFoods)
                     return "you haven't enough food!";
                 currentGovernment.decreaseAmountOfFood(currentGovernment.getPopulation() / 2);
                 currentGovernment.changePopularity(-4);
             }
-            case 0: {
+            case 0 -> {
                 if (currentGovernment.getPopulation() > numberOfFoods)
                     return "you haven't enough food!";
                 currentGovernment.decreaseAmountOfFood(currentGovernment.getPopulation());
                 currentGovernment.changePopularity(0);
             }
-            case 1: {
+            case 1 -> {
                 if (1.5 * currentGovernment.getPopulation() > numberOfFoods)
                     return "you haven't enough food!";
                 currentGovernment.decreaseAmountOfFood((int) (1.5 * currentGovernment.getPopulation()));
                 currentGovernment.changePopularity(4);
             }
-            case 2: {
+            case 2 -> {
                 if (2 * currentGovernment.getPopulation() > numberOfFoods)
                     return "you haven't enough food!";
                 currentGovernment.decreaseAmountOfFood(2 * currentGovernment.getPopulation());
@@ -93,56 +92,57 @@ public class GameMenuController {
         int gold = currentGovernment.getAmountOfGood(Good.GOLD);
         int population = currentGovernment.getPopulation();
         switch (rate) {
-            case -3: {
+            case -3 -> {
                 if (population > gold)
                     return "you haven't enough gold in your treasury";
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, population);
                 currentGovernment.changePopularity(7);
             }
-            case -2: {
+            case -2 -> {
                 if (0.8 * population > gold)
                     return "you haven't enough gold in your treasury";
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, (int) (0.8 * population));
                 currentGovernment.changePopularity(5);
             }
-            case -1: {
+            case -1 -> {
                 if (0.6 * population > gold)
                     return "you haven't enough gold in your treasury";
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, (int) (0.6 * population));
                 currentGovernment.changePopularity(3);
             }
-            case 0: {
+            case 0 -> {
                 currentGovernment.changePopularity(1);
             }
-            case 1: {
+            case 1 -> {
                 currentGovernment.increaseAmountOfGood(Good.GOLD, (int) (0.6 * population));
                 currentGovernment.changePopularity(-2);
             }
-            case 2: {
+            case 2 -> {
                 currentGovernment.increaseAmountOfGood(Good.GOLD, (int) (0.8 * population));
                 currentGovernment.changePopularity(-4);
             }
-            case 3: {
+            case 3 -> {
                 currentGovernment.increaseAmountOfGood(Good.GOLD, population);
                 currentGovernment.changePopularity(-6);
+                break;
             }
-            case 4: {
+            case 4 -> {
                 currentGovernment.increaseAmountOfGood(Good.GOLD, (int) (1.2 * population));
                 currentGovernment.changePopularity(-8);
             }
-            case 5: {
+            case 5 -> {
                 currentGovernment.increaseAmountOfGood(Good.GOLD, (int) (1.4 * population));
                 currentGovernment.changePopularity(-12);
             }
-            case 6: {
+            case 6 -> {
                 currentGovernment.increaseAmountOfGood(Good.GOLD, (int) (1.6 * population));
                 currentGovernment.changePopularity(-16);
             }
-            case 7: {
+            case 7 -> {
                 currentGovernment.increaseAmountOfGood(Good.GOLD, (int) (1.8 * population));
                 currentGovernment.changePopularity(-20);
             }
-            case 8: {
+            case 8 -> {
                 currentGovernment.increaseAmountOfGood(Good.GOLD, 2 * population);
                 currentGovernment.changePopularity(-24);
             }
@@ -195,7 +195,7 @@ public class GameMenuController {
                     return "you can't drop building because this cell isn't available";
                 if (!isCoordinateValid(i) || !isCoordinateValid(j))
                     return "your coordinates is incorrect!";
-                if (!Map.getMap()[i][j].getTexture().getType().equals("water"))
+                if (Map.getMap()[i][j].getTexture().getType().equals("water"))
                     return "You can't drop  building because texture of this cell is water";
             }
         if (currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired())
@@ -208,6 +208,8 @@ public class GameMenuController {
         currentGovernment.decreaseAmountOfGood(Good.GOLD, targetBuilding.getCost()[0]);
         currentGovernment.decreaseAmountOfGood(Good.WOOD, targetBuilding.getCost()[1]);
         currentGovernment.decreaseAmountOfGood(Good.STONE, targetBuilding.getCost()[2]);
+        targetBuilding.setXCoordinates(x);
+        targetBuilding.setYCoordinates(y);
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
             for (int j = y; j < y + targetBuilding.getWidth(); j++) {
                 Map.getMap()[i][j].setBuilding(targetBuilding);
@@ -223,13 +225,16 @@ public class GameMenuController {
     }
 
     public static String selectBuilding(int x, int y) throws ReflectiveOperationException {
-        //do work after select
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
         if (Map.getMap()[x][y].getBuilding() == null)
             return "There is no existing building in your coordinates!";
         selectedBuilding = Map.getMap()[x][y].getBuilding();
-        if (selectedBuilding.getName().equals("shop")) ShopMenu.run();
+        if (selectedBuilding.getName().equals("shop")) {
+            ShopMenuController.setCurrentGovernment(currentGovernment);
+            ShopMenu.run();
+
+        }
         if (selectedBuilding.getName().equals("Mercenary Post")) {
             System.out.print("enter number of troops you want buy: ");
             int count = Commands.scanner.nextInt();
@@ -556,20 +561,7 @@ public class GameMenuController {
             return "you should choose engineer unit!";
         if (selectedUnit.getTroops().size() > currentGovernment.getAmountOfGood(Good.MELTING_POT))
             return "you don't have enough oil";
-        int x = selectedUnit.getX();
-        int y = selectedUnit.getY();
-        switch (direction) {
-            case "top":
-                y--;
-            case "right":
-                x++;
-            case "bottom":
-                y++;
-            case "left":
-                x--;
-        }
-        Unit unit = Map.getMap()[x][y].getUnit();
-        if (unit != null) unit.decreaseHpOfUnit(200);
+
         return "oil successfully poured";
     }
 
@@ -579,14 +571,16 @@ public class GameMenuController {
                 return "you should select Tunneler unit!";
             else return "you didn't select any unit!";
         for (int i = x; i <= x + 3; i++) {
-            Building targetBuilding = Map.getMap()[x][y].getBuilding();
-            if (!targetBuilding.getName().equals("lookout tower") && !targetBuilding.getName().endsWith("turret"))
+            Building targetBuilding = Map.getMap()[i][y].getBuilding();
+            if(targetBuilding == null) continue;
+            if (targetBuilding.getName().equals("lookout tower") || targetBuilding.getName().endsWith("turret"))
                 return "you can't dig tunnel under this building";
             if (Map.getMap()[x][y].getTexture().getType().equals("water"))
                 return "you can't dig tunnel on water regions";
             if (Map.getMap()[x][y].isStartDigging() || Map.getMap()[x][y].isHaveDitch())
                 return "you can't dig tunnel on ditch";
             targetBuilding = Map.getMap()[i][y].getBuilding();
+            if(targetBuilding == null) continue;
             currentGovernment.getBuildings().remove(targetBuilding);
             for (int j = targetBuilding.getX1(); j <= targetBuilding.getX2(); j++) {
                 for (int k = targetBuilding.getY1(); k <= targetBuilding.getY2(); k++) {
@@ -731,7 +725,6 @@ public class GameMenuController {
     }
 
     public static String dropWall(int x, int y, int thickness, int height, String direction) {
-        //left or right??? top or bottom
         if (direction.equals("horizontal")) {
             for (int i = x; i <= x + thickness; i++)
                 if (Map.getMap()[i][y].isAvailable() || (!Map.getMap()[i][y].getTexture().equals(Texture.LAND) && !Map.getMap()[i][y].getTexture().equals(Texture.LAND_WITH_PEBBLES)))

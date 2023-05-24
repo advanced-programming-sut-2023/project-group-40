@@ -142,4 +142,14 @@ public class Building implements Serializable, BuildingAction {
     public int getWorkersRequired() {
         return workersRequired;
     }
+
+    public void setXCoordinates(int x1) {
+        this.x1 = x1;
+        this.x2 = x1+ height;
+    }
+
+    public void setYCoordinates(int y1) {
+        this.y1 = y1;
+        this.y2 = y1+ width;
+    }
 }

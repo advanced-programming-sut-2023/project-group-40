@@ -12,18 +12,19 @@ public class Storage extends Building {
 
     private final int capacity;
     private String productType;
+    private int currentAmount = 0;
 
     public Storage(String name, int height, int width, int hp, int[] cost, int capacity, HashSet<Texture> textures,
                    boolean isIllegal, BuildingGroups group, String productType) {
         super(name, height, width, hp, cost, textures, isIllegal, group);
         this.capacity = capacity;
-        GameMenuController.getCurrentGovernment().addStorage(this);
         this.productType = productType;
     }
 
     public void addProduct(Good product, int number) {
-        products.put(product, products.get(product) + number);
+        products.merge(product, number, Integer::sum);
         this.productType = product.getType();
+        currentAmount += number;
     }
 
     public String getProductType() {
@@ -48,11 +49,7 @@ public class Storage extends Building {
         return capacity;
     }
 
-    public int getSumOfProducts(Good key) {
-        int count = 0;
-        for (int i = 0; i < products.size(); i++)
-            count += products.get(key);
-        return count;
+    public int getCurrentAmount() {
+        return currentAmount;
     }
-
 }
