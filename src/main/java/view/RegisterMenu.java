@@ -48,16 +48,12 @@ public class RegisterMenu extends Application {
     private Image captchaImage;
     private ImageView captchaImageView;
     private final Button submitButton = new Button("submit");
-    private boolean isSuccessful = false;
     private ComboBox<String> securityQuestions;
     private final File captchaDirectory = new File(RegisterMenu.class.getResource("/captcha/").toExternalForm().substring(6));
     private Stage primaryStage;
-
-
     {
         generateRandomSlogan.setVisible(false);
     }
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
@@ -158,13 +154,12 @@ public class RegisterMenu extends Application {
             slogan.setText(UserController.generateRandomSlogan());
         });
         register.setOnMouseClicked(mouseEvent -> {
-            isSuccessful = true;
-            checkUsername();
-            checkPassword();
-            checkEmail();
-            checkNickname();
-            checkSlogan();
-            if (isSuccessful)
+            TextFieldController.checkExistUsername(usernameHBox,username,usernameError);
+            TextFieldController.checkPassword(passwordHBox,password,passwordError);
+            TextFieldController.checkEmail(emailHBox,email,emailError,usernameBounds.getWidth() - emailBounds.getWidth());
+            TextFieldController.checkNickname(nicknameHBox,nickname,nicknameError);
+            TextFieldController.checkSlogan(sloganHBox,slogan,sloganError);
+            if (TextFieldController.isSuccessful())
                 chooseSecurityQuestion();
         });
 
@@ -210,62 +205,6 @@ public class RegisterMenu extends Application {
         loginVbox.getChildren().addAll(securityQuestionsHBox,securityAnswerHBox,captchaHBox);
         submitButton.setAlignment(Pos.CENTER);
         loginVbox.getChildren().addAll(submitButton);
-    }
-
-    private void checkUsername() {
-        if (username.getText().length() == 0) {
-            isSuccessful = false;
-            usernameError.setText("username is empty!");
-            if (usernameHBox.getChildren().size() == 2)
-                usernameHBox.getChildren().add(usernameError);
-        } else if (UserController.isUsernameExists(username.getText())) {
-            isSuccessful = false;
-            usernameError.setText("username is exists!");
-            if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(usernameError);
-        } else usernameHBox.getChildren().remove(usernameError);
-    }
-
-    private void checkPassword() {
-        if (password.getText().length() == 0) {
-            isSuccessful = false;
-            passwordError.setText("password is empty!");
-            if (passwordHBox.getChildren().size() == 3)
-                passwordHBox.getChildren().add(passwordError);
-        } else if (!UserController.checkPasswordFormat(password.getText())) {
-            isSuccessful = false;
-            passwordError.setText("password is weak!");
-            if (passwordHBox.getChildren().size() == 3)
-                passwordHBox.getChildren().add(passwordError);
-        } else passwordHBox.getChildren().remove(passwordError);
-    }
-
-    private void checkSlogan() {
-        if (slogan.getText().length() == 0 && sloganCheckBox.isSelected()) {
-            isSuccessful = false;
-            if (sloganHBox.getChildren().size() == 2)
-                sloganHBox.getChildren().add(sloganError);
-        } else sloganHBox.getChildren().remove(sloganError);
-    }
-
-    private void checkNickname() {
-        if (nickname.getText().length() == 0) {
-            isSuccessful = false;
-            if (nicknameHBox.getChildren().size() == 2)
-                nicknameHBox.getChildren().add(nicknameError);
-        } else nicknameHBox.getChildren().remove(nicknameError);
-    }
-
-    private void checkEmail() {
-        if (email.getText().length() == 0) {
-            isSuccessful = false;
-            emailError.setText("email is empty!");
-            if (emailHBox.getChildren().size() == 2) emailHBox.getChildren().add(emailError);
-            emailHBox.getChildren().get(2).setTranslateX(usernameBounds.getWidth() - emailBounds.getWidth());
-        } else if (UserController.isEmailExists(email.getText())) {
-            emailError.setText("email is exists!");
-            if (emailHBox.getChildren().size() == 2) emailHBox.getChildren().add(emailError);
-            emailHBox.getChildren().get(2).setTranslateX(usernameBounds.getWidth() - emailBounds.getWidth());
-        } else emailHBox.getChildren().remove(emailError);
     }
 
     private void setSizes() {

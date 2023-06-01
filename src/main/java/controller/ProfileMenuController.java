@@ -3,14 +3,10 @@ package controller;
 import model.User;
 
 public class ProfileMenuController {
-    private static User currentUser;
+    private static User currentUser = new User("username","password","nickname","email",null);
 
-    public static String changeUsername(String username) {
-        if (username == null || username.equals("")) return "username is empty!";
-        if (!UserController.checkUsernameFormat(username)) return "username is invalid!";
-        if (UserController.isUsernameExists(username)) return "username is exists!";
+    public static void changeUsername(String username) {
         currentUser.setUsername(username);
-        return "username changed!";
     }
 
     public static String changePassword(String oldPassword, String newPassword) {
@@ -75,5 +71,9 @@ public class ProfileMenuController {
 
     public static void setCurrentUser(User currentUser) {
         ProfileMenuController.currentUser = currentUser;
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
     }
 }

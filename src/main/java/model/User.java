@@ -19,7 +19,7 @@ public class User {
     private static final String PATH = "src/main/resources/database/users.json";
     private static ArrayList<User> users = new ArrayList<>();
     private boolean isStayLoggedIn;
-
+    private String avatarPath = User.class.getResource("/avatars/1.png").toString();
     public User(String username, String password, String nickname, String email, String slogan) {
         this.username = username;
         this.passwordHash = UserController.generatePasswordHash(password);
@@ -133,5 +133,9 @@ public class User {
 
     public int getSecurityQuestionNo() {
         return securityQuestionNo;
+    }
+
+    public String getAvatarPath() {
+        return avatarPath;
     }
 }

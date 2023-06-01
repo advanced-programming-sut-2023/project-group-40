@@ -1,7 +1,6 @@
 package view;
 
 import controller.LoginMenuController;
-import controller.RegisterMenuController;
 import controller.UserController;
 import javafx.application.Application;
 import javafx.geometry.Bounds;
@@ -43,7 +42,6 @@ public class LoginMenu extends Application {
     private final Button login = new Button("login");
     private final ToggleButton forgetMyPassword = new ToggleButton("forget my password");
     private final Button signup = new Button("signup");
-    private boolean isSuccessful = false;
     private ComboBox<String> securityQuestions;
     private Label passwordLabel;
     private Stage primaryStage;
@@ -142,12 +140,12 @@ public class LoginMenu extends Application {
             password.requestFocus();
         });
         login.setOnMouseClicked(mouseEvent -> {
-            isSuccessful = true;
-            checkUsername();
-            checkPassword();
-            checkSecurity();
-            checkCaptcha();
-            if (isSuccessful) System.out.println("login successful");
+            TextFieldController.checkExistUsername(usernameHBox,username,usernameError);
+            TextFieldController.checkPassword(passwordHBox,passwordLabel,username,password,passwordError);
+            if (forgetMyPassword.isSelected())
+                TextFieldController.checkSecurity(username,securityQuestions,securityQuestionsHBox,securityQuestionError,securityAnswerHBox,securityAnswer,securityAnswerError);
+            TextFieldController.checkCaptcha(captchaHBox,captchaImageView,captchaImage,captchaAnswerTextField,captchaError,captchaDirectory);
+            if (TextFieldController.isSuccessful()) System.out.println("login successful");
         });
         forgetMyPassword.setOnMouseClicked(mouseEvent -> {
             if (loginVbox.getChildren().size() == 3) {
@@ -174,71 +172,6 @@ public class LoginMenu extends Application {
         });
     }
 
-    private void checkCaptcha() {
-        String url = captchaImage.getUrl();
-        if (url.substring(url.length() - 8, url.length() - 4).equals(captchaAnswerTextField.getText())) {
-            captchaHBox.getChildren().remove(captchaError);
-        }
-        else{
-            if (captchaHBox.getChildren().size() == 3) captchaHBox.getChildren().add(captchaError);
-            captchaImage = new Image("file:/" + Objects.
-                    requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
-            captchaImageView.setImage(captchaImage);
-            isSuccessful = false;
-        }
-    }
 
-    private void checkSecurity() {
-        if (!forgetMyPassword.isSelected()) return;
-        if (!UserController.isUsernameExists(username.getText())) return;
-        if (securityQuestions.getItems().indexOf(securityQuestions.getValue()) + 1
-                != LoginMenuController.getSecurityQuestionNo(username.getText())) {
-            if (securityQuestionsHBox.getChildren().size() == 2)
-                securityQuestionsHBox.getChildren().add(securityQuestionError);
-        }
-        if (!securityAnswer.getText().equals(LoginMenuController.getSecurityAnswer(username.getText()))) {
-            if (securityAnswerHBox.getChildren().size() == 2)
-                securityAnswerHBox.getChildren().add(securityAnswerError);
-        }
-        else securityAnswerHBox.getChildren().remove(securityAnswerError);
-    }
-
-    private void checkUsername() {
-        if (username.getText().length() == 0) {
-            isSuccessful = false;
-            usernameError.setText("username is empty!");
-            if (usernameHBox.getChildren().size() == 2)
-                usernameHBox.getChildren().add(usernameError);
-        }
-        else if (!UserController.isUsernameExists(username.getText())) {
-            isSuccessful = false;
-            usernameError.setText("username is not exists!");
-            if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(usernameError);
-        }
-        else usernameHBox.getChildren().remove(usernameError);
-    }
-
-    private void checkPassword() {
-        if (password.getText().length() == 0) {
-            isSuccessful = false;
-            passwordError.setText("password is empty!");
-            if (passwordHBox.getChildren().size() == 3)
-                passwordHBox.getChildren().add(passwordError);
-        }
-        else if (!UserController.checkPasswordFormat(password.getText())) {
-            isSuccessful = false;
-            passwordError.setText("password is weak!");
-            if (passwordHBox.getChildren().size() == 3)
-                passwordHBox.getChildren().add(passwordError);
-        }
-        else if (!passwordLabel.getText().equals("new password : ") &&
-                !LoginMenuController.isPasswordCorrect(username.getText(),password.getText())){
-            isSuccessful = false;
-            passwordError.setText("password is incorrect!");
-            if (passwordHBox.getChildren().size() == 3)
-                passwordHBox.getChildren().add(passwordError);
-        }
-        else passwordHBox.getChildren().remove(passwordError);
-    }
 
 }
