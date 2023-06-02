@@ -1,78 +1,111 @@
 package view;
 
-import controller.MapMenuController;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
-import view.enums.Commands;
+import javafx.util.Duration;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MapMenu extends Application {
-    private Stage stage;
-    private ImageView[][] map = new ImageView[200][200];
+    private final ImageView[][] map = new ImageView[200][200];
     Pane root;
+    Image image1;
+    Image image2;
+    double textureSize;
+    private Stage stage;
+    private int hoverX;
+    private int hoverY;
+    private final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
+
 
     @Override
     public void start(Stage stage) throws Exception {
         this.stage = stage;
         root = new Pane();
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects
-                .requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
         stage.setScene(scene);
         stage.show();
         App.setupStage(stage);
         App.setWindowSize(stage.getWidth(), stage.getHeight());
+
+        textureSize = stage.getScene().getWidth() / 50;
+
+        image1 = new Image(MapMenu.class.getResource("/textures/land.jpg").toString(), textureSize, textureSize, false, true, true);
+        image2 = new Image(MapMenu.class.getResource("/textures/grass.jpg").toString(), textureSize, textureSize, false, true, true);
         setupMap();
     }
 
-    private void setupMap() {
-        for (int i = 0 ; i < 50 ; i ++) {
-            for (int j = 0 ; j < 50 ; j++){
-                map[i][j] = new ImageView(MapMenu.class.getResource("/textures/land.jpg").toString());
-                map[i][j].setFitWidth(stage.getScene().getWidth() / 50);
-                map[i][j].setFitHeight(stage.getScene().getHeight() / 50);
-                map[i][j].setTranslateX((stage.getScene().getWidth() / 50 )* i);
-                map[i][j].setTranslateY((stage.getScene().getHeight() / 50 )* j);
-                root.getChildren().add(map[i][j]);
+    private void changeMapSight(double deltaX, double deltaY) {
+        if (map[map.length - 1][map[0].length - 1].getTranslateY() + deltaY < App.getHeight())
+            deltaY = App.getHeight() - map[map.length - 1][map[0].length - 1].getTranslateY();
+
+        if (map[map.length - 1][map[0].length - 1].getTranslateX() + deltaX < App.getWidth())
+            deltaX = App.getWidth() - map[map.length - 1][map[0].length - 1].getTranslateX();
+
+        if (map[0][0].getTranslateY() + deltaY > 0) deltaY = -map[0][0].getTranslateY();
+        if (map[0][0].getTranslateX() + deltaX > 0) deltaX = -map[0][0].getTranslateX();
+
+        for (int i = 0; i < 200; i++) {
+            for (int j = 0; j < 200; j++) {
+                map[i][j].setTranslateX(map[i][j].getTranslateX() + deltaX);
+                map[i][j].setTranslateY(map[i][j].getTranslateY() + deltaY);
             }
         }
     }
 
-    public static String showMap(Matcher matcher) {
-        int x = Integer.parseInt(matcher.group("x"));
-        int y = Integer.parseInt(matcher.group("y"));
-        return MapMenuController.showMap(x, y);
-    }
+    private void setupMap() {
+        for (int i = 0; i < 200; i++) {
+            for (int j = 0; j < 200; j++) {
+                map[i][j] = new ImageView(image1);
+                if (i == j) {
+                    map[i][j] = new ImageView(image2);
+                }
+                map[i][j].setTranslateX((stage.getScene().getWidth() / 50) * i);
+                map[i][j].setTranslateY((stage.getScene().getWidth() / 50) * j);
+                root.getChildren().add(map[i][j]);
 
-    public static String changeSightArea(Matcher matcher) {
-        int leftNumber = 0, topNumber = 0, rightNumber = 0, downNumber = 0;
-        //left in another first
-        while (true) {
-            if (matcher.group("left") != null)
-                leftNumber = StringUtils.isNotBlank(matcher.group("leftNumber")) ? Integer.parseInt(matcher.group("leftNumber")) : 1;
-            if (matcher.group("top") != null)
-                topNumber = StringUtils.isNotBlank(matcher.group("topNumber")) ? Integer.parseInt(matcher.group("topNumber")) : 1;
-            if (matcher.group("right") != null)
-                rightNumber = StringUtils.isNotBlank(matcher.group("rightNumber")) ? Integer.parseInt(matcher.group("rightNumber")) : 1;
-            if (matcher.group("down") != null)
-                downNumber = StringUtils.isNotBlank(matcher.group("downNumber")) ? Integer.parseInt(matcher.group("downNumber")) : 1;
-            boolean res = matcher.find();
-            if (!res) break;
+            }
         }
+        AtomicReference<Double> startX = new AtomicReference<>((double) 0);
+        AtomicReference<Double> startY = new AtomicReference<>((double) 0);
+        root.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                startX.set(event.getX());
+                startY.set(event.getY());
+            }
+        });
+        root.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY))
+                changeMapSight(event.getX() - startX.get(), event.getY() - startY.get());
+        });
 
-        return MapMenuController.showMap(MapMenuController.getCenterX() - topNumber + downNumber,
-                MapMenuController.getCenterY() - leftNumber + rightNumber);
+        root.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, event -> {
+            hoverTimeline.stop();
+        });
+
+        root.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, event -> {
+            double mouseX = event.getX(), mouseY = event.getY();
+            double x = map[0][0].getTranslateX();
+            double y = map[0][0].getTranslateY();
+            hoverX = (int) Math.ceil((mouseX - x) / textureSize);
+            hoverY = (int) Math.ceil((mouseY - y) / textureSize);
+            hoverTimeline.play();
+        });
     }
 
-    public static String showDetails(Matcher matcher) {
-        int x = Integer.parseInt(matcher.group("x"));
-        int y = Integer.parseInt(matcher.group("y"));
-        return MapMenuController.showDetails(x, y);
+    private void showDetails() {
+        System.out.println(map[hoverX][hoverY].getImage().getUrl());
     }
+
+
 }
