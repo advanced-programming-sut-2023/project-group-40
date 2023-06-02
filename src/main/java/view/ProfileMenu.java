@@ -107,7 +107,7 @@ public class ProfileMenu  extends Application {
         nickname = new TextField(ProfileMenuController.getCurrentUser().getNickname());
         slogan = new TextField();
         if (ProfileMenuController.getCurrentUser().getSlogan() == null)
-            slogan.setText(EMPTY_SLOGAN);
+            slogan.setPromptText(EMPTY_SLOGAN);
         else slogan.setText(ProfileMenuController.getCurrentUser().getSlogan());
     }
 
@@ -178,10 +178,14 @@ public class ProfileMenu  extends Application {
         nickname.textProperty().addListener((observableValue, s, t1) -> {
             save.setVisible(true);
         });
-        slogan.textProperty().addListener((observableValue, s, t1) -> {
-            save.setVisible(true);
-            if (t1.length() == 0)
-                slogan.setText(EMPTY_SLOGAN);
+//        slogan.textProperty().addListener((observableValue, s, t1) -> {
+//            slogan.setEditable(true);
+//            save.setVisible(true);
+//            if (t1.length() == 0)
+//                slogan.setPromptText(EMPTY_SLOGAN);
+//        });
+        slogan.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) slogan.setEditable(false);
         });
         sloganCheckBox.setOnMouseClicked(mouseEvent -> {
             if (sloganCheckBox.isSelected()) {

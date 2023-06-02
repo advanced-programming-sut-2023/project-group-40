@@ -7,18 +7,6 @@ import view.enums.Commands;
 import java.util.regex.Matcher;
 
 public class MapMenu {
-    public static void run() throws ReflectiveOperationException {
-        System.out.println("you are in map menu!");
-        while (true) {
-            String command = Commands.scanner.nextLine();
-            if (command.equals("return")) {
-                System.out.println("you are in game menu");
-                return;
-            }
-            System.out.println(Commands.regexFinder(command, MapMenu.class));
-        }
-    }
-
     public static String showMap(Matcher matcher) {
         int x = Integer.parseInt(matcher.group("x"));
         int y = Integer.parseInt(matcher.group("y"));

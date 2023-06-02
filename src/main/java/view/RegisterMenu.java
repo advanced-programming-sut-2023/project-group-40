@@ -154,7 +154,7 @@ public class RegisterMenu extends Application {
             slogan.setText(UserController.generateRandomSlogan());
         });
         register.setOnMouseClicked(mouseEvent -> {
-            TextFieldController.checkExistUsername(usernameHBox,username,usernameError);
+            TextFieldController.checkNotExistUsername(usernameHBox,username,usernameError);
             TextFieldController.checkPassword(passwordHBox,password,passwordError);
             TextFieldController.checkEmail(emailHBox,email,emailError,usernameBounds.getWidth() - emailBounds.getWidth());
             TextFieldController.checkNickname(nicknameHBox,nickname,nicknameError);
