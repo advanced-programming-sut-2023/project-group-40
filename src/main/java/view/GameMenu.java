@@ -32,7 +32,7 @@ public class GameMenu {
     }
 
     public static String enterMapMenu(Matcher matcher) throws ReflectiveOperationException {
-        MapMenu.run();
+//        MapMenu.run();
         return null;
     }
 
