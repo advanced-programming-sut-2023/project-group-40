@@ -50,8 +50,7 @@ public class EnvironmentMenuController {
     }
 
     public static void changeTextureOfCell(Cell cell, Texture texture) {
-        if (texture == Texture.STONE || texture == Texture.KOCH_POND ||
-                texture == Texture.BIG_POND || texture == Texture.SEA)
+        if (texture == Texture.STONE || texture == Texture.PONE ||texture == Texture.SEA)
             cell.setPassable(false);
         if (texture == Texture.STONE) cell.setAvailable(false);
         cell.setTexture(texture);
