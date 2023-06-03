@@ -2,9 +2,13 @@ package view;
 
 import controller.RegisterMenuController;
 import controller.UserController;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -12,21 +16,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.SecurityQuestions;
+import model.Texture;
 
 import java.io.File;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Timer;
 
 public class RegisterMenu extends Application {
-    private final Label usernameError = new Label("username is empty!");
-    private final Label passwordError = new Label("password is empty!");
-    private final Label emailError = new Label("email is empty!");
-    private final Label nicknameError = new Label("nickname is empty!");
-    private final Label sloganError = new Label("slogan is empty!");
-    private final Label captchaError = new Label("captcha is incorrect!");
-
     private final Button generateRandomPassword = new Button("random password");
     private final Button generateRandomSlogan = new Button("random slogan");
     private final Button register = new Button("register");
@@ -40,16 +41,13 @@ public class RegisterMenu extends Application {
     private TextField username, email, nickname, slogan,securityAnswer;
     private TextField password;
     private HBox usernameHBox, passwordHBox, emailHBox, nicknameHBox, buttonHBox, sloganHBox,
-            sloganToolsHBox,securityQuestionsHBox,securityAnswerHBox,captchaHBox;
+            sloganToolsHBox,securityQuestionsHBox,securityAnswerHBox;
     private Image hideIconImage;
     private Image showIconImage;
     private ImageView eyeIcon;
     private Bounds usernameBounds, passwordLabelBounds, emailBounds;
-    private Image captchaImage;
-    private ImageView captchaImageView;
     private final Button submitButton = new Button("submit");
     private ComboBox<String> securityQuestions;
-    private final File captchaDirectory = new File(RegisterMenu.class.getResource("/captcha/").toExternalForm().substring(6));
     private Stage primaryStage;
     {
         generateRandomSlogan.setVisible(false);
@@ -59,9 +57,9 @@ public class RegisterMenu extends Application {
         this.primaryStage = primaryStage;
         root = new Pane();
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects
-                .requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
         loginVbox = new VBox();
+        loginVbox.getStylesheets().add(Objects
+                .requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
         username = new TextField();
         password = new PasswordField();
         email = new TextField();
@@ -82,45 +80,37 @@ public class RegisterMenu extends Application {
         securityQuestions.getItems().add(SecurityQuestions.NO_2.getQuestion());
         securityQuestions.getItems().add(SecurityQuestions.NO_3.getQuestion());
         securityQuestionsHBox = new HBox(new Label("security question :"),securityQuestions);
-        securityAnswerHBox = new HBox(new Label("security answer"),securityAnswer);
+        securityAnswerHBox = new HBox(new Label("security answer : "),securityAnswer);
         root.getChildren().addAll(loginVbox);
         primaryStage.setScene(scene);
         primaryStage.show();
         App.setupStage(primaryStage);
+        App.setWindowSize(primaryStage.getWidth(), primaryStage.getHeight());
         setSizes();
         setActions();
     }
 
     private void setActions() {
-        passwordError.setStyle("-fx-text-fill: red");
-        usernameError.setStyle("-fx-text-fill: red");
-        emailError.setStyle("-fx-text-fill: red");
-        nicknameError.setStyle("-fx-text-fill: red");
-        usernameError.setStyle("-fx-text-fill: red");
-        sloganError.setStyle("-fx-text-fill: red");
-        captchaError.setStyle("-fx-text-fill: red");
         eyeIcon = new ImageView(hideIconImage);
         passwordHBox.getChildren().addAll(eyeIcon);
         username.textProperty().addListener((observableValue, s, t1) -> {
             if (!UserController.checkUsernameFormat(t1)) {
-                usernameError.setText("username is invalid!");
-                if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(usernameError);
+                Errors.USERNAME_ERROR.getErrorLabel().setText("username is invalid!");
+                if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
                 setSizes();
             } else {
-                usernameHBox.getChildren().remove(usernameError);
+                usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
                 setSizes();
             }
         });
         password.textProperty().addListener((observableValue, s, t1) -> {
-            if (!UserController.checkPasswordFormat(t1)) {
-                passwordError.setText("password is weak!");
+            if (!UserController.checkPasswordFormat(password.getText())) {
+                Errors.PASSWORD_ERROR.getErrorLabel().setText("password is weak!");
                 if (passwordHBox.getChildren().size() == 3)
-                    passwordHBox.getChildren().add(passwordError);
-            } else {
-                passwordHBox.getChildren().remove(passwordError);
+                    passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
             }
+            else passwordHBox.getChildren().remove(Errors.PASSWORD_ERROR.getErrorLabel());
         });
-
         eyeIcon.setOnMouseClicked(mouseEvent -> {
             String currentText = password.getText();
             passwordHBox.getChildren().remove(password);
@@ -154,75 +144,50 @@ public class RegisterMenu extends Application {
             slogan.setText(UserController.generateRandomSlogan());
         });
         register.setOnMouseClicked(mouseEvent -> {
-            TextFieldController.checkNotExistUsername(usernameHBox,username,usernameError);
-            TextFieldController.checkPassword(passwordHBox,password,passwordError);
-            TextFieldController.checkEmail(emailHBox,email,emailError,usernameBounds.getWidth() - emailBounds.getWidth());
-            TextFieldController.checkNickname(nicknameHBox,nickname,nicknameError);
-            TextFieldController.checkSlogan(sloganHBox,slogan,sloganError);
-            if (TextFieldController.isSuccessful())
-                chooseSecurityQuestion();
-        });
-
-        captchaRefreshImageView.setOnMouseClicked(event -> {
-            captchaImage = new Image("file:/" + Objects.
-                    requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
-            captchaImageView.setImage(captchaImage);
+            TextFieldController.setSuccessful(true);
+            TextFieldController.checkExistUsername(usernameHBox,username);
+            TextFieldController.checkPassword(passwordHBox,password);
+            TextFieldController.checkEmail(emailHBox,email);
+            TextFieldController.checkNickname(nicknameHBox,nickname);
+            TextFieldController.checkSlogan(sloganHBox,slogan);
+            if (TextFieldController.isSuccessful()) {
+                SuccessfulDialog dialog = new SuccessfulDialog(root, "register successful");
+                root.getChildren().add(dialog.make());
+                new Timeline(new KeyFrame(Duration.seconds(1),actionEvent -> {
+                    dialog.removeDialog();
+                    chooseSecurityQuestion();
+                })).play();
+            }
         });
 
         submitButton.setOnMouseClicked(event -> {
-            String url = captchaImage.getUrl();
-            if (url.substring(url.length() - 8, url.length() - 4).equals(captchaAnswerTextField.getText())) {
+            TextFieldController.setSuccessful(true);
+            CaptchaController.checkCaptcha();
+            TextFieldController.checkSecurityEmpty(securityQuestions,securityQuestionsHBox,securityAnswerHBox,securityAnswer);
+            if (TextFieldController.isSuccessful()) {
                 RegisterMenuController.register(username.getText(), password.getText(), email.getText(), nickname.getText()
                         , slogan.getText(), securityQuestions.getItems().indexOf(securityQuestions.getValue()) + 1, securityAnswer.getText());
-                captchaHBox.getChildren().remove(captchaError);
                 try {
                     new LoginMenu().start(primaryStage);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
-            else{
-                if (captchaHBox.getChildren().size() == 3) captchaHBox.getChildren().add(captchaError);
-                captchaImage = new Image("file:/" + Objects.
-                        requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
-                captchaImageView.setImage(captchaImage);
-            }
         });
     }
-
     private void chooseSecurityQuestion() {
         loginVbox.getChildren().clear();
-        File file = new File(RegisterMenu.class.getResource("/captcha/").toExternalForm().substring(6));
-        captchaImage = new Image("file:/" + Objects.
-                requireNonNull(file.listFiles())[new Random().nextInt(0, Objects.requireNonNull(file.listFiles()).length)].getPath());
-        captchaImageView = new ImageView(captchaImage);
-        captchaRefreshImageView.setPreserveRatio(true);
-        captchaRefreshImageView.setFitHeight(captchaImage.getHeight());
-        captchaHBox = new HBox(captchaAnswerTextField,captchaImageView, captchaRefreshImageView);
-        captchaHBox.setSpacing(20);
-        securityQuestionsHBox.setSpacing(20);
-        securityAnswerHBox.setSpacing(20);
-        loginVbox.getChildren().addAll(securityQuestionsHBox,securityAnswerHBox,captchaHBox);
-        submitButton.setAlignment(Pos.CENTER);
+        CaptchaController.setUpCaptcha();
+        loginVbox.getChildren().addAll(securityQuestionsHBox,securityAnswerHBox,CaptchaController.getCaptchaHBox());
+//        submitButton.translateXProperty().bind(Bindings.add(loginVbox.widthProperty().divide(2),submitButton.translateXProperty().divide(-2)));
         loginVbox.getChildren().addAll(submitButton);
     }
 
     private void setSizes() {
-        int distance = 20;
-        loginVbox.setTranslateY(App.getHeight() / 10);
+        loginVbox.translateXProperty().bind(loginVbox.widthProperty().divide(-2).add(App.getWidth()/2));
+        loginVbox.translateYProperty().bind(loginVbox.heightProperty().divide(-2).add(App.getHeight()/2));
         int width = (int) passwordHBox.getChildren().get(1).getBoundsInParent().getHeight();
-        loginVbox.setTranslateX(App.getWidth() / 2 - loginVbox.getWidth() / 2 - width / 2.0);
         loginVbox.setSpacing(App.getHeight() / 20);
-        usernameBounds = usernameHBox.getChildren().get(0).getBoundsInParent();
-        passwordLabelBounds = passwordHBox.getChildren().get(0).getBoundsInParent();
-        emailBounds = emailHBox.getChildren().get(0).getBoundsInParent();
-        usernameHBox.setSpacing(distance);
-        sloganToolsHBox.setSpacing(distance);
-        passwordHBox.setSpacing(distance + usernameBounds.getWidth() - passwordLabelBounds.getWidth());
-        emailHBox.setSpacing(distance);
-        nicknameHBox.setSpacing(distance);
-        buttonHBox.setSpacing(distance);
-        emailHBox.getChildren().get(1).setTranslateX(usernameBounds.getWidth() - emailBounds.getWidth());
         hideIconImage = new Image(LoginMenu.class.getResource("/images/hideIcon.png").toExternalForm(), width, width, false, false);
         showIconImage = new Image(LoginMenu.class.getResource("/images/showIcon.png").toExternalForm(), width, width, false, false);
     }

@@ -12,11 +12,11 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         UserController.fetchDatabase();
         setupStage(primaryStage);
-        new ProfileMenu().start(primaryStage);
+        new RegisterMenu().start(primaryStage);
     }
 
     public static void setupStage(Stage primaryStage) {
-        primaryStage.setResizable(false);
+//        primaryStage.setResizable(false);
         primaryStage.setFullScreen(true);
         primaryStage.setFullScreenExitHint("");
 //        primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);

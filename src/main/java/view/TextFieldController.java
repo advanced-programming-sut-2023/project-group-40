@@ -11,77 +11,77 @@ import javafx.scene.layout.HBox;
 public class TextFieldController {
     private static boolean successful = true;
 
-    public static void checkExistUsername(HBox usernameHBox , TextField username, Label usernameError) {
+    public static void checkExistUsername(HBox usernameHBox , TextField username) {
         if (username.getText().length() == 0) {
             successful = false;
-            usernameError.setText("username is empty!");
+            Errors.USERNAME_ERROR.getErrorLabel().setText("username is empty!");
             if (usernameHBox.getChildren().size() == 2)
-                usernameHBox.getChildren().add(usernameError);
+                usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
         } else if (UserController.isUsernameExists(username.getText())) {
             successful = false;
-            usernameError.setText("username is exists!");
-            if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(usernameError);
-        } else usernameHBox.getChildren().remove(usernameError);
+            Errors.USERNAME_ERROR.getErrorLabel().setText("username is exists!");
+            if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
+        } else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
     }
 
-    public static void checkNotExistUsername(HBox usernameHBox , TextField username, Label usernameError) {
+    public static void checkNotExistUsername(HBox usernameHBox , TextField username) {
         if (username.getText().length() == 0) {
             successful = false;
-            usernameError.setText("username is empty!");
+            Errors.USERNAME_ERROR.getErrorLabel().setText("username is empty!");
             if (usernameHBox.getChildren().size() == 2)
-                usernameHBox.getChildren().add(usernameError);
+                usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
         }
         else if (!UserController.isUsernameExists(username.getText())) {
             successful = false;
-            usernameError.setText("username is not exists!");
-            if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(usernameError);
+            Errors.USERNAME_ERROR.getErrorLabel().setText("username is not exists!");
+            if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
         }
-        else usernameHBox.getChildren().remove(usernameError);
+        else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
     }
 
-    public static void checkSlogan(HBox sloganHBox , TextField slogan, Label sloganError) {
+    public static void checkSlogan(HBox sloganHBox , TextField slogan) {
         if (slogan.getText().length() == 0 && sloganHBox.getChildren().size() == 2)   {
             successful = false;
             if (sloganHBox.getChildren().size() == 2)
-                sloganHBox.getChildren().add(sloganError);
+                sloganHBox.getChildren().add(Errors.SLOGAN_ERROR.getErrorLabel());
         }
-        else sloganHBox.getChildren().remove(sloganError);
+        else sloganHBox.getChildren().remove(Errors.SLOGAN_ERROR.getErrorLabel());
     }
 
-    public static void checkNickname(HBox nicknameHBox , TextField nickname, Label nicknameError) {
+    public static void checkNickname(HBox nicknameHBox , TextField nickname) {
         if (nickname.getText().length() == 0) {
             successful = false;
             if (nicknameHBox.getChildren().size() == 2)
-                nicknameHBox.getChildren().add(nicknameError);
-        } else nicknameHBox.getChildren().remove(nicknameError);
+                nicknameHBox.getChildren().add(Errors.NICKNAME_ERROR.getErrorLabel());
+        } else nicknameHBox.getChildren().remove(Errors.NICKNAME_ERROR.getErrorLabel());
     }
 
-    public static void checkEmail(HBox emailHBox , TextField email, Label emailError, double translateX) {
+    public static void checkEmail(HBox emailHBox , TextField email) {
         if (email.getText().length() == 0) {
             successful = false;
-            emailError.setText("email is empty!");
-            if (emailHBox.getChildren().size() == 2) emailHBox.getChildren().add(emailError);
-            emailHBox.getChildren().get(2).setTranslateX(translateX);
+            Errors.EMAIL_ERROR.getErrorLabel().setText("email is empty!");
+            if (emailHBox.getChildren().size() == 2)
+                emailHBox.getChildren().add(Errors.EMAIL_ERROR.getErrorLabel());
         }
         else if (UserController.isEmailExists(email.getText())) {
-            emailError.setText("email is exists!");
-            if (emailHBox.getChildren().size() == 2) emailHBox.getChildren().add(emailError);
-            emailHBox.getChildren().get(2).setTranslateX(translateX);
-        } else emailHBox.getChildren().remove(emailError);
+            Errors.EMAIL_ERROR.getErrorLabel().setText("email is exists!");
+            if (emailHBox.getChildren().size() == 2)
+                emailHBox.getChildren().add(Errors.EMAIL_ERROR.getErrorLabel());
+        } else emailHBox.getChildren().remove(Errors.EMAIL_ERROR.getErrorLabel());
     }
 
-    public static void checkPassword(HBox passwordHBox,TextField password, Label passwordError) {
+    public static void checkPassword(HBox passwordHBox,TextField password) {
         if (password.getText().length() == 0) {
             successful = false;
-            passwordError.setText("password is empty!");
+            Errors.PASSWORD_ERROR.getErrorLabel().setText("password is empty!");
             if (passwordHBox.getChildren().size() == 3)
-                passwordHBox.getChildren().add(passwordError);
+                passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
         } else if (!UserController.checkPasswordFormat(password.getText())) {
             successful = false;
-            passwordError.setText("password is weak!");
+            Errors.PASSWORD_ERROR.getErrorLabel().setText("password is weak!");
             if (passwordHBox.getChildren().size() == 3)
-                passwordHBox.getChildren().add(passwordError);
-        } else passwordHBox.getChildren().remove(passwordError);
+                passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
+        } else passwordHBox.getChildren().remove(Errors.PASSWORD_ERROR.getErrorLabel());
     }
 
     public static void checkPassword(HBox passwordHBox,Label passwordLabel,TextField username,TextField password, Label passwordError) {
@@ -152,5 +152,20 @@ public class TextFieldController {
 
     public static void setSuccessful(boolean successful) {
         TextFieldController.successful = successful;
+    }
+
+    public static void checkSecurityEmpty(ComboBox<String> securityQuestions, HBox securityQuestionsHBox, HBox securityAnswerHBox, TextField securityAnswer) {
+        if (securityAnswer.getText().isEmpty()) {
+            if (securityAnswerHBox.getChildren().size() == 2)
+                securityAnswerHBox.getChildren().add(Errors.SECURITY_ANSWER_ERROR.getErrorLabel());
+            successful = false;
+        }
+        else securityAnswerHBox.getChildren().remove(Errors.SECURITY_ANSWER_ERROR.getErrorLabel());
+        if (securityQuestions.getValue() == null) {
+            if (securityQuestionsHBox.getChildren().size() == 2)
+                securityQuestionsHBox.getChildren().add(Errors.SECURITY_QUESTION_ERROR.getErrorLabel());
+            successful = false;
+        }
+        else securityQuestionsHBox.getChildren().remove(Errors.SECURITY_QUESTION_ERROR.getErrorLabel());
     }
 }

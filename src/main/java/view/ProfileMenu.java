@@ -193,9 +193,9 @@ public class ProfileMenu extends Application {
             }
         });
         save.setOnMouseClicked(mouseEvent -> {
-            TextFieldController.checkExistUsername(usernameHBox, username, Errors.USERNAME_ERROR.getErrorLabel());
-            TextFieldController.checkEmail(emailHBox, email, Errors.EMAIL_ERROR.getErrorLabel(), usernameBounds.getWidth() - emailBounds.getWidth());
-            TextFieldController.checkNickname(nicknameHBox, nickname, Errors.NICKNAME_ERROR.getErrorLabel());
+            TextFieldController.checkExistUsername(usernameHBox, username);
+            TextFieldController.checkEmail(emailHBox, email);
+            TextFieldController.checkNickname(nicknameHBox, nickname);
             if (TextFieldController.isSuccessful()) {
                 ProfileMenuController.changeUsername(username.getText());
                 ProfileMenuController.changeNickname(nickname.getText());
@@ -226,6 +226,7 @@ public class ProfileMenu extends Application {
     private void setChangePasswordButtonActions(VBox changePasswordVbox, Button submit, Button cancel) {
         setErrorListener(newPassword, newPasswordHBox);
         submit.setOnMouseClicked(mouseEvent -> {
+            TextFieldController.setSuccessful(true);
             CaptchaController.checkCaptcha();
             TextFieldController.checkPassword(newPasswordHBox, newPassword, oldPasswordHBox, oldPassword);
             if (TextFieldController.isSuccessful()) {

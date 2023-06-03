@@ -1,0 +1,27 @@
+Label{
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-min-width: 240;
+    -fx-max-width: 400;
+}
+HBox{
+    -fx-spacing: 20;
+}
+VBox,StackPane{
+    -fx-background-color: rgba(255,255,255);
+    -fx-padding: 10;
+    -fx-background-radius: 10;
+}
+TextField,PasswordField{
+    -fx-padding: 5;
+}
+Button{
+    -fx-background-color: #429f47;
+    -fx-text-fill: white;
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+    -fx-min-width: 250;
+    -fx-max-width: 250;
+
+}

@@ -1,4 +1,13 @@
-TextField, PasswordField, Button, CheckBox ,ComboBox , ToggleButton , Label{
+TextField, PasswordField, Button, CheckBox ,ComboBox , ToggleButton {
     -fx-font-size: 30;
     -fx-font-weight: bold;
+}
+HBox{
+    -fx-spacing: 20;
+}
+Label{
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+    -fx-min-width: 160;
+    -fx-max-width: 450;
 }
