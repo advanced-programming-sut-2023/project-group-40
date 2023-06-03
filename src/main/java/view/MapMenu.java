@@ -25,8 +25,6 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MapMenu extends Application {
     private final ImageView[][] map = new ImageView[200][200];
     Pane root;
-    Image image1;
-    Image image2;
     double textureSize;
     private Stage stage;
     private int hoverX;
@@ -45,9 +43,6 @@ public class MapMenu extends Application {
         App.setWindowSize(stage.getWidth(), stage.getHeight());
 
         textureSize = stage.getScene().getWidth() / 50;
-
-        image1 = new Image(MapMenu.class.getResource("/textures/land.jpg").toString(), textureSize, textureSize, false, true, true);
-        image2 = new Image(MapMenu.class.getResource("/textures/grass.jpg").toString(), textureSize, textureSize, false, true, true);
         Map.initMap(200);
         setupMap();
     }
@@ -73,11 +68,15 @@ public class MapMenu extends Application {
     private void setupMap() {
         for (int i = 0; i < 200; i++) {
             for (int j = 0; j < 200; j++) {
-                map[i][j] = new ImageView(image1);
-                Map.getMap()[i][j].setTexture(Texture.LAND);
+                map[i][j] = new ImageView(Texture.LAND_WITH_PEBBLES.getImage());
+                map[i][j].setFitWidth(textureSize);
+                map[i][j].setFitHeight(textureSize);
+                Map.getMap()[i][j].setTexture(Texture.SEA);
                 if (i == j) {
-                    map[i][j] = new ImageView(image2);
-                    Map.getMap()[i][j].setTexture(Texture.GRASS);
+                    map[i][j] = new ImageView(Texture.PONE.getImage());
+                    map[i][j].setFitWidth(textureSize);
+                    map[i][j].setFitHeight(textureSize);
+                    Map.getMap()[i][j].setTexture(Texture.BEACH);
                 }
                 map[i][j].setTranslateX((stage.getScene().getWidth() / 50) * i);
                 map[i][j].setTranslateY((stage.getScene().getWidth() / 50) * j);
@@ -110,6 +109,17 @@ public class MapMenu extends Application {
             hoverX = (int) Math.ceil((mouseX - x) / textureSize);
             hoverY = (int) Math.ceil((mouseY - y) / textureSize);
             hoverTimeline.play();
+        });
+
+        root.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                double mouseX = event.getX(), mouseY = event.getY();
+                double x = map[0][0].getTranslateX();
+                double y = map[0][0].getTranslateY();
+                int indexI = (int) Math.ceil((mouseX - x) / textureSize) - 1;
+                int indexJ = (int) Math.ceil((mouseY - y) / textureSize) - 1;
+                map[indexI][indexJ].setStyle("-fx-background-insets : 0 0 0 0 ; -fx-border-style: solid solid solid solid; -fx-border-color: white ; -fx-border-radius: 30");
+            }
         });
     }
 
@@ -150,10 +160,10 @@ public class MapMenu extends Application {
         }
         root.getChildren().add(showDetailsBox);
         showDetailsBox.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-background-radius: 10 ; -fx-padding: 8");
-//        showDetailsBox.setTranslateX(hoverX * textureSize);
-//        showDetailsBox.setTranslateY(hoverY * textureSize);
-        showDetailsBox.translateXProperty().bind(showDetailsBox.widthProperty().multiply(-1).add(Math.min(hoverX * textureSize,App.getWidth())).add(-10));
-        showDetailsBox.translateYProperty().bind(showDetailsBox.heightProperty().multiply(-1).add(Math.min(hoverY * textureSize,App.getHeight())).add(-10));
+        showDetailsBox.setTranslateX(hoverX * textureSize);
+        showDetailsBox.setTranslateY(hoverY * textureSize);
+//        showDetailsBox.translateXProperty().bind(showDetailsBox.widthProperty().multiply(-1).add(Math.min(hoverX * textureSize,App.getWidth())).add(-10));
+//        showDetailsBox.translateYProperty().bind(showDetailsBox.heightProperty().multiply(-1).add(Math.min(hoverY * textureSize,App.getHeight())).add(-10));
     }
 
 

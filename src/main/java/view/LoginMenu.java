@@ -1,6 +1,5 @@
 package view;
 
-import controller.LoginMenuController;
 import controller.UserController;
 import javafx.application.Application;
 import javafx.geometry.Bounds;
@@ -144,8 +143,9 @@ public class LoginMenu extends Application {
             TextFieldController.checkPassword(passwordHBox,passwordLabel,username,password,passwordError);
             if (forgetMyPassword.isSelected())
                 TextFieldController.checkSecurity(username,securityQuestions,securityQuestionsHBox,securityQuestionError,securityAnswerHBox,securityAnswer,securityAnswerError);
-            TextFieldController.checkCaptcha(captchaHBox,captchaImageView,captchaImage,captchaAnswerTextField,captchaError,captchaDirectory);
-            if (TextFieldController.isSuccessful()) System.out.println("login successful");
+            CaptchaController.checkCaptcha();
+            if (TextFieldController.isSuccessful())
+                System.out.println("login successful");
         });
         forgetMyPassword.setOnMouseClicked(mouseEvent -> {
             if (loginVbox.getChildren().size() == 3) {

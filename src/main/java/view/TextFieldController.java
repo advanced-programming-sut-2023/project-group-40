@@ -1,18 +1,12 @@
 package view;
 
 import controller.LoginMenuController;
+import controller.ProfileMenuController;
 import controller.UserController;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-
-import java.io.File;
-import java.util.Objects;
-import java.util.Random;
 
 public class TextFieldController {
     private static boolean successful = true;
@@ -113,18 +107,27 @@ public class TextFieldController {
         else passwordHBox.getChildren().remove(passwordError);
     }
 
-    public static void checkCaptcha(HBox captchaHBox, ImageView captchaImageView, Image captchaImage, TextField captchaAnswerTextField, Label captchaError, File captchaDirectory) {
-        String url = captchaImage.getUrl();
-        if (url.substring(url.length() - 8, url.length() - 4).equals(captchaAnswerTextField.getText())) {
-            captchaHBox.getChildren().remove(captchaError);
-        }
-        else{
-            if (captchaHBox.getChildren().size() == 3) captchaHBox.getChildren().add(captchaError);
-            captchaImage = new Image("file:/" + Objects.
-                    requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
-            captchaImageView.setImage(captchaImage);
+    public static void checkPassword(HBox newPasswordHBox,TextField newPassword,HBox oldPasswordHBox,TextField oldPassword) {
+        if (!ProfileMenuController.isPasswordCorrect(oldPassword.getText())){
             successful = false;
+            Errors.OLD_PASSWORD_ERROR.getErrorLabel().setText("old password is incorrect!");
+            if (oldPasswordHBox.getChildren().size() == 2)
+                oldPasswordHBox.getChildren().add(Errors.OLD_PASSWORD_ERROR.getErrorLabel());
         }
+        else oldPasswordHBox.getChildren().remove(Errors.OLD_PASSWORD_ERROR.getErrorLabel());
+        if (newPassword.getText().length() == 0) {
+            successful = false;
+            Errors.PASSWORD_ERROR.getErrorLabel().setText("password is empty!");
+            if (newPasswordHBox.getChildren().size() == 2)
+                newPasswordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
+        }
+        else if (!UserController.checkPasswordFormat(newPassword.getText())) {
+            successful = false;
+            Errors.PASSWORD_ERROR.getErrorLabel().setText("password is weak!");
+            if (newPasswordHBox.getChildren().size() == 2)
+                newPasswordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
+        }
+        else newPasswordHBox.getChildren().remove(Errors.PASSWORD_ERROR.getErrorLabel());
     }
 
     public static void checkSecurity(TextField username, ComboBox<String> securityQuestions,HBox securityQuestionsHBox,Label securityQuestionError,HBox securityAnswerHBox,TextField securityAnswer, Label securityAnswerError) {
@@ -147,4 +150,7 @@ public class TextFieldController {
         return successful;
     }
 
+    public static void setSuccessful(boolean successful) {
+        TextFieldController.successful = successful;
+    }
 }

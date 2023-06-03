@@ -44,4 +44,8 @@ public enum Texture {
     public String getType() {
         return type;
     }
+
+    public Image getImage() {
+        return image;
+    }
 }

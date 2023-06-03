@@ -7,3 +7,8 @@ Label{
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
+.border {
+    -fx-border-color: black;
+    -fx-border-style: solid;
+    -fx-border-width: 5;
+}

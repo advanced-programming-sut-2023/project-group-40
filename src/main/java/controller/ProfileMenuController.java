@@ -9,15 +9,8 @@ public class ProfileMenuController {
         currentUser.setUsername(username);
     }
 
-    public static String changePassword(String oldPassword, String newPassword) {
-        if (oldPassword == null || oldPassword.equals("")) return "old password is empty!";
-        if (newPassword == null || newPassword.equals("")) return "new password is empty!";
-        if (!currentUser.getPasswordHash().equals(UserController.generatePasswordHash(oldPassword)))
-            return "old password is incorrect!";
-        if (oldPassword.equals(newPassword)) return "new password is equal to your current password!";
-        if (!UserController.checkPasswordFormat(newPassword)) return "new password is weak!";
+    public static void changePassword(String newPassword) {
         currentUser.setPassword(newPassword);
-        return "password changed!";
     }
 
     public static String changeNickname(String nickname) {
@@ -34,39 +27,12 @@ public class ProfileMenuController {
         return "email changed!";
     }
 
-    public static String changeSlogan(String slogan) {
-        if (slogan == null || slogan.equals("")) return "slogan is empty!";
+    public static void changeSlogan(String slogan) {
         currentUser.setSlogan(slogan);
-        return "slogan changed!";
     }
 
-    public static String displayHighScore() {
-        return "your highscore: " + currentUser.getHighScore();
-    }
-
-    public static String displayRank() {
-        return "your rank: " + currentUser.getRank();
-    }
-
-    public static String displaySlogan() {
-        String slogan = currentUser.getSlogan();
-        if (slogan == null || slogan.equals("")) return "slogan is empty!";
-        return "your slogan: " + slogan;
-    }
-
-    public static String displayProfile() {
-        String result = "username: " + currentUser.getUsername() + '\n';
-        result += "nickname: " + currentUser.getNickname() + '\n';
-        result += "email: " + currentUser.getEmail() + '\n';
-        result += "rank: " + currentUser.getRank() + '\n';
-        result += "highscore: " + currentUser.getHighScore() + '\n';
-        result += "slogan: " + currentUser.getSlogan();
-        return result;
-    }
-
-    public static String removeSlogan() {
-        currentUser.setSlogan(null);
-        return "slogan deleted";
+    public static boolean isPasswordCorrect(String newPassword){
+        return currentUser.getPasswordHash().equals(UserController.generatePasswordHash(newPassword));
     }
 
     public static void setCurrentUser(User currentUser) {
