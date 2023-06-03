@@ -9,30 +9,36 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import view.enums.Commands;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 
-public class ProfileMenu  extends Application {
+public class ProfileMenu extends Application {
     private Pane root;
     private final String EMPTY_SLOGAN = "slogan is empty!";
     private Bounds usernameBounds;
-    private TextField username,newPassword,oldPassword,nickname,email,slogan;
+    private TextField username, newPassword, oldPassword, nickname, email, slogan;
     private VBox profileMenuVbox;
-    private HBox usernameHBox,nicknameHBox, emailHBox, sloganHBox,buttonHBox,oldPasswordHBox,newPasswordHBox;
+    private HBox usernameHBox, nicknameHBox, emailHBox, sloganHBox, buttonHBox, oldPasswordHBox, newPasswordHBox;
     private final Button save = new Button("save");
     private Label passwordLabel;
     private Stage primaryStage;
     private final CheckBox sloganCheckBox = new CheckBox("show slogan");
     private final Button changePasswordButton = new Button("change password");
     private Bounds emailBounds;
-    private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath(),100,100,false,false));
+    private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -55,33 +61,75 @@ public class ProfileMenu  extends Application {
     }
 
     private void setupAvatar() {
+        ArrayList<ImageView> imageViews = new ArrayList<>();
         avatar.setTranslateX(App.getWidth() / 50);
         avatar.setTranslateY(App.getHeight() / 50);
         root.getChildren().add(avatar);
+        final VBox[] avatarBox = {new VBox()};
+        avatar.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, mouseEvent -> {
+            if (avatarBox[0].getChildren().size() != 0) return;
+            avatarBox[0].setSpacing(10);
+            avatarBox[0].setTranslateX(avatar.getTranslateX());
+            avatarBox[0].setTranslateY(avatar.getTranslateY() + 120);
+            HBox firstRowHbox = new HBox();
+            for (int i = 1; i <= 5; i++) {
+                ImageView imageView = new ImageView(new Image(ProfileMenu.class.getResource("/avatars/" + i + ".png").toString(), 30, 30, true, true, true));
+                imageViews.add(imageView);
+                firstRowHbox.getChildren().add(imageView);
+            }
+            HBox secondRowHbox = new HBox();
+            for (int i = 6; i <= 10; i++) {
+                ImageView imageView = new ImageView(new Image(ProfileMenu.class.getResource("/avatars/" + i + ".png").toString(), 30, 30, true, true, true));
+                imageViews.add(imageView);
+                secondRowHbox.getChildren().add(imageView);
+            }
+            for (ImageView imageView : imageViews) {
+                imageView.setOnMouseClicked(mouseEvent2 -> {
+                    avatar.setImage(new Image(imageView.getImage().getUrl(),100,100,true,true));
+                    ProfileMenuController.changeAvatar(imageView.getImage().getUrl());
+                });
+            }
+            avatarBox[0].getChildren().addAll(firstRowHbox, secondRowHbox);
+            avatarBox[0].getStylesheets().add(ProfileMenu.class.getResource("/css/changePasswordBoxStyle.css").toString());
+            root.getChildren().add(avatarBox[0]);
+        });
+        avatarBox[0].addEventFilter(MouseEvent.MOUSE_EXITED, mouseEvent -> {
+            root.getChildren().remove(avatarBox[0]);
+            avatarBox[0] = new VBox();
+        });
         avatar.setOnMouseClicked(mouseEvent -> {
-            Menu fileMenu = new Menu("File");
-            ImageView imgView1 = new ImageView(new Image(ProfileMenu.class.getResource("/avatars/2.png").toString()));
-            ImageView imgView2 = new ImageView(new Image(ProfileMenu.class.getResource("/avatars/3.png").toString()));
-            ImageView imgView3 = new ImageView(new Image(ProfileMenu.class.getResource("/avatars/4.png").toString()));
-            MenuItem item1 = new MenuItem("image 1", imgView1);
-            MenuItem item2 = new MenuItem("image 2", imgView2);
-            MenuItem item3 = new MenuItem("image 3", imgView3);
-            //Adding all the menu items to the menu
-            fileMenu.getItems().addAll(item1, item2, item3);
-            MenuBar menuBar = new MenuBar(fileMenu);
-            fileMenu.show();
+            FileChooser fileChooser = new FileChooser();
+            File file = fileChooser.showOpenDialog(primaryStage);
+            if (file == null) return;
+            avatar.setImage(new Image(file.getAbsolutePath(),100,100,true,true));
+            ProfileMenuController.changeAvatar(file.getAbsolutePath());
+        });
+        avatar.setOnDragDropped(dragEvent -> {
+            List<File> files = dragEvent.getDragboard().getFiles();
+            try {
+                avatar.setImage(new Image(new FileInputStream(files.get(0)),100,100,true,true));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            dragEvent.consume();
+        });
+        avatar.setOnDragOver(dragEvent -> {
+            if (dragEvent.getDragboard().hasFiles()) {
+                dragEvent.acceptTransferModes(TransferMode.ANY);
+            }
+            dragEvent.consume();
         });
     }
 
     private void setupBoxes() {
         usernameHBox = new HBox(new Label("username :"), username);
-        nicknameHBox = new HBox(new Label("nickname :"),nickname);
-        emailHBox = new HBox(new Label("email :"),email);
+        nicknameHBox = new HBox(new Label("nickname :"), nickname);
+        emailHBox = new HBox(new Label("email :"), email);
         sloganHBox = new HBox(sloganCheckBox);
         CaptchaController.setUpCaptcha();
-        buttonHBox = new HBox(save,changePasswordButton);
+        buttonHBox = new HBox(save, changePasswordButton);
         save.setVisible(false);
-        profileMenuVbox.getChildren().addAll(usernameHBox, emailHBox,nicknameHBox, sloganHBox,buttonHBox);
+        profileMenuVbox.getChildren().addAll(usernameHBox, emailHBox, nicknameHBox, sloganHBox, buttonHBox);
     }
 
     private void setupTextFields() {
@@ -124,9 +172,9 @@ public class ProfileMenu  extends Application {
             save.setVisible(true);
             if (!UserController.checkUsernameFormat(t1)) {
                 Errors.USERNAME_ERROR.getErrorLabel().setText("username is invalid!");
-                if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
-            }
-            else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
+                if (usernameHBox.getChildren().size() == 2)
+                    usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
+            } else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
         });
         email.textProperty().addListener((observableValue, s, t1) -> {
             save.setVisible(true);
@@ -140,14 +188,14 @@ public class ProfileMenu  extends Application {
         sloganCheckBox.setOnMouseClicked(mouseEvent -> {
             if (sloganCheckBox.isSelected()) {
                 sloganHBox.getChildren().remove(sloganCheckBox);
-                sloganHBox.getChildren().addAll(new Label("slogan :"),slogan);
+                sloganHBox.getChildren().addAll(new Label("slogan :"), slogan);
                 sloganHBox.getChildren().get(1).setTranslateX(usernameBounds.getWidth() - sloganHBox.getChildren().get(0).getBoundsInParent().getWidth() - 110);
             }
         });
         save.setOnMouseClicked(mouseEvent -> {
-            TextFieldController.checkExistUsername(usernameHBox,username,Errors.USERNAME_ERROR.getErrorLabel());
-            TextFieldController.checkEmail(emailHBox,email,Errors.EMAIL_ERROR.getErrorLabel(),usernameBounds.getWidth() - emailBounds.getWidth());
-            TextFieldController.checkNickname(nicknameHBox,nickname,Errors.NICKNAME_ERROR.getErrorLabel());
+            TextFieldController.checkExistUsername(usernameHBox, username, Errors.USERNAME_ERROR.getErrorLabel());
+            TextFieldController.checkEmail(emailHBox, email, Errors.EMAIL_ERROR.getErrorLabel(), usernameBounds.getWidth() - emailBounds.getWidth());
+            TextFieldController.checkNickname(nicknameHBox, nickname, Errors.NICKNAME_ERROR.getErrorLabel());
             if (TextFieldController.isSuccessful()) {
                 ProfileMenuController.changeUsername(username.getText());
                 ProfileMenuController.changeNickname(nickname.getText());
@@ -159,27 +207,27 @@ public class ProfileMenu  extends Application {
         changePasswordButton.setOnMouseClicked(mouseEvent -> {
             VBox changePasswordVbox = new VBox();
             changePasswordVbox.setSpacing(10);
-            oldPasswordHBox = new HBox(new Label("old password : "),oldPassword);
-            newPasswordHBox = new HBox(new Label("new password : "),newPassword);
+            oldPasswordHBox = new HBox(new Label("old password : "), oldPassword);
+            newPasswordHBox = new HBox(new Label("new password : "), newPassword);
             changePasswordVbox.translateXProperty().bind(changePasswordVbox.widthProperty().divide(-2).add(App.getWidth() / 2));
             changePasswordVbox.translateYProperty().bind(changePasswordVbox.heightProperty().divide(-2).add(App.getHeight() / 2));
             changePasswordVbox.getStylesheets().add(ProfileMenu.class.getResource("/css/changePasswordBoxStyle.css").toString());
             CaptchaController.getImageHBox().setPrefWidth(240);
             Button submit = new Button("submit");
             Button cancel = new Button("cancel");
-            HBox buttons = new HBox(submit,cancel);
-            buttons.translateXProperty().bind(Bindings.add(changePasswordVbox.widthProperty().divide(2),submit.widthProperty().divide(-1)).add(-10));
-            changePasswordVbox.getChildren().addAll(oldPasswordHBox,newPasswordHBox,CaptchaController.getCaptchaHBox(),buttons);
-            setChangePasswordButtonActions(changePasswordVbox,submit,cancel);
+            HBox buttons = new HBox(submit, cancel);
+            buttons.translateXProperty().bind(Bindings.add(changePasswordVbox.widthProperty().divide(2), submit.widthProperty().divide(-1)).add(-10));
+            changePasswordVbox.getChildren().addAll(oldPasswordHBox, newPasswordHBox, CaptchaController.getCaptchaHBox(), buttons);
+            setChangePasswordButtonActions(changePasswordVbox, submit, cancel);
             root.getChildren().add(changePasswordVbox);
         });
     }
 
-    private void setChangePasswordButtonActions(VBox changePasswordVbox,Button submit, Button cancel) {
+    private void setChangePasswordButtonActions(VBox changePasswordVbox, Button submit, Button cancel) {
         setErrorListener(newPassword, newPasswordHBox);
         submit.setOnMouseClicked(mouseEvent -> {
             CaptchaController.checkCaptcha();
-            TextFieldController.checkPassword(newPasswordHBox,newPassword,oldPasswordHBox,oldPassword);
+            TextFieldController.checkPassword(newPasswordHBox, newPassword, oldPasswordHBox, oldPassword);
             if (TextFieldController.isSuccessful()) {
                 ProfileMenuController.changePassword(newPassword.getText());
                 root.getChildren().remove(changePasswordVbox);

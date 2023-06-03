@@ -42,4 +42,8 @@ public class ProfileMenuController {
     public static User getCurrentUser() {
         return currentUser;
     }
+
+    public static void changeAvatar(String avatarPath) {
+        currentUser.setAvatarPath(avatarPath);
+    }
 }
