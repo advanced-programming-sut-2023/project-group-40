@@ -31,10 +31,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MapMenu extends Application {
     private final ImageView[][] map = new ImageView[200][200];
     private final ArrayList<Line> borderLines = new ArrayList<>();
+    private final SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
+    private final SimpleDoubleProperty deltaX = new SimpleDoubleProperty();
+    private final SimpleDoubleProperty deltaY = new SimpleDoubleProperty();
     Pane root;
-    private SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
-    private SimpleDoubleProperty deltaX = new SimpleDoubleProperty();
-    private SimpleDoubleProperty deltaY = new SimpleDoubleProperty();
+    private double defaultTextureSize;
     private Stage stage;
     private int hoverX;
     private int hoverY;
@@ -52,8 +53,8 @@ public class MapMenu extends Application {
         stage.show();
         App.setupStage(stage);
         App.setWindowSize(stage.getWidth(), stage.getHeight());
-
-        textureSize.set(stage.getScene().getWidth() / 50);
+        defaultTextureSize = App.getWidth() / 50;
+        textureSize.set(defaultTextureSize);
         Map.initMap(200);
         setupMap();
         setUpBuildingScrollPane();
@@ -186,19 +187,21 @@ public class MapMenu extends Application {
         KeyCodeCombination zoomInCombination = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.CONTROL_DOWN);
         root.requestFocus();
         root.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (zoomInCombination.match(event)) zoom(10);
+            if (textureSize.get()/defaultTextureSize < 3)
+                if (zoomInCombination.match(event)) zoom(10);
         });
 
         KeyCodeCombination zoomOutCombination = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.CONTROL_DOWN);
         root.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (zoomOutCombination.match(event)) {
-                zoom(-10);
-                if(!canZoom()) zoom(12);
-            }
+            if (zoomOutCombination.match(event))
+                if (textureSize.get()/defaultTextureSize > 1/3.0) {
+                    zoom(-10);
+                    if (!canZoom()) zoom(100 / 9.0);
+                }
         });
     }
 
-    private void zoom(int percentage) {
+    private void zoom(double percentage) {
         textureSize.set(textureSize.get() * (100 + percentage) / 100);
     }
 
