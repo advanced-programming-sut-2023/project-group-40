@@ -10,9 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import view.enums.Commands;
@@ -37,13 +35,16 @@ public class ProfileMenu extends Application {
     private Stage primaryStage;
     private final CheckBox sloganCheckBox = new CheckBox("show slogan");
     private final Button changePasswordButton = new Button("change password");
-    private Bounds emailBounds;
+    private VBox changePasswordVbox;
     private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         root = new Pane();
+        Image image = new Image(RegisterMenu.class.getResource("/images/backgrounds/profileMenuBackground.jpg").toString());
+        root.setBackground(new Background(new BackgroundImage(image,null,null,null,new BackgroundSize(App.getWidth(),App.getHeight(),false,false
+                ,true,true))));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(Objects
                 .requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
@@ -146,18 +147,9 @@ public class ProfileMenu extends Application {
 
 
     private void setSizes() {
-        int distance = 20;
-        profileMenuVbox.setTranslateY(App.getHeight() / 10);
-        profileMenuVbox.setTranslateX(App.getWidth() / 2.0 - profileMenuVbox.getWidth() / 2.0);
+        profileMenuVbox.translateXProperty().bind(profileMenuVbox.widthProperty().divide(-2).add(App.getWidth()/2));
+        profileMenuVbox.translateYProperty().bind(profileMenuVbox.heightProperty().divide(-2).add(App.getHeight()/2));
         profileMenuVbox.setSpacing(App.getHeight() / 20);
-        usernameBounds = usernameHBox.getChildren().get(0).getBoundsInParent();
-        emailBounds = emailHBox.getChildren().get(0).getBoundsInParent();
-        usernameHBox.setSpacing(distance);
-        emailHBox.setSpacing(distance);
-        nicknameHBox.setSpacing(distance);
-        sloganHBox.setSpacing(distance);
-        emailHBox.getChildren().get(1).setTranslateX(usernameBounds.getWidth() - emailBounds.getWidth());
-        buttonHBox.setSpacing(distance);
     }
 
     private void setActions() {
@@ -189,7 +181,6 @@ public class ProfileMenu extends Application {
             if (sloganCheckBox.isSelected()) {
                 sloganHBox.getChildren().remove(sloganCheckBox);
                 sloganHBox.getChildren().addAll(new Label("slogan :"), slogan);
-                sloganHBox.getChildren().get(1).setTranslateX(usernameBounds.getWidth() - sloganHBox.getChildren().get(0).getBoundsInParent().getWidth() - 110);
             }
         });
         save.setOnMouseClicked(mouseEvent -> {
@@ -205,7 +196,7 @@ public class ProfileMenu extends Application {
             }
         });
         changePasswordButton.setOnMouseClicked(mouseEvent -> {
-            VBox changePasswordVbox = new VBox();
+            changePasswordVbox = new VBox();
             changePasswordVbox.setSpacing(10);
             oldPasswordHBox = new HBox(new Label("old password : "), oldPassword);
             newPasswordHBox = new HBox(new Label("new password : "), newPassword);
@@ -218,12 +209,12 @@ public class ProfileMenu extends Application {
             HBox buttons = new HBox(submit, cancel);
             buttons.translateXProperty().bind(Bindings.add(changePasswordVbox.widthProperty().divide(2), submit.widthProperty().divide(-1)).add(-10));
             changePasswordVbox.getChildren().addAll(oldPasswordHBox, newPasswordHBox, CaptchaController.getCaptchaHBox(), buttons);
-            setChangePasswordButtonActions(changePasswordVbox, submit, cancel);
+            setChangePasswordButtonActions(submit, cancel);
             root.getChildren().add(changePasswordVbox);
         });
     }
 
-    private void setChangePasswordButtonActions(VBox changePasswordVbox, Button submit, Button cancel) {
+    private void setChangePasswordButtonActions(Button submit, Button cancel) {
         setErrorListener(newPassword, newPasswordHBox);
         submit.setOnMouseClicked(mouseEvent -> {
             TextFieldController.setSuccessful(true);
@@ -232,10 +223,17 @@ public class ProfileMenu extends Application {
             if (TextFieldController.isSuccessful()) {
                 ProfileMenuController.changePassword(newPassword.getText());
                 root.getChildren().remove(changePasswordVbox);
+                changePasswordVbox.getChildren().clear();
+                newPassword.clear();
+                oldPassword.clear();
+                CaptchaController.getCaptchaAnswerTextField().clear();
             }
         });
         cancel.setOnMouseClicked(mouseEvent -> {
             root.getChildren().remove(changePasswordVbox);
+            newPassword.clear();
+            oldPassword.clear();
+            CaptchaController.getCaptchaAnswerTextField().clear();
         });
     }
 

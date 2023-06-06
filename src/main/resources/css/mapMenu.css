@@ -12,3 +12,7 @@ Label{
     -fx-border-style: solid;
     -fx-border-width: 5;
 }
+Line{
+    -fx-stroke-width: 4;
+    -fx-stroke: white;
+}

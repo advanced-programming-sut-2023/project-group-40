@@ -13,9 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -56,6 +54,9 @@ public class RegisterMenu extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         root = new Pane();
+        Image image = new Image(RegisterMenu.class.getResource("/images/backgrounds/registerMenuBackground.jpg").toString());
+        root.setBackground(new Background(new BackgroundImage(image,null,null,null,new BackgroundSize(App.getWidth(),App.getHeight(),false,false
+        ,true,true))));
         Scene scene = new Scene(root);
         loginVbox = new VBox();
         loginVbox.getStylesheets().add(Objects

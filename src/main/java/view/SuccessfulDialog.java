@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.text.TextAlignment;
 
 public class SuccessfulDialog {
     private Label contentLabel;
@@ -35,7 +36,8 @@ public class SuccessfulDialog {
         imageView.setTranslateY(-25);
         Label label= new Label("Success");
         label.setTranslateX(140);
-//        contentLabel.translateXProperty().bind(contentLabel.widthProperty().divide(-2).add(200));
+        contentLabel.setPrefWidth(400);
+        contentLabel.setTextAlignment(TextAlignment.CENTER);
         contentLabel.setTranslateX(60);
         contentLabel.setTranslateY(20);
         Button okButton = new Button("OK");

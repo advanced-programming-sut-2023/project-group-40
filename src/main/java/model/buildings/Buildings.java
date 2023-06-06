@@ -1,5 +1,6 @@
 package model.buildings;
 
+import javafx.scene.image.Image;
 import model.Good;
 import model.Texture;
 import org.apache.commons.lang3.SerializationUtils;
@@ -53,15 +54,25 @@ public enum Buildings {
     GRANARY("granary", new Storage("Granary", 6, 6, 300, new int[]{0, 5, 0, 0, 0}, 2000, new HashSet<>(), false, BuildingGroups.FOOD_PROCESSING, "food"));
     String fullName;
     Building buildingObject;
+    Image buildingImage;
 
     Buildings(String fullName, Building buildingObject) {
         this.fullName = fullName;
         this.buildingObject = buildingObject;
+        this.buildingImage =new Image(Buildings.class.getResource("/images/buildings/" + "barrack" + ".png").toString());
     }
 
     public static Building getBuildingObjectByType(String type) {
         for (Buildings building : values())
             if (building.fullName.equals(type)) return SerializationUtils.clone(building.buildingObject);
         return null;
+    }
+
+    public Image getBuildingImage() {
+        return buildingImage;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 }

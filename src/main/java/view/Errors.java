@@ -19,7 +19,7 @@ public enum Errors {
 
     public Label getErrorLabel() {
         Label label = errorLabel;
-        label.setStyle("-fx-text-fill: red");
+        label.setStyle("-fx-text-fill: #9e0202 ;");
         return label;
     }
 }

@@ -20,6 +20,7 @@ public class CaptchaController {
     private static Image captchaImage;
     private static ImageView captchaImageView;
    private static HBox imageHBox;
+
     public static void setUpCaptcha(){
         File file = new File(RegisterMenu.class.getResource("/captcha/").toExternalForm().substring(6));
         captchaImage = new Image("file:/" + Objects.
