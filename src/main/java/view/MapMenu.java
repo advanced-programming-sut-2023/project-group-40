@@ -69,7 +69,7 @@ public class MapMenu extends Application {
         Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
         HBox hBox = new HBox();
         hBox.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
-                , false, false))));
+                , true, false))));
         hBox.setSpacing(20);
         hBox.minHeightProperty().bind(pane.minHeightProperty());
         for (Buildings value : Buildings.values()) {
