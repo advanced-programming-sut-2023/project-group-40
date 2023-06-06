@@ -1,5 +1,6 @@
 package view;
 
+import controller.GameMenuController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -15,12 +16,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.Cell;
 import model.Map;
 import model.Texture;
+import model.buildings.Building;
 import model.buildings.Buildings;
 
 import java.util.ArrayList;
@@ -30,11 +31,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MapMenu extends Application {
     private final ImageView[][] map = new ImageView[200][200];
+    private final ArrayList<ImageView> buildings = new ArrayList<>();
     private final ArrayList<Line> borderLines = new ArrayList<>();
     private final SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
     private final SimpleDoubleProperty deltaX = new SimpleDoubleProperty();
     private final SimpleDoubleProperty deltaY = new SimpleDoubleProperty();
     Pane root;
+    AnchorPane mapPane;
     private double defaultTextureSize;
     private Stage stage;
     private int hoverX;
@@ -47,12 +50,15 @@ public class MapMenu extends Application {
     public void start(Stage stage) throws Exception {
         this.stage = stage;
         root = new Pane();
+        mapPane = new AnchorPane();
+        root.getChildren().add(mapPane);
         Scene scene = new Scene(root);
         scene.getStylesheets().add(Objects.requireNonNull(LoginMenu.class.getResource("/css/mapMenu.css")).toExternalForm());
         stage.setScene(scene);
         stage.show();
         App.setupStage(stage);
         App.setWindowSize(stage.getWidth(), stage.getHeight());
+
         defaultTextureSize = App.getWidth() / 50;
         textureSize.set(defaultTextureSize);
         Map.initMap(200);
@@ -71,11 +77,18 @@ public class MapMenu extends Application {
         hBox.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
                 , true, false))));
         hBox.setSpacing(20);
-        hBox.minHeightProperty().bind(pane.minHeightProperty());
         for (Buildings value : Buildings.values()) {
             ImageView buildingImageView = new ImageView(value.getBuildingImage());
             buildingImageView.setPreserveRatio(true);
             buildingImageView.setFitHeight(80);
+            buildingImageView.addEventFilter(MouseDragEvent.DRAG_DETECTED, event -> {
+                Dragboard db = buildingImageView.startDragAndDrop(TransferMode.ANY);
+                ClipboardContent content = new ClipboardContent();
+                content.putImage(buildingImageView.getImage());
+                content.putString(buildingImageView.getImage().getUrl());
+                db.setContent(content);
+                event.consume();
+            });
 
             VBox vBox = new VBox();
             vBox.setSpacing(20);
@@ -85,7 +98,6 @@ public class MapMenu extends Application {
             Label label = new Label(value.getFullName());
             label.setMaxWidth(150);
             label.setWrapText(true);
-            label.setTextAlignment(TextAlignment.CENTER);
             vBox.getChildren().addAll(buildingImageView, label);
             hBox.getChildren().add(vBox);
         }
@@ -116,25 +128,73 @@ public class MapMenu extends Application {
             for (int j = 0; j < 200; j++) {
                 map[i][j] = new ImageView(Texture.LAND.getImage());
                 if (i == j) {
-                    map[i][j] = new ImageView(Texture.GRASS_LAND.getImage());
+                    map[i][j] = new ImageView(Texture.SEA.getImage());
+                    Map.getMap()[i][j].setTexture(Texture.SEA);
                 }
+                int finalI = i;
+                int finalJ = j;
+                map[i][j].addEventFilter(DragEvent.DRAG_OVER, event -> {
+                    if (event.getDragboard().hasImage()) {
+                        String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
+                        Image image = event.getDragboard().getImage();
+                        String[] split = url.split("/");
+                        String type = split[split.length - 1].substring(0, split[split.length - 1].length() - 4);
+                        boolean b = GameMenuController.checkDropBuilding(finalI, finalJ, type);
+                        if (b)
+                            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                        else event.acceptTransferModes(TransferMode.NONE);
+                    }
+                    event.consume();
+                });
+                map[i][j].addEventFilter(DragEvent.DRAG_DROPPED, event -> {
+                    if (event.getDragboard().hasImage()) {
+                        String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
+                        String[] split = url.split("/");
+                        String type = split[split.length - 1].substring(0, split[split.length - 1].length() - 4);
+
+                        ImageView imageView = new ImageView(event.getDragboard().getImage());
+                        buildings.add(imageView);
+                        int width = Buildings.getBuildingObjectByType(type).getWidth();
+                        int height = Buildings.getBuildingObjectByType(type).getHeight();
+                        imageView.fitWidthProperty().bind(textureSize.multiply(width));
+                        imageView.fitHeightProperty().bind(textureSize.multiply(height));
+                        imageView.translateXProperty().bind(map[finalI][finalJ].translateXProperty());
+                        imageView.translateYProperty().bind(map[finalI][finalJ].translateYProperty());
+                        mapPane.getChildren().add(imageView);
+                        for (int k = finalI; k <= finalI + width; k++) {
+                            for (int l = finalJ; l <= finalJ + height; l++) {
+                                if (Map.getMap()[k][l].equals(selectedCell)) {
+                                    selectedCell = null;
+                                    mapPane.getChildren().removeAll(borderLines);
+                                }
+                            }
+                        }
+                        GameMenuController.dropBuilding(finalI, finalJ, type);
+                    }
+                    event.consume();
+                });
                 map[i][j].fitHeightProperty().bind(textureSize);
                 map[i][j].fitWidthProperty().bind(textureSize);
                 map[i][j].translateXProperty().bind(Bindings.add(textureSize.multiply(i), deltaX));
                 map[i][j].translateYProperty().bind(Bindings.add(textureSize.multiply(j), deltaY));
-                root.getChildren().add(map[i][j]);
-
+                mapPane.getChildren().add(map[i][j]);
             }
         }
+
+        mapPane.setMaxWidth(App.getWidth());
+        mapPane.setMaxHeight(App.getHeight() - 200);
+        mapPane.setPrefWidth(App.getWidth());
+        mapPane.setPrefHeight(App.getHeight() - 200);
+
         AtomicReference<Double> startX = new AtomicReference<>((double) 0);
         AtomicReference<Double> startY = new AtomicReference<>((double) 0);
-        root.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+        mapPane.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 startX.set(event.getX());
                 startY.set(event.getY());
             }
         });
-        root.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+        mapPane.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 deltaX.set(deltaX.get() + event.getX() - startX.get());
                 deltaY.set(deltaY.get() + event.getY() - startY.get());
@@ -142,12 +202,12 @@ public class MapMenu extends Application {
             }
         });
 
-        root.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, event -> {
+        mapPane.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, event -> {
             hoverTimeline.stop();
-            root.getChildren().remove(showDetailsBox);
+            mapPane.getChildren().remove(showDetailsBox);
         });
 
-        root.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, event -> {
+        mapPane.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, event -> {
             double mouseX = event.getX(), mouseY = event.getY();
             double x = map[0][0].getTranslateX();
             double y = map[0][0].getTranslateY();
@@ -155,46 +215,72 @@ public class MapMenu extends Application {
             hoverY = (int) Math.ceil((mouseY - y) / textureSize.get()) - 1;
             hoverTimeline.play();
         });
-        root.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+        mapPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 double mouseX = event.getX(), mouseY = event.getY();
                 double x = map[0][0].getTranslateX();
                 double y = map[0][0].getTranslateY();
                 int indexI = (int) Math.ceil((mouseX - x) / textureSize.get()) - 1;
                 int indexJ = (int) Math.ceil((mouseY - y) / textureSize.get()) - 1;
-                if (selectedCell != null && selectedCell != Map.getMap()[indexI][indexJ]) return;
-                if (selectedCell != null) {
-                    for (Line borderLine : borderLines)
-                        root.getChildren().remove(borderLine);
-                    selectedCell = null;
-                    return;
+
+                NumberBinding cornerLeftX, cornerRightX, cornerTopY, cornerBottomY;
+                Building targetBuilding = Map.getMap()[indexI][indexJ].getBuilding();
+                int buildingX, buildingY;
+                if (targetBuilding != null) {
+                    if(selectedCell != null) return;
+                    if (GameMenuController.getSelectedBuilding() == targetBuilding) {
+                        mapPane.getChildren().removeAll(borderLines);
+                        GameMenuController.setSelectedBuilding(null);
+                        return;
+                    }
+                    buildingX = targetBuilding.getX1();
+                    buildingY = targetBuilding.getY1();
+                    cornerLeftX = Bindings.add(map[buildingX][buildingY].translateXProperty(), 0);
+                    cornerRightX = Bindings.add(map[buildingX][buildingY].translateXProperty()
+                            , map[buildingX][buildingX].fitWidthProperty().multiply(targetBuilding.getWidth()));
+                    cornerTopY = Bindings.add(map[buildingX][buildingY].translateYProperty(), 0);
+                    cornerBottomY = Bindings.add(map[buildingX][buildingY].translateYProperty()
+                            , map[buildingX][buildingY].fitHeightProperty().multiply(targetBuilding.getHeight()));
+                    GameMenuController.selectBuilding(buildingX, buildingY);
+
+                } else {
+                    if(GameMenuController.getSelectedBuilding() != null) return;
+
+                    if (selectedCell != null && selectedCell != Map.getMap()[indexI][indexJ]) return;
+                    if (selectedCell != null) {
+                        mapPane.getChildren().removeAll(borderLines);
+                        selectedCell = null;
+                        return;
+                    }
+
+                    cornerLeftX = Bindings.add(map[indexI][indexJ].translateXProperty(), 0);
+                    cornerRightX = Bindings.add(map[indexI][indexJ].translateXProperty()
+                            , map[indexI][indexJ].fitWidthProperty());
+                    cornerTopY = Bindings.add(map[indexI][indexJ].translateYProperty(), 0);
+                    cornerBottomY = Bindings.add(map[indexI][indexJ].translateYProperty()
+                            , map[indexI][indexJ].fitHeightProperty());
+                    selectedCell = Map.getMap()[indexI][indexJ];
                 }
-                NumberBinding cornerLeftX = Bindings.add(map[indexI][indexJ].translateXProperty(), 0);
-                NumberBinding cornerRightX = Bindings.add(map[indexI][indexJ].translateXProperty(), map[indexI][indexJ].fitWidthProperty());
-                NumberBinding cornerTopY = Bindings.add(map[indexI][indexJ].translateYProperty(), 0);
-                NumberBinding cornerBottomY = Bindings.add(map[indexI][indexJ].translateYProperty(), map[indexI][indexJ].fitHeightProperty());
                 Line line1 = getLine(cornerLeftX, cornerTopY, cornerLeftX, cornerBottomY);
                 Line line2 = getLine(cornerLeftX, cornerTopY, cornerRightX, cornerTopY);
                 Line line3 = getLine(cornerRightX, cornerTopY, cornerRightX, cornerBottomY);
                 Line line4 = getLine(cornerRightX, cornerBottomY, cornerLeftX, cornerBottomY);
                 borderLines.addAll(List.of(line1, line2, line3, line4));
 
-                root.getChildren().addAll(line1, line2, line3, line4);
-                selectedCell = Map.getMap()[indexI][indexJ];
+                mapPane.getChildren().addAll(line1, line2, line3, line4);
             }
         });
 
         KeyCodeCombination zoomInCombination = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.CONTROL_DOWN);
-        root.requestFocus();
         root.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (textureSize.get()/defaultTextureSize < 3)
+            if (textureSize.get() / defaultTextureSize < 3)
                 if (zoomInCombination.match(event)) zoom(10);
         });
 
         KeyCodeCombination zoomOutCombination = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.CONTROL_DOWN);
         root.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (zoomOutCombination.match(event))
-                if (textureSize.get()/defaultTextureSize > 1/3.0) {
+                if (textureSize.get() / defaultTextureSize > 1 / 3.0) {
                     zoom(-10);
                     if (!canZoom()) zoom(100 / 9.0);
                 }
@@ -249,10 +335,8 @@ public class MapMenu extends Application {
             treeHBox.setSpacing(10);
             treeHBox.getChildren().addAll(new Label("tree type: "), new Label(cell.getTree().name().toLowerCase()));
         }
-        root.getChildren().add(showDetailsBox);
+        mapPane.getChildren().add(showDetailsBox);
         showDetailsBox.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-background-radius: 10 ; -fx-padding: 8");
-        System.out.println(hoverX);
-        System.out.println(hoverY);
         showDetailsBox.translateXProperty().bind(Bindings.min((hoverX + 1) * textureSize.get() + map[0][0].translateXProperty().get()
                 , showDetailsBox.widthProperty().multiply(-1).add(App.getWidth()).add(-10)));
 

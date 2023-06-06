@@ -186,28 +186,37 @@ public class GameMenuController {
         return coordinate > 0 && coordinate <= Map.getSize();
     }
 
-    public static String dropBuilding(int x, int y, String type) {
+    public static boolean checkDropBuilding(int x, int y, String type) {
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
-        if (targetBuilding == null) return "your building type is incorrect!";
+        if (targetBuilding == null) return false;
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
             for (int j = y; j < y + targetBuilding.getWidth(); j++) {
                 if (!Map.getMap()[i][j].isAvailable())
-                    return "you can't drop building because this cell isn't available";
-                if (!isCoordinateValid(i) || !isCoordinateValid(j))
-                    return "your coordinates is incorrect!";
+                    return false;
                 if (Map.getMap()[i][j].getTexture().getType().equals("water"))
-                    return "You can't drop  building because texture of this cell is water";
+                    return false;
             }
-        if (currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired())
-            return "you don't have enough workers!";
-        currentGovernment.getCastle().changeNumberOfActiveWorkers(-targetBuilding.getWorkersRequired());
+
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
-            for (int j = y; j < y + targetBuilding.getWidth(); j++)
+            for (int j = y; j < y + targetBuilding.getWidth(); j++) {
                 if (targetBuilding.checkTexture(Map.getMap()[i][j].getTexture()))
-                    return "you can't drop " + targetBuilding.getName() + " in " + Map.getMap()[i][j].getTexture().getType();
-        currentGovernment.decreaseAmountOfGood(Good.GOLD, targetBuilding.getCost()[0]);
-        currentGovernment.decreaseAmountOfGood(Good.WOOD, targetBuilding.getCost()[1]);
-        currentGovernment.decreaseAmountOfGood(Good.STONE, targetBuilding.getCost()[2]);
+                    return false;
+            }
+
+        return true;
+    }
+
+    public static void dropBuilding(int x, int y, String type) {
+        Building targetBuilding = Buildings.getBuildingObjectByType(type);
+        //        if (currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired())
+//            return false;
+//        currentGovernment.getCastle().changeNumberOfActiveWorkers(-targetBuilding.getWorkersRequired());
+        //        if (currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired())
+//            return false;
+//        currentGovernment.getCastle().changeNumberOfActiveWorkers(-targetBuilding.getWorkersRequired());
+        //        currentGovernment.decreaseAmountOfGood(Good.GOLD, targetBuilding.getCost()[0]);
+//        currentGovernment.decreaseAmountOfGood(Good.WOOD, targetBuilding.getCost()[1]);
+//        currentGovernment.decreaseAmountOfGood(Good.STONE, targetBuilding.getCost()[2]);
         targetBuilding.setXCoordinates(x);
         targetBuilding.setYCoordinates(y);
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
@@ -216,47 +225,42 @@ public class GameMenuController {
                 Map.getMap()[i][j].setAvailable(false);
                 Map.getMap()[i][j].setPassable(false);
             }
-        currentGovernment.addBuilding(targetBuilding);
-        if (targetBuilding.getName().equals("Woodcutter")) {
-            Mine mine = (Mine) targetBuilding;
-            mine.setProductRate(2 ^ currentGovernment.getCountOfBuilding("Woodcutter"));
-        }
-        return "building dropped to the target cell!";
+//        currentGovernment.addBuilding(targetBuilding);
+//        if (targetBuilding.getName().equals("Woodcutter")) {
+//            Mine mine = (Mine) targetBuilding;
+//            mine.setProductRate(2 ^ currentGovernment.getCountOfBuilding("Woodcutter"));
+//        }
     }
 
-    public static String selectBuilding(int x, int y) throws ReflectiveOperationException {
-        if (!isCoordinateValid(x) || !isCoordinateValid(y))
-            return "your coordinates is incorrect!";
-        if (Map.getMap()[x][y].getBuilding() == null)
-            return "There is no existing building in your coordinates!";
+    public static void selectBuilding(int x, int y){
         selectedBuilding = Map.getMap()[x][y].getBuilding();
-        if (selectedBuilding.getName().equals("shop")) {
-            ShopMenuController.setCurrentGovernment(currentGovernment);
-            ShopMenu.run();
-
-        }
-        if (selectedBuilding.getName().equals("Mercenary Post")) {
-            System.out.print("enter number of troops you want buy: ");
-            int count = Commands.scanner.nextInt();
-            System.out.print("enter type of troops you want buy: ");
-            String type = Commands.scanner.nextLine();
-            Troop troop = Troops.getTroopObjectByType(type);
-            if (troop == null)
-                return "invalid troop name";
-            if (troop.getValue() * count > currentGovernment.getAmountOfGood(Good.GOLD))
-                return "you haven't enough gold";
-            Barrack barrack = (Barrack) selectedBuilding;
-            barrack.addTroop(troop, count);
-        }
-        if (selectedBuilding instanceof CagedWarDogs cagedWarDogs)
-            cagedWarDogs.setOpen(true);
-        String output = "target building selected";
-        if (selectedBuilding.getGroup().equals(BuildingGroups.CASTLE))
-            output += " (max hp = " + selectedBuilding.getMaxHp() + ", hp = " + selectedBuilding.getHp() + ")";
-        if (selectedBuilding.getGroup().equals(BuildingGroups.CASTLE) && selectedBuilding.getHp() < selectedBuilding.getMaxHp())
-            return GameMenu.repair(output);
-        else
-            return output;
+//        if (selectedBuilding.getName().equals("shop")) {
+//            ShopMenuController.setCurrentGovernment(currentGovernment);
+//            ShopMenu.run();
+//
+//        }
+//        if (selectedBuilding.getName().equals("Mercenary Post")) {
+//            System.out.print("enter number of troops you want buy: ");
+//            int count = Commands.scanner.nextInt();
+//            System.out.print("enter type of troops you want buy: ");
+//            String type = Commands.scanner.nextLine();
+//            Troop troop = Troops.getTroopObjectByType(type);
+//            if (troop == null)
+//                return "invalid troop name";
+//            if (troop.getValue() * count > currentGovernment.getAmountOfGood(Good.GOLD))
+//                return "you haven't enough gold";
+//            Barrack barrack = (Barrack) selectedBuilding;
+//            barrack.addTroop(troop, count);
+//        }
+//        if (selectedBuilding instanceof CagedWarDogs cagedWarDogs)
+//            cagedWarDogs.setOpen(true);
+//        String output = "target building selected";
+//        if (selectedBuilding.getGroup().equals(BuildingGroups.CASTLE))
+//            output += " (max hp = " + selectedBuilding.getMaxHp() + ", hp = " + selectedBuilding.getHp() + ")";
+//        if (selectedBuilding.getGroup().equals(BuildingGroups.CASTLE) && selectedBuilding.getHp() < selectedBuilding.getMaxHp())
+//            return GameMenu.repair(output);
+//        else
+//            return output;
     }
 
     public static String createUnit(int x, int y, String type, int count) {
@@ -572,7 +576,7 @@ public class GameMenuController {
             else return "you didn't select any unit!";
         for (int i = x; i <= x + 3; i++) {
             Building targetBuilding = Map.getMap()[i][y].getBuilding();
-            if(targetBuilding == null) continue;
+            if (targetBuilding == null) continue;
             if (targetBuilding.getName().equals("lookout tower") || targetBuilding.getName().endsWith("turret"))
                 return "you can't dig tunnel under this building";
             if (Map.getMap()[x][y].getTexture().getType().equals("water"))
@@ -580,7 +584,7 @@ public class GameMenuController {
             if (Map.getMap()[x][y].isStartDigging() || Map.getMap()[x][y].isHaveDitch())
                 return "you can't dig tunnel on ditch";
             targetBuilding = Map.getMap()[i][y].getBuilding();
-            if(targetBuilding == null) continue;
+            if (targetBuilding == null) continue;
             currentGovernment.getBuildings().remove(targetBuilding);
             for (int j = targetBuilding.getX1(); j <= targetBuilding.getX2(); j++) {
                 for (int k = targetBuilding.getY1(); k <= targetBuilding.getY2(); k++) {
@@ -910,11 +914,19 @@ public class GameMenuController {
         return "castle destroyed";
     }
 
+    public static int getNumberOfPlayers() {
+        return numberOfPlayers;
+    }
+
     public static void setNumberOfPlayers(int numberOfPlayers) {
         GameMenuController.numberOfPlayers = numberOfPlayers;
     }
 
-    public static int getNumberOfPlayers() {
-        return numberOfPlayers;
+    public static Building getSelectedBuilding() {
+        return selectedBuilding;
+    }
+
+    public static void setSelectedBuilding(Building selectedBuilding) {
+        GameMenuController.selectedBuilding = selectedBuilding;
     }
 }

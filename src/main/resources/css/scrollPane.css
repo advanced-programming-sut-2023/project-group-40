@@ -2,5 +2,7 @@
 Label{
     -fx-font-size: 20;
     -fx-font-weight: bold;
-    -fx-text-fill: black
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-text-fill: black;
 }

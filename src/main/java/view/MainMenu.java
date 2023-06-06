@@ -25,15 +25,5 @@ public class MainMenu {
         return null;
     }
 
-    public static String enterGameMenu(Matcher matcher) throws ReflectiveOperationException {
-        try {
-            System.out.println(MainMenuController.enterGameMenu());
-            GameMenu.run();
-            return null;
-        } catch (RuntimeException e) {
-            return e.getMessage();
-        }
-    }
-
 
 }

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.SerializationUtils;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 public enum Buildings {
     SMALL_STONE_GATEHOUSE("small stone gatehouse", new GateHouse("small stone gatehouse", 3, 3, 1000, new int[]{0, 0, 0, 0, 0}, 8, new HashSet<>(), false, BuildingGroups.CASTLE)),
@@ -59,7 +60,8 @@ public enum Buildings {
     Buildings(String fullName, Building buildingObject) {
         this.fullName = fullName;
         this.buildingObject = buildingObject;
-        this.buildingImage =new Image(Buildings.class.getResource("/images/buildings/" + "barrack" + ".png").toString());
+        String buildingNames[] = new String[]{"barrack","shop","quarry"};
+        this.buildingImage =new Image(Buildings.class.getResource("/images/buildings/" + buildingNames[new Random().nextInt(0,3)] + ".png").toString());
     }
 
     public static Building getBuildingObjectByType(String type) {
