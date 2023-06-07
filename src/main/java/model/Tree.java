@@ -5,7 +5,7 @@ import javafx.scene.image.ImageView;
 
 public enum Tree {
     DESERT_SHRUB("desert shrub"),
-    CHERRY_PALM("cherry  palm"),
+    CHERRY_PALM("cherry palm"),
     OLIVE_TREE("olive tree"),
     COCONUT_PALM("coconut palm"),
     DATE_PALM("date palm");
