@@ -10,11 +10,12 @@ import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 
 public class SuccessfulDialog {
-    private Label contentLabel;
-   private Pane root;
-   private Pane blackPane;
-   private VBox vBox;
-    public SuccessfulDialog(Pane root,String content) {
+    private final Label contentLabel;
+    private final Pane root;
+    private final Pane blackPane;
+    private VBox vBox;
+
+    public SuccessfulDialog(Pane root, String content) {
         this.root = root;
         this.contentLabel = new Label(content);
         blackPane = new Pane();
@@ -24,33 +25,35 @@ public class SuccessfulDialog {
         root.getChildren().add(blackPane);
     }
 
-    public VBox make(){
+    public void make() {
         vBox = new VBox();
         vBox.getStylesheets().add(SuccessfulDialog.class.getResource("/css/successfulDialog.css").toString());
-        vBox.translateXProperty().bind(vBox.widthProperty().divide(-2).add(App.getWidth()/2));
-        vBox.setPrefWidth(400);
-        vBox.setPrefHeight(300);
+        vBox.translateXProperty().bind(vBox.widthProperty().divide(-2).add(App.getWidth() / 2));
+        vBox.setMinWidth(500);
+        vBox.setMaxWidth(500);
+        vBox.setMinHeight(330);
+        vBox.setMaxHeight(330);
         vBox.setTranslateY(20);
-        ImageView imageView = new ImageView(new Image(SuccessfulDialog.class.getResource("/images/tikIcon.png").toString(),50,50,true,true));
-        imageView.setTranslateX(175);
-        imageView.setTranslateY(-25);
-        Label label= new Label("Success");
-        label.setTranslateX(140);
-        contentLabel.setPrefWidth(400);
-        contentLabel.setTextAlignment(TextAlignment.CENTER);
-        contentLabel.setTranslateX(60);
+        vBox.setAlignment(Pos.CENTER);
+        ImageView imageView = new ImageView(new Image(SuccessfulDialog.class.getResource("/images/tikIcon.png").toString(), 50, 50, true, true));
+        imageView.setTranslateY(-20);
+        Label label = new Label("Success");
+        label.minWidthProperty().bind(vBox.widthProperty());
+        label.maxWidthProperty().bind(vBox.widthProperty());
+        contentLabel.setAlignment(Pos.CENTER);
+        contentLabel.setMaxWidth(vBox.getMaxWidth());
+        contentLabel.setMinWidth(vBox.getMinWidth());
         contentLabel.setTranslateY(20);
         Button okButton = new Button("OK");
-        okButton.setTranslateX(65);
-        okButton.setTranslateY(50);
+        okButton.setTranslateY(40);
         okButton.setOnMouseClicked(mouseEvent -> {
-           removeDialog();
+            removeDialog();
         });
-        vBox.getChildren().addAll(imageView,label,contentLabel,okButton);
-        return vBox;
+        vBox.getChildren().addAll(imageView, label, contentLabel, okButton);
+        root.getChildren().add(vBox);
     }
 
-    public void removeDialog(){
+    public void removeDialog() {
         root.getChildren().remove(vBox);
         root.getChildren().remove(blackPane);
     }

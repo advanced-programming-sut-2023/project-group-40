@@ -1,22 +1,26 @@
-Label{
+Label {
     -fx-font-size: 30;
     -fx-font-weight: bold;
     -fx-text-fill: black;
-    -fx-min-width: 240;
-    -fx-max-width: 400;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
 }
-HBox{
+
+HBox {
     -fx-spacing: 20;
 }
-VBox,StackPane{
-    -fx-background-color: rgba(255,255,255);
+
+VBox, StackPane {
+    -fx-background-color: rgba(255, 255, 255);
     -fx-padding: 10;
     -fx-background-radius: 10;
 }
-TextField,PasswordField{
+
+TextField, PasswordField {
     -fx-padding: 5;
 }
-Button{
+
+Button {
     -fx-background-color: #429f47;
     -fx-text-fill: white;
     -fx-font-size: 30;

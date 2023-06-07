@@ -15,12 +15,12 @@ public class OilSmelter extends Building {
         this.rate = rate;
     }
 
-    public void setRate(int rate) {
-        this.rate = rate;
-    }
-
     public int getRate() {
         return rate;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
     }
 
     @Override

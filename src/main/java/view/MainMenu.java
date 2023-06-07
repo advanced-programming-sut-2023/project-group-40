@@ -19,17 +19,18 @@ import java.util.Objects;
 import java.util.Random;
 
 public class MainMenu extends Application {
-    private Pane root;
     private static Stage primaryStage;
-    private Button startNewGame,continueGame,enterProfileMenu,logout;
     VBox vbox;
+    private Pane root;
+    private Button startNewGame, continueGame, enterProfileMenu, logout;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         MainMenu.primaryStage = primaryStage;
         root = new Pane();
         Image image = new Image(MainMenu.class.getResource("/images/backgrounds/loginMenuBackground.jpg").toString());
-        root.setBackground(new Background(new BackgroundImage(image,null,null,null,new BackgroundSize(App.getWidth(),App.getHeight(),false,false
-                ,true,true))));
+        root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(App.getWidth(), App.getHeight(), false, false
+                , true, true))));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(Objects
                 .requireNonNull(MainMenu.class.getResource("/css/mainMenu.css")).toExternalForm());
@@ -38,7 +39,7 @@ public class MainMenu extends Application {
         continueGame = new Button("continue game");
         enterProfileMenu = new Button("profile menu");
         logout = new Button("logout");
-        vbox.getChildren().addAll(startNewGame,continueGame,enterProfileMenu,logout);
+        vbox.getChildren().addAll(startNewGame, continueGame, enterProfileMenu, logout);
         root.getChildren().add(vbox);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -47,47 +48,47 @@ public class MainMenu extends Application {
         setSizes();
         setActions();
     }
+
     private void setSizes() {
-        vbox.translateXProperty().bind(vbox.widthProperty().divide(-2).add(App.getWidth()/2));
-        vbox.translateYProperty().bind(vbox.heightProperty().divide(-2).add(App.getHeight()/2));
+        vbox.translateXProperty().bind(vbox.widthProperty().divide(-2).add(App.getWidth() / 2));
+        vbox.translateYProperty().bind(vbox.heightProperty().divide(-2).add(App.getHeight() / 2));
         vbox.setSpacing(App.getHeight() / 20);
     }
 
     private void setActions() {
-       startNewGame.setOnMouseClicked(event -> {
-           try {
-               new SetupGameMenu().start(primaryStage);
-           } catch (Exception e) {
-               throw new RuntimeException(e);
-           }
-       });
-       continueGame.setOnMouseClicked(event -> {
-           MainMenuController.continueGame();
-           // TODO: 6/7/2023
-           try {
-               new MapMenu().start(primaryStage);
-           } catch (Exception e) {
-               throw new RuntimeException(e);
-           }
-       });
-       enterProfileMenu.setOnMouseClicked(event -> {
-           ProfileMenuController.setCurrentUser(MainMenuController.getCurrentUser());
-           try {
-               new ProfileMenu().start(primaryStage);
-           } catch (Exception e) {
-               throw new RuntimeException(e);
-           }
-       });
-       logout.setOnMouseClicked(event -> {
-           MainMenuController.setCurrentUser(null);
-           try {
-               new LoginMenu().start(primaryStage);
-           } catch (Exception e) {
-               throw new RuntimeException(e);
-           }
-       });
+        startNewGame.setOnMouseClicked(event -> {
+            try {
+                new SetupGameMenu().start(primaryStage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        continueGame.setOnMouseClicked(event -> {
+            MainMenuController.continueGame();
+            // TODO: 6/7/2023
+            try {
+                new MapMenu().start(primaryStage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        enterProfileMenu.setOnMouseClicked(event -> {
+            ProfileMenuController.setCurrentUser(MainMenuController.getCurrentUser());
+            try {
+                new ProfileMenu().start(primaryStage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        logout.setOnMouseClicked(event -> {
+            MainMenuController.setCurrentUser(null);
+            try {
+                new LoginMenu().start(primaryStage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
-
 
 
 }

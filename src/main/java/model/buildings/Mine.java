@@ -8,10 +8,10 @@ import model.Texture;
 import java.util.HashSet;
 
 public class Mine extends Building {
+    private final int maxStorage = 0;
     private Good material;
     private int productRate;
     private int storage;
-    private final int maxStorage = 0;
 
     public Mine(String name, int height, int width, int hp, int[] cost, int workersRequired, Good material,
                 int productRate, HashSet<Texture> textures, boolean isIllegal, BuildingGroups group) {

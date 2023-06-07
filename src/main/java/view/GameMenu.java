@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 
 public class GameMenu {
     private static boolean gameStarted = false;
+
     public static void setGameStarted(boolean b) {
         GameMenu.gameStarted = b;
     }

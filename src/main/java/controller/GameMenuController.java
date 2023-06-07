@@ -16,7 +16,7 @@ public class GameMenuController {
     private static Government onGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;
-    private static int numberOfPlayers;
+    private static int numberOfPlayers = 2;
 
 
     public static void setMapSize(int size) {
@@ -232,7 +232,7 @@ public class GameMenuController {
 //        }
     }
 
-    public static void selectBuilding(int x, int y){
+    public static void selectBuilding(int x, int y) {
         selectedBuilding = Map.getMap()[x][y].getBuilding();
 //        if (selectedBuilding.getName().equals("shop")) {
 //            ShopMenuController.setCurrentGovernment(currentGovernment);

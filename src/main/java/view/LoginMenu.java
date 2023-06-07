@@ -2,6 +2,8 @@ package view;
 
 import controller.MainMenuController;
 import controller.UserController;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
@@ -10,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import model.SecurityQuestions;
 
 import java.io.File;
@@ -17,26 +20,27 @@ import java.util.Objects;
 import java.util.Random;
 
 public class LoginMenu extends Application {
-    private Pane root;
-    private TextField username,password,securityAnswer;
-    VBox loginVbox;
-    private HBox usernameHBox, passwordHBox,buttonHBox,securityQuestionsHBox,securityAnswerHBox;
-    private Image hideIconImage;
-    private Image showIconImage;
-    private ImageView eyeIcon;
     private final Button login = new Button("login");
     private final ToggleButton forgetMyPassword = new ToggleButton("forget my password");
     private final Button signup = new Button("signup");
+    VBox loginVbox;
+    private Pane root;
+    private TextField username, password, securityAnswer;
+    private HBox usernameHBox, passwordHBox, buttonHBox, securityQuestionsHBox, securityAnswerHBox;
+    private Image hideIconImage;
+    private Image showIconImage;
+    private ImageView eyeIcon;
     private ComboBox<String> securityQuestions;
     private Label passwordLabel;
     private Stage primaryStage;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         root = new Pane();
         Image image = new Image(RegisterMenu.class.getResource("/images/backgrounds/loginMenuBackground.jpg").toString());
-        root.setBackground(new Background(new BackgroundImage(image,null,null,null,new BackgroundSize(App.getWidth(),App.getHeight(),false,false
-                ,true,true))));
+        root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(App.getWidth(), App.getHeight(), false, false
+                , true, true))));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(Objects
                 .requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
@@ -44,18 +48,18 @@ public class LoginMenu extends Application {
         username = new TextField();
         password = new PasswordField();
         securityAnswer = new TextField();
-        passwordLabel =  new Label("password :");
+        passwordLabel = new Label("password :");
         usernameHBox = new HBox(new Label("username :"), username);
         passwordHBox = new HBox(passwordLabel, password);
         securityQuestions = new ComboBox<>();
         securityQuestions.getItems().add(SecurityQuestions.NO_1.getQuestion());
         securityQuestions.getItems().add(SecurityQuestions.NO_2.getQuestion());
         securityQuestions.getItems().add(SecurityQuestions.NO_3.getQuestion());
-        securityQuestionsHBox = new HBox(new Label("security question :"),securityQuestions);
-        securityAnswerHBox = new HBox(new Label("security answer"),securityAnswer);
+        securityQuestionsHBox = new HBox(new Label("security question :"), securityQuestions);
+        securityAnswerHBox = new HBox(new Label("security answer"), securityAnswer);
         CaptchaController.setUpCaptcha();
-        buttonHBox = new HBox(forgetMyPassword, login,signup);
-        loginVbox.getChildren().addAll(usernameHBox, passwordHBox, CaptchaController.getCaptchaHBox(),buttonHBox);
+        buttonHBox = new HBox(forgetMyPassword, login, signup);
+        loginVbox.getChildren().addAll(usernameHBox, passwordHBox, CaptchaController.getCaptchaHBox(), buttonHBox);
         root.getChildren().addAll(loginVbox);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -88,9 +92,9 @@ public class LoginMenu extends Application {
         username.textProperty().addListener((observableValue, s, t1) -> {
             if (!UserController.checkUsernameFormat(t1)) {
                 Errors.USERNAME_ERROR.getErrorLabel().setText("username is invalid!");
-                if (usernameHBox.getChildren().size() == 2) usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
-            }
-            else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
+                if (usernameHBox.getChildren().size() == 2)
+                    usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
+            } else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
         });
         password.textProperty().addListener((observableValue, s, t1) -> {
             if (!UserController.checkPasswordFormat(t1)) {
@@ -104,40 +108,45 @@ public class LoginMenu extends Application {
         eyeIcon.setOnMouseClicked(mouseEvent -> {
             String currentText = password.getText();
             passwordHBox.getChildren().remove(password);
-            if(eyeIcon.getImage().equals(hideIconImage)) {
+            if (eyeIcon.getImage().equals(hideIconImage)) {
                 password = new TextField(currentText);
                 eyeIcon.setImage(showIconImage);
-            }
-            else {
+            } else {
                 password = new PasswordField();
                 password.setText(currentText);
                 eyeIcon.setImage(hideIconImage);
             }
-            passwordHBox.getChildren().add(1,password);
+            passwordHBox.getChildren().add(1, password);
             password.requestFocus();
         });
         login.setOnMouseClicked(mouseEvent -> {
-            TextFieldController.checkExistUsername(usernameHBox,username);
-            TextFieldController.checkPassword(passwordHBox,passwordLabel,username,password);
+            TextFieldController.setSuccessful(true);
+            TextFieldController.checkNotExistUsername(usernameHBox, username);
+            TextFieldController.checkPassword(passwordHBox, passwordLabel, username, password);
             if (forgetMyPassword.isSelected())
-                TextFieldController.checkSecurity(username,securityQuestions,securityQuestionsHBox,securityAnswerHBox,securityAnswer);
+                TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
             CaptchaController.checkCaptcha();
-            if (TextFieldController.isSuccessful()){
+            if (TextFieldController.isSuccessful()) {
                 MainMenuController.setCurrentUser(UserController.getUserByUsername(username.getText()));
-                try {
-                    new MainMenu().start(primaryStage);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login succesful!");
+                successfulDialog.make();
+                new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
+                    successfulDialog.removeDialog();
+                    try {
+                        new MainMenu().start(primaryStage);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })).play();
+
             }
         });
         forgetMyPassword.setOnMouseClicked(mouseEvent -> {
             if (loginVbox.getChildren().size() == 3) {
                 loginVbox.getChildren().add(2, securityQuestionsHBox);
-                loginVbox.getChildren().add(3,securityAnswerHBox);
+                loginVbox.getChildren().add(3, securityAnswerHBox);
                 passwordLabel.setText("new password : ");
-            }
-            else {
+            } else {
                 loginVbox.getChildren().remove(securityQuestionsHBox);
                 loginVbox.getChildren().remove(securityAnswerHBox);
             }
@@ -150,7 +159,6 @@ public class LoginMenu extends Application {
             }
         });
     }
-
 
 
 }

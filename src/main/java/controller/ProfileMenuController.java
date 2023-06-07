@@ -3,7 +3,7 @@ package controller;
 import model.User;
 
 public class ProfileMenuController {
-    private static User currentUser = new User("username","password","nickname","email",null);
+    private static User currentUser = new User("username", "password", "nickname", "email", null);
 
     public static void changeUsername(String username) {
         currentUser.setUsername(username);
@@ -31,16 +31,16 @@ public class ProfileMenuController {
         currentUser.setSlogan(slogan);
     }
 
-    public static boolean isPasswordCorrect(String newPassword){
+    public static boolean isPasswordCorrect(String newPassword) {
         return currentUser.getPasswordHash().equals(UserController.generatePasswordHash(newPassword));
-    }
-
-    public static void setCurrentUser(User currentUser) {
-        ProfileMenuController.currentUser = currentUser;
     }
 
     public static User getCurrentUser() {
         return currentUser;
+    }
+
+    public static void setCurrentUser(User currentUser) {
+        ProfileMenuController.currentUser = currentUser;
     }
 
     public static void changeAvatar(String avatarPath) {

@@ -8,11 +8,11 @@ public enum Tool {
     CATAPULT_WITH_BALANCE_WEIGHT("catapult with balance weight", 3, 0, 200, 100, 6),
     FIERY_STONE_THROWER("fiery stone thrower", 2, 0, 150, 70, 4);
     private final int velocity;
-    private int numberOfEngineer = 0;
     private final int damage;
     private final String name;
     private final int price;
     private final int range;
+    private int numberOfEngineer = 0;
 
     Tool(String name, int velocity, int numberOfEngineer, int damage, int price, int range) {
         this.name = name;

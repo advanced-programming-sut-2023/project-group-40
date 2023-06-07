@@ -12,7 +12,8 @@ public enum Errors {
     SLOGAN_ERROR(new Label("slogan is empty!")),
     SECURITY_QUESTION_ERROR(new Label("security question is incorrect!")),
     SECURITY_ANSWER_ERROR(new Label("security answer is incorrect!"));
-    private  Label errorLabel;
+    private final Label errorLabel;
+
     Errors(Label errorLabel) {
         this.errorLabel = errorLabel;
     }

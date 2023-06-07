@@ -300,7 +300,7 @@ public class Government {
         int count = 0;
 
         for (Building building : buildings)
-            if(building instanceof Storage storage && storage.getProductType().equals(type))
+            if (building instanceof Storage storage && storage.getProductType().equals(type))
                 count += storage.getCapacity() - storage.getCurrentAmount();
 
         return count;

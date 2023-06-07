@@ -9,9 +9,7 @@ import java.util.HashSet;
 
 public class Building implements Serializable, BuildingAction {
     protected int x1, y1, x2, y2;
-    private boolean isIllegal;
     protected BuildingGroups group;
-    private HashSet<Texture> textures;
     protected String name;
     protected int maxHp;
     protected int hp;
@@ -20,6 +18,8 @@ public class Building implements Serializable, BuildingAction {
     protected int height, width;
     protected Government owner;
     protected int workersRequired = 0, engineersRequired = 0;
+    private boolean isIllegal;
+    private HashSet<Texture> textures;
 
     public Building(String name, int height, int width, int hp, int[] cost) {
         this.name = name;
@@ -72,12 +72,12 @@ public class Building implements Serializable, BuildingAction {
         this.group = group;
     }
 
-    public void setOwner(Government owner) {
-        this.owner = owner;
-    }
-
     public Government getOwner() {
         return owner;
+    }
+
+    public void setOwner(Government owner) {
+        this.owner = owner;
     }
 
     public boolean checkTexture(Texture texture) {
@@ -119,12 +119,12 @@ public class Building implements Serializable, BuildingAction {
         return hp;
     }
 
-    public int getMaxHp() {
-        return maxHp;
-    }
-
     public void setHp(int hp) {
         this.hp = hp;
+    }
+
+    public int getMaxHp() {
+        return maxHp;
     }
 
     public BuildingGroups getGroup() {
@@ -145,11 +145,11 @@ public class Building implements Serializable, BuildingAction {
 
     public void setXCoordinates(int x1) {
         this.x1 = x1;
-        this.x2 = x1+ height;
+        this.x2 = x1 + height;
     }
 
     public void setYCoordinates(int y1) {
         this.y1 = y1;
-        this.y2 = y1+ width;
+        this.y2 = y1 + width;
     }
 }

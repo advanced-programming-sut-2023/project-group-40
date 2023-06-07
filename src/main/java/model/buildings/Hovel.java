@@ -13,12 +13,12 @@ public class Hovel extends Building {
         super(name, height, width, hp, cost, textures, isIllegal, group);
     }
 
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
     public int getCapacity() {
         return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     public int getMaxCapacity() {

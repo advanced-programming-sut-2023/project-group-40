@@ -1,7 +1,7 @@
 package model;
 
 public class Map {
-    private static int size;
+    private static int size = 200;
     private static Cell[][] map;
 
     public static int getSize() {

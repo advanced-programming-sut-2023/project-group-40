@@ -9,11 +9,11 @@ public enum DefaultSlogans {
     NO_6("Believe in Miracles"),
     NO_7("Shape the Future");
 
+    private final String slogan;
+
     DefaultSlogans(String slogan) {
         this.slogan = slogan;
     }
-
-    private final String slogan;
 
     public String getSlogan() {
         return slogan;

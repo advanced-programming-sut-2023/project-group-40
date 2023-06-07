@@ -24,27 +24,27 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 
 public class ProfileMenu extends Application {
-    private Pane root;
     private final String EMPTY_SLOGAN = "slogan is empty!";
+    private final Button save = new Button("save");
+    private final CheckBox sloganCheckBox = new CheckBox("show slogan");
+    private final Button changePasswordButton = new Button("change password");
+    private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
+    private Pane root;
     private Bounds usernameBounds;
     private TextField username, newPassword, oldPassword, nickname, email, slogan;
     private VBox profileMenuVbox;
     private HBox usernameHBox, nicknameHBox, emailHBox, sloganHBox, buttonHBox, oldPasswordHBox, newPasswordHBox;
-    private final Button save = new Button("save");
     private Label passwordLabel;
     private Stage primaryStage;
-    private final CheckBox sloganCheckBox = new CheckBox("show slogan");
-    private final Button changePasswordButton = new Button("change password");
     private VBox changePasswordVbox;
-    private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         root = new Pane();
         Image image = new Image(RegisterMenu.class.getResource("/images/backgrounds/profileMenuBackground.jpg").toString());
-        root.setBackground(new Background(new BackgroundImage(image,null,null,null,new BackgroundSize(App.getWidth(),App.getHeight(),false,false
-                ,true,true))));
+        root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(App.getWidth(), App.getHeight(), false, false
+                , true, true))));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(Objects
                 .requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
@@ -86,7 +86,7 @@ public class ProfileMenu extends Application {
             }
             for (ImageView imageView : imageViews) {
                 imageView.setOnMouseClicked(mouseEvent2 -> {
-                    avatar.setImage(new Image(imageView.getImage().getUrl(),100,100,true,true));
+                    avatar.setImage(new Image(imageView.getImage().getUrl(), 100, 100, true, true));
                     ProfileMenuController.changeAvatar(imageView.getImage().getUrl());
                 });
             }
@@ -102,13 +102,13 @@ public class ProfileMenu extends Application {
             FileChooser fileChooser = new FileChooser();
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file == null) return;
-            avatar.setImage(new Image(file.getAbsolutePath(),100,100,true,true));
+            avatar.setImage(new Image(file.getAbsolutePath(), 100, 100, true, true));
             ProfileMenuController.changeAvatar(file.getAbsolutePath());
         });
         avatar.setOnDragDropped(dragEvent -> {
             List<File> files = dragEvent.getDragboard().getFiles();
             try {
-                avatar.setImage(new Image(new FileInputStream(files.get(0)),100,100,true,true));
+                avatar.setImage(new Image(new FileInputStream(files.get(0)), 100, 100, true, true));
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -147,8 +147,8 @@ public class ProfileMenu extends Application {
 
 
     private void setSizes() {
-        profileMenuVbox.translateXProperty().bind(profileMenuVbox.widthProperty().divide(-2).add(App.getWidth()/2));
-        profileMenuVbox.translateYProperty().bind(profileMenuVbox.heightProperty().divide(-2).add(App.getHeight()/2));
+        profileMenuVbox.translateXProperty().bind(profileMenuVbox.widthProperty().divide(-2).add(App.getWidth() / 2));
+        profileMenuVbox.translateYProperty().bind(profileMenuVbox.heightProperty().divide(-2).add(App.getHeight() / 2));
         profileMenuVbox.setSpacing(App.getHeight() / 20);
     }
 

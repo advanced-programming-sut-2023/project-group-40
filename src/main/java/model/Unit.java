@@ -6,11 +6,12 @@ import java.util.ArrayList;
 
 
 public class Unit {
+    private final Government government;
+    private final ArrayList<Troop> troops = new ArrayList<>();
+    private final int sightRange = 3;
     int x;
     int y;
-    private final Government government;
     boolean canDamage = true;
-    private final ArrayList<Troop> troops = new ArrayList<>();
     private String state;
     private int hp;
     private int velocity;
@@ -18,7 +19,6 @@ public class Unit {
     private boolean canClimb = false;
     private int shootingRange;
     private int power;
-    private final int sightRange = 3;
     private boolean havePortableShield;
     private boolean isPatrolling;
     private int patrolTargetX, patrolTargetY;
@@ -47,6 +47,10 @@ public class Unit {
         return state;
     }
 
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public ArrayList<Troop> getTroops() {
         return troops;
     }
@@ -57,10 +61,6 @@ public class Unit {
 
     public void decreaseHpOfUnit(int amount) {
         hp -= amount * troops.size();
-    }
-
-    public void setHp(int hp) {
-        this.hp = hp;
     }
 
     public Government getGovernment() {
@@ -111,10 +111,6 @@ public class Unit {
         power *= Math.round((1 + (rate * 5) / 100.0) * rate);
     }
 
-    public void setState(String state) {
-        this.state = state;
-    }
-
     public int getSightRange() {
         return sightRange;
     }
@@ -131,20 +127,24 @@ public class Unit {
         return hp;
     }
 
-    public void setHavePortableShield(boolean havePortableShield) {
-        this.havePortableShield = havePortableShield;
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 
     public boolean isHavePortableShield() {
         return havePortableShield;
     }
 
-    public void setPatrolling(boolean patrolling) {
-        isPatrolling = patrolling;
+    public void setHavePortableShield(boolean havePortableShield) {
+        this.havePortableShield = havePortableShield;
     }
 
     public boolean isPatrolling() {
         return isPatrolling;
+    }
+
+    public void setPatrolling(boolean patrolling) {
+        isPatrolling = patrolling;
     }
 
     public int getPatrolTargetX() {

@@ -60,8 +60,8 @@ public enum Buildings {
     Buildings(String fullName, Building buildingObject) {
         this.fullName = fullName;
         this.buildingObject = buildingObject;
-        String buildingNames[] = new String[]{"barrack","shop","quarry"};
-        this.buildingImage =new Image(Buildings.class.getResource("/images/buildings/" + buildingNames[new Random().nextInt(0,3)] + ".png").toString());
+        String[] buildingNames = new String[]{"barrack", "shop", "quarry"};
+        this.buildingImage = new Image(Buildings.class.getResource("/images/buildings/" + buildingNames[new Random().nextInt(0, 3)] + ".png").toString());
     }
 
     public static Building getBuildingObjectByType(String type) {

@@ -12,13 +12,12 @@ public class MainMenuController {
         return "log out!";
     }
 
+    public static User getCurrentUser() {
+        return currentUser;
+    }
 
     public static void setCurrentUser(User currentUser) {
         MainMenuController.currentUser = currentUser;
-    }
-
-    public static User getCurrentUser() {
-        return currentUser;
     }
 
     public static String enterGameMenu() {

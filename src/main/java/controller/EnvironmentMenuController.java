@@ -13,6 +13,7 @@ public class EnvironmentMenuController {
     private static ImageView[][] map;
     private static SimpleDoubleProperty textureSize;
     private static Pane mapPane;
+
     public static boolean isFirstPlayer() {
         return Government.getGovernmentsSize() == 1;
     }
@@ -38,8 +39,8 @@ public class EnvironmentMenuController {
         return Map.getMap()[x][y].getBuilding() == null;
     }
 
-    public static void setTexture(int i , int j , Texture texture){
-        if (texture == Texture.STONE || texture == Texture.PONE ||texture == Texture.SEA)
+    public static void setTexture(int i, int j, Texture texture) {
+        if (texture == Texture.STONE || texture == Texture.PONE || texture == Texture.SEA)
             Map.getMap()[i][j].setPassable(false);
         if (texture == Texture.STONE) Map.getMap()[i][j].setAvailable(false);
         Map.getMap()[i][j].setTexture(texture);
@@ -66,17 +67,17 @@ public class EnvironmentMenuController {
     }
 
     public static boolean checkDropTree(int x, int y, String type) {
-        if (Map.getMap()[x][y].getTexture() != Texture.LAND &&
-                Map.getMap()[x][y].getTexture() != Texture.GRASS
-                && Map.getMap()[x][y].getTexture() != Texture.GRASS_LAND &&
-                Map.getMap()[x][y].getTexture() != Texture.DENSE_GRASS_LAND)
-            return false;
-        return true;
+        return Map.getMap()[x][y].getTexture() == Texture.LAND ||
+                Map.getMap()[x][y].getTexture() == Texture.GRASS
+                || Map.getMap()[x][y].getTexture() == Texture.GRASS_LAND ||
+                Map.getMap()[x][y].getTexture() == Texture.DENSE_GRASS_LAND;
     }
-    public static void dropTree(int x, int y, String type){
+
+    public static void dropTree(int x, int y, String type) {
         Map.getMap()[x][y].setTree(Tree.getTree(type));
         Map.getMap()[x][y].setAvailable(false);
     }
+
     private static void dropStockpile(int x, int y, Government government) {
         Building targetBuilding = Buildings.getBuildingObjectByType("stockpile");
         government.addBuilding(targetBuilding);
@@ -88,7 +89,7 @@ public class EnvironmentMenuController {
             }
     }
 
-    public static void organizeCastles(int countOfPlayers,int size) {
+    public static void organizeCastles(int countOfPlayers, int size) {
         if (countOfPlayers == 2) {
             placeCastle(40, 40);
             placeCastle(size - 40, size - 40);

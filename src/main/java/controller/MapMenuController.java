@@ -7,8 +7,6 @@ import model.Texture;
 import model.buildings.Storage;
 
 public class MapMenuController {
-    private static int centerX;
-    private static int centerY;
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -26,6 +24,8 @@ public class MapMenuController {
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+    private static int centerX;
+    private static int centerY;
 
     public static int getCenterX() {
         return centerX;

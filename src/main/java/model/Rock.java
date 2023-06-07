@@ -16,14 +16,14 @@ public enum Rock {
         this.name = name;
     }
 
-    public Image getImage(){
-        return new Image(Rock.class.getResource("/images/rocks/" + name + ".png").toString());
-    }
-
     public static Rock getRock(String name) {
         for (Rock rock : values())
             if (rock.name.equals(name)) return rock;
         return null;
+    }
+
+    public Image getImage() {
+        return new Image(Rock.class.getResource("/images/rocks/" + name + ".png").toString());
     }
 
     public String getName() {

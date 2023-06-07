@@ -5,12 +5,12 @@ import model.buildings.Building;
 import java.util.ArrayList;
 
 public class Cell {
+    private final ArrayList<Unit> units = new ArrayList<>();
     private boolean isAvailable = true, isPassable = true;
     private Building building = null;
     private Tree tree;
     private Rock rock;
     private Texture texture;
-    private final ArrayList<Unit> units = new ArrayList<>();
     private Wall wall;
     private boolean isStartDigging;
     private boolean haveDitch;
@@ -23,46 +23,37 @@ public class Cell {
         this.texture = texture;
     }
 
-    public void setBuilding(Building building) {
-        this.building = building;
-    }
-
     public Building getBuilding() {
         return building;
     }
 
-    public void setTexture(Texture texture) {
-        this.texture = texture;
+    public void setBuilding(Building building) {
+        this.building = building;
     }
 
     public Texture getTexture() {
         return texture;
     }
 
-    public void setAvailable(boolean available) {
-        isAvailable = available;
-    }
-
-    public void setPassable(boolean passable) {
-        isPassable = passable;
-    }
-
-    public void setRock(Rock rock) {
-        this.rock = rock;
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 
     public Rock getRock() {
         return rock;
     }
 
-    public void setTree(Tree tree) {
-        this.tree = tree;
+    public void setRock(Rock rock) {
+        this.rock = rock;
     }
 
     public Tree getTree() {
         return tree;
     }
 
+    public void setTree(Tree tree) {
+        this.tree = tree;
+    }
 
     public boolean isAvailable() {
         if (texture.getType().equals("water"))
@@ -70,44 +61,56 @@ public class Cell {
         return isAvailable;
     }
 
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
     public boolean isPassable() {
         return isPassable;
     }
 
-    public void setWall(Wall wall) {
-        this.wall = wall;
+    public void setPassable(boolean passable) {
+        isPassable = passable;
     }
 
     public Wall getWall() {
         return wall;
     }
 
-    public void setHaveDitch(boolean haveDitch) {
-        this.haveDitch = haveDitch;
-    }
-
-    public void setStartDigging(boolean startDigging) {
-        isStartDigging = startDigging;
+    public void setWall(Wall wall) {
+        this.wall = wall;
     }
 
     public boolean isHaveDitch() {
         return haveDitch;
     }
 
+    public void setHaveDitch(boolean haveDitch) {
+        this.haveDitch = haveDitch;
+    }
+
     public boolean isStartDigging() {
         return isStartDigging;
     }
 
-    public void setDitchOwner(Government ditchOwner) {
-        this.ditchOwner = ditchOwner;
+    public void setStartDigging(boolean startDigging) {
+        isStartDigging = startDigging;
     }
 
     public Government getDitchOwner() {
         return ditchOwner;
     }
 
+    public void setDitchOwner(Government ditchOwner) {
+        this.ditchOwner = ditchOwner;
+    }
+
     public Castle getCastle() {
         return castle;
+    }
+
+    public void setCastle(Castle castle) {
+        this.castle = castle;
     }
 
     public void addUnit(Unit unit) {
@@ -128,23 +131,19 @@ public class Cell {
         }
     }
 
-    public void setTool(Tool tool) {
-        this.tool = tool;
-    }
-
     public Tool getTool() {
         return tool;
     }
 
-    public void setCastle(Castle castle) {
-        this.castle = castle;
-    }
-
-    public void setStair(boolean stair) {
-        isStair = stair;
+    public void setTool(Tool tool) {
+        this.tool = tool;
     }
 
     public boolean isStair() {
         return isStair;
+    }
+
+    public void setStair(boolean stair) {
+        isStair = stair;
     }
 }

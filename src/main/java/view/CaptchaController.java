@@ -11,17 +11,17 @@ import java.util.Objects;
 import java.util.Random;
 
 public class CaptchaController {
-    private static HBox captchaHBox;
-    private static TextField captchaAnswerTextField = new TextField();
     private static final Image reloadCaptchaImage = new Image(Objects.requireNonNull(RegisterMenu
             .class.getResource("/images/reloadCaptchaIcon.png")).toExternalForm());
     private static final ImageView captchaRefreshImageView = new ImageView(reloadCaptchaImage);
     private static final File captchaDirectory = new File(RegisterMenu.class.getResource("/captcha/").toExternalForm().substring(6));
+    private static HBox captchaHBox;
+    private static TextField captchaAnswerTextField = new TextField();
     private static Image captchaImage;
     private static ImageView captchaImageView;
-   private static HBox imageHBox;
+    private static HBox imageHBox;
 
-    public static void setUpCaptcha(){
+    public static void setUpCaptcha() {
         File file = new File(RegisterMenu.class.getResource("/captcha/").toExternalForm().substring(6));
         captchaImage = new Image("file:/" + Objects.
                 requireNonNull(file.listFiles())[new Random().nextInt(0, Objects.requireNonNull(file.listFiles()).length)].getPath());
@@ -32,9 +32,9 @@ public class CaptchaController {
         captchaRefreshImageView.setFitHeight(captchaImage.getHeight());
         captchaImageView.setStyle("-fx-padding: 5");
         captchaRefreshImageView.setStyle("-fx-padding: 5");
-        imageHBox = new HBox(captchaRefreshImageView,captchaImageView);
+        imageHBox = new HBox(captchaRefreshImageView, captchaImageView);
         imageHBox.setSpacing(20);
-        captchaHBox = new HBox(imageHBox,captchaAnswerTextField);
+        captchaHBox = new HBox(imageHBox, captchaAnswerTextField);
         captchaHBox.setSpacing(20);
         captchaRefreshImageView.setOnMouseClicked(event -> {
             captchaImage = new Image("file:/" + Objects.
@@ -67,8 +67,7 @@ public class CaptchaController {
         String url = captchaImage.getUrl();
         if (url.substring(url.length() - 8, url.length() - 4).equals(captchaAnswerTextField.getText())) {
             captchaHBox.getChildren().remove(Errors.CAPTCHA_ERROR.getErrorLabel());
-        }
-        else{
+        } else {
             if (captchaHBox.getChildren().size() == 2)
                 captchaHBox.getChildren().add(Errors.CAPTCHA_ERROR.getErrorLabel());
             captchaImage = new Image("file:/" + Objects.

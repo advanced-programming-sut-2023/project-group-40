@@ -71,20 +71,19 @@ public class EnvironmentMenu extends Application {
         EnvironmentMenuController.setMap(map);
         EnvironmentMenuController.setMapPane(mapPane);
         EnvironmentMenuController.setTextureSize(textureSize);
-        EnvironmentMenuController.organizeCastles(countOfPlayers,MAP_SIZE);
+        EnvironmentMenuController.organizeCastles(countOfPlayers, MAP_SIZE);
         HBox hBox = setUpBuildingScrollPane();
         updateScrollPane(hBox);
     }
 
     private void updateScrollPane(HBox hBox) {
-        root.addEventFilter(KeyEvent.KEY_PRESSED,keyEvent -> {
+        root.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
             if (keyEvent.getCode() == KeyCode.T) {
                 scrollPaneContent = "tree";
                 try {
                     hBox.getChildren().clear();
-                    updateScrollPanePicture(hBox,Tree.class);
-                }
-                catch (ReflectiveOperationException e) {
+                    updateScrollPanePicture(hBox, Tree.class);
+                } catch (ReflectiveOperationException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -93,8 +92,7 @@ public class EnvironmentMenu extends Application {
                 try {
                     hBox.getChildren().clear();
                     updateScrollPanePicture(hBox, Rock.class);
-                }
-                catch (ReflectiveOperationException e) {
+                } catch (ReflectiveOperationException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -102,7 +100,7 @@ public class EnvironmentMenu extends Application {
                 scrollPaneContent = "texture";
                 try {
                     hBox.getChildren().clear();
-                    updateScrollPanePicture(hBox,Texture.class);
+                    updateScrollPanePicture(hBox, Texture.class);
                 } catch (ReflectiveOperationException e) {
                     throw new RuntimeException(e);
                 }
@@ -124,9 +122,8 @@ public class EnvironmentMenu extends Application {
                 , true, false))));
         hBox.setSpacing(20);
         try {
-            updateScrollPanePicture(hBox,Texture.class);
-        }
-        catch (ReflectiveOperationException e) {
+            updateScrollPanePicture(hBox, Texture.class);
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
         pane.setContent(hBox);
@@ -176,13 +173,13 @@ public class EnvironmentMenu extends Application {
         });
     }
 
-    private void updateScrollPanePicture(HBox hBox,Class<?> aClass) throws ReflectiveOperationException {
+    private void updateScrollPanePicture(HBox hBox, Class<?> aClass) throws ReflectiveOperationException {
         Object arrayObject = aClass.getMethod("values").invoke(null);
         for (int i = 0; i < Array.getLength(arrayObject); i++) {
             ImageView imageView = new ImageView(
                     aClass == Texture.class ? ((Texture) Array.get(arrayObject, i)).getImage()
-                    : aClass == Tree.class ? ((Tree) Array.get(arrayObject, i)).getImage()
-                    : ((Rock) Array.get(arrayObject, i)).getImage());
+                            : aClass == Tree.class ? ((Tree) Array.get(arrayObject, i)).getImage()
+                            : ((Rock) Array.get(arrayObject, i)).getImage());
             imageView.setPreserveRatio(true);
             imageView.setFitHeight(80);
             imageView.addEventFilter(MouseDragEvent.DRAG_DETECTED, event -> {
@@ -201,7 +198,7 @@ public class EnvironmentMenu extends Application {
             vBox.minHeightProperty().bind(hBox.minHeightProperty());
             Label label = new Label(aClass == Texture.class ? ((Texture) Array.get(arrayObject, i)).name().toLowerCase() :
                     aClass == Tree.class ? ((Tree) Array.get(arrayObject, i)).getName() :
-                            ((Rock) Array.get(arrayObject, i)).getName()) ;
+                            ((Rock) Array.get(arrayObject, i)).getName());
             vBox.getChildren().addAll(imageView, label);
             hBox.getChildren().add(vBox);
         }
@@ -237,16 +234,16 @@ public class EnvironmentMenu extends Application {
             }
         });
         mapPane.requestFocus();
-        mapPane.addEventFilter(KeyEvent.KEY_PRESSED,keyEvent -> {
+        mapPane.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
             if (selectedCell != null && keyEvent.getCode() == KeyCode.DELETE) {
                 for (int i = 0; i < MAP_SIZE; i++)
                     for (int j = 0; j < MAP_SIZE; j++)
-                        if (Map.getMap()[i][j] == selectedCell){
-                            EnvironmentMenuController.clearBlock(i,j);
+                        if (Map.getMap()[i][j] == selectedCell) {
+                            EnvironmentMenuController.clearBlock(i, j);
                             map[i][j].setImage(Texture.LAND.getImage());
                             for (ImageView tree : images) {
                                 if (tree.getTranslateX() == map[i][j].getTranslateX() &&
-                                tree.getTranslateY() == map[i][j].getTranslateY()) {
+                                        tree.getTranslateY() == map[i][j].getTranslateY()) {
                                     images.remove(tree);
                                     mapPane.getChildren().remove(tree);
                                     break;
@@ -316,25 +313,25 @@ public class EnvironmentMenu extends Application {
                 String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
                 String[] split = url.split("/");
                 String type = "";
-                String result = split[split.length - 1].replaceAll("%20"," ");
-                for (int k = 0 ; k < result.length() ; k++){
+                String result = split[split.length - 1].replaceAll("%20", " ");
+                for (int k = 0; k < result.length(); k++) {
                     if (result.charAt(k) != '.')
                         type += result.charAt(k);
                     else break;
                 }
                 switch (scrollPaneContent) {
                     case "texture" -> {
-                        if (EnvironmentMenuController.checkTexture(finalI,finalJ,Texture.getTextureByName(type)))
+                        if (EnvironmentMenuController.checkTexture(finalI, finalJ, Texture.getTextureByName(type)))
                             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                         else event.acceptTransferModes(TransferMode.NONE);
                     }
                     case "tree" -> {
-                        if (EnvironmentMenuController.checkDropTree(finalI,finalJ,type))
+                        if (EnvironmentMenuController.checkDropTree(finalI, finalJ, type))
                             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                         else event.acceptTransferModes(TransferMode.NONE);
                     }
                     default -> {
-                        if (EnvironmentMenuController.checkDropRock(finalI,finalJ,Rock.getRock(type)))
+                        if (EnvironmentMenuController.checkDropRock(finalI, finalJ, Rock.getRock(type)))
                             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                         else event.acceptTransferModes(TransferMode.NONE);
                     }
@@ -347,8 +344,8 @@ public class EnvironmentMenu extends Application {
                 String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
                 String[] split = url.split("/");
                 String type = "";
-                String result = split[split.length - 1].replaceAll("%20"," ");
-                for (int k = 0 ; k < result.length() ; k++){
+                String result = split[split.length - 1].replaceAll("%20", " ");
+                for (int k = 0; k < result.length(); k++) {
                     if (result.charAt(k) != '.')
                         type += result.charAt(k);
                     else break;
@@ -361,17 +358,17 @@ public class EnvironmentMenu extends Application {
                 switch (scrollPaneContent) {
                     case "texture" -> {
                         map[i][j].setImage(imageView.getImage());
-                        EnvironmentMenuController.setTexture(finalI,finalJ,Texture.getTextureByName(type));
+                        EnvironmentMenuController.setTexture(finalI, finalJ, Texture.getTextureByName(type));
                     }
                     case "tree" -> {
                         images.add(imageView);
                         mapPane.getChildren().add(imageView);
-                        EnvironmentMenuController.dropTree(finalI,finalJ,type);
+                        EnvironmentMenuController.dropTree(finalI, finalJ, type);
                     }
                     default -> {
                         images.add(imageView);
                         mapPane.getChildren().add(imageView);
-                        EnvironmentMenuController.dropRock(finalI,finalJ,Rock.getRock(type));
+                        EnvironmentMenuController.dropRock(finalI, finalJ, Rock.getRock(type));
                     }
                 }
             }

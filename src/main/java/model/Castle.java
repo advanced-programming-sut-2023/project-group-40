@@ -3,8 +3,8 @@ package model;
 import controller.GameMenuController;
 
 public class Castle {
-    private int hp = 10000;
     private final int x1, y1, x2, y2;
+    private int hp = 10000;
     private int population = 5;
     private int numberOfActiveWorker = 5;
     private Government government;
@@ -44,12 +44,12 @@ public class Castle {
         return y2;
     }
 
-    public void setGovernment(Government government) {
-        this.government = government;
-    }
-
     public Government getGovernment() {
         return government;
+    }
+
+    public void setGovernment(Government government) {
+        this.government = government;
     }
 
     public void decreaseHp(int amount) {

@@ -9,9 +9,9 @@ public enum Tree {
     OLIVE_TREE("olive tree"),
     COCONUT_PALM("coconut palm"),
     DATE_PALM("date palm");
-    ;
     private final String name;
     private Image image;
+
     Tree(String name) {
         this.name = name;
     }

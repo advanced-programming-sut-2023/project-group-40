@@ -23,17 +23,17 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class SetupGameMenu extends Application {
-    private Pane root;
-    private VBox mainVbox = new VBox();
     private static Stage primaryStage;
     private final ComboBox<String> gameModeComboBox = new ComboBox<>();
-    private int countOfPlayers = 2;
     private final ScrollPane scrollPane = new ScrollPane();
-    private ArrayList<CheckBox> checkBoxes = new ArrayList<>();
-    private Button startGame = new Button("start game");
+    private Pane root;
+    private final VBox mainVbox = new VBox();
+    private int countOfPlayers = 2;
+    private final ArrayList<CheckBox> checkBoxes = new ArrayList<>();
+    private final Button startGame = new Button("start game");
     private int size = 200;
-    private Button firstSizeButton = new Button("200 x 200");
-    private Button secondSizeButton = new Button("400 x 400");
+    private final Button firstSizeButton = new Button("200 x 200");
+    private final Button secondSizeButton = new Button("400 x 400");
 
 
     @Override

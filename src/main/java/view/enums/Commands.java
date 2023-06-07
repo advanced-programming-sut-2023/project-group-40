@@ -79,10 +79,10 @@ public enum Commands {
     BUY("(?=.* -i (?<name>((\"[^\"]+\")|(\\S+))))(?=.* -a (?<amount>\\d+))^buy( -[ia] ((\"[^\"]+\")|(\\S+))){2}$", ShopMenu.class, "buy"),
     SELL("(?=.* -i (?<name>((\"[^\"]+\")|(\\S+))))(?=.* -a (?<amount>\\d+))^sell( -[ia] ((\"[^\"]+\")|(\\S+))){2}$", ShopMenu.class, "sell");
 
+    public final static Scanner scanner = new Scanner(System.in);
     private final String regex;
     private String methodName;
     private Class<?> menuClass;
-    public final static Scanner scanner = new Scanner(System.in);
 
     Commands(String regex, Class<?> menuClass, String methodName) {
         this.regex = regex;
@@ -104,6 +104,13 @@ public enum Commands {
         return "invalid command!";
     }
 
+    public static String eraseQuot(String input) {
+        if (input == null) return null;
+        if (input.charAt(0) == '"' && input.charAt(input.length() - 1) == '"')
+            return input.substring(1, input.length() - 1);
+        return input;
+    }
+
     public boolean canMatch(String input) {
         return Pattern.compile(regex).matcher(input).matches();
     }
@@ -114,12 +121,5 @@ public enum Commands {
 
     public String getRegex() {
         return regex;
-    }
-
-    public static String eraseQuot(String input) {
-        if (input == null) return null;
-        if (input.charAt(0) == '"' && input.charAt(input.length() - 1) == '"')
-            return input.substring(1, input.length() - 1);
-        return input;
     }
 }

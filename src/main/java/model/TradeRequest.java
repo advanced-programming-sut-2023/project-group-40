@@ -7,8 +7,8 @@ public class TradeRequest {
     private final Good commodity;
     private final int price, count;
     private final String senderMessage;
-    private String receiverMessage;
     private final Integer id = lastId++;
+    private String receiverMessage;
     private boolean isAccepted = false, hasSeen = false;
 
     public TradeRequest(Government sender, Government receiver, Good commodity, int price, int count, String message) {
@@ -20,16 +20,12 @@ public class TradeRequest {
         this.senderMessage = message;
     }
 
-    public void setAccepted(boolean accepted) {
-        isAccepted = accepted;
+    public static int getLastId() {
+        return lastId;
     }
 
     public boolean getAccepted() {
         return isAccepted;
-    }
-
-    public static int getLastId() {
-        return lastId;
     }
 
     public Good getCommodity() {
@@ -64,6 +60,10 @@ public class TradeRequest {
         return isAccepted;
     }
 
+    public void setAccepted(boolean accepted) {
+        isAccepted = accepted;
+    }
+
     public Government getSender() {
         return sender;
     }
@@ -72,11 +72,11 @@ public class TradeRequest {
         return receiver;
     }
 
-    public void setHasSeen(boolean hasSeen) {
-        this.hasSeen = hasSeen;
-    }
-
     public boolean getHasSeen() {
         return this.hasSeen;
+    }
+
+    public void setHasSeen(boolean hasSeen) {
+        this.hasSeen = hasSeen;
     }
 }
