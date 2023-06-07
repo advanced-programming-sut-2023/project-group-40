@@ -30,7 +30,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MapMenu extends Application {
-    private final ImageView[][] map = new ImageView[200][200];
+    private int MAP_SIZE = 200;
+    private final ImageView[][] map = new ImageView[MAP_SIZE][MAP_SIZE];
     private final ArrayList<ImageView> buildings = new ArrayList<>();
     private final ArrayList<Line> borderLines = new ArrayList<>();
     private final SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
@@ -39,18 +40,14 @@ public class MapMenu extends Application {
     Pane root;
     AnchorPane mapPane;
     private double defaultTextureSize;
-    private Stage stage;
     private int hoverX;
     private int hoverY;
     private VBox showDetailsBox = new VBox();
     private final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
     private Cell selectedCell;
-    private final ArrayList<Cell> selectedCells = new ArrayList<>();
-    private int startIndexI,startIndexJ,endIndexI,endIndexJ;
 
     @Override
     public void start(Stage stage) throws Exception {
-        this.stage = stage;
         root = new Pane();
         mapPane = new AnchorPane();
         root.getChildren().add(mapPane);
@@ -63,7 +60,11 @@ public class MapMenu extends Application {
 
         defaultTextureSize = App.getWidth() / 50;
         textureSize.set(defaultTextureSize);
-        Map.initMap(200);
+        Map.initMap(MAP_SIZE);
+        mapPane.setMaxWidth(App.getWidth());
+        mapPane.setMaxHeight(App.getHeight() - 200);
+        mapPane.setPrefWidth(App.getWidth());
+        mapPane.setPrefHeight(App.getHeight() - 200);
         setupMap();
         setUpBuildingScrollPane();
     }
@@ -126,8 +127,124 @@ public class MapMenu extends Application {
     }
 
     private void setupMap() {
-        for (int i = 0; i < 200; i++) {
-            for (int j = 0; j < 200; j++) {
+        setupCells();
+        handleMoveOnMap();
+        handleMouseHoverOnCell();
+        handleSelectCell();
+        handleZoom();
+    }
+
+    private void handleZoom() {
+        KeyCodeCombination zoomInCombination = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.CONTROL_DOWN);
+        root.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (textureSize.get() / defaultTextureSize < 3)
+                if (zoomInCombination.match(event)) zoom(10);
+        });
+        KeyCodeCombination zoomOutCombination = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.CONTROL_DOWN);
+        root.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (zoomOutCombination.match(event))
+                if (textureSize.get() / defaultTextureSize > 1 / 3.0) {
+                    zoom(-10);
+                    if (!canZoom()) zoom(100 / 9.0);
+                }
+        });
+    }
+
+    private void handleSelectCell() {
+        mapPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                double mouseX = event.getX(), mouseY = event.getY();
+                double x = map[0][0].getTranslateX();
+                double y = map[0][0].getTranslateY();
+                int indexI = (int) Math.ceil((mouseX - x) / textureSize.get()) - 1;
+                int indexJ = (int) Math.ceil((mouseY - y) / textureSize.get()) - 1;
+
+                NumberBinding cornerLeftX, cornerRightX, cornerTopY, cornerBottomY;
+                Building targetBuilding = Map.getMap()[indexI][indexJ].getBuilding();
+                int buildingX, buildingY;
+                if (targetBuilding != null) {
+                    if(selectedCell != null) return;
+                    if (GameMenuController.getSelectedBuilding() == targetBuilding) {
+                        mapPane.getChildren().removeAll(borderLines);
+                        GameMenuController.setSelectedBuilding(null);
+                        return;
+                    }
+                    buildingX = targetBuilding.getX1();
+                    buildingY = targetBuilding.getY1();
+                    cornerLeftX = Bindings.add(map[buildingX][buildingY].translateXProperty(), 0);
+                    cornerRightX = Bindings.add(map[buildingX][buildingY].translateXProperty()
+                            , map[buildingX][buildingX].fitWidthProperty().multiply(targetBuilding.getWidth()));
+                    cornerTopY = Bindings.add(map[buildingX][buildingY].translateYProperty(), 0);
+                    cornerBottomY = Bindings.add(map[buildingX][buildingY].translateYProperty()
+                            , map[buildingX][buildingY].fitHeightProperty().multiply(targetBuilding.getHeight()));
+                    GameMenuController.selectBuilding(buildingX, buildingY);
+
+                }
+                else {
+                    if(GameMenuController.getSelectedBuilding() != null) return;
+
+                    if (selectedCell != null && selectedCell != Map.getMap()[indexI][indexJ]) return;
+                    if (selectedCell != null) {
+                        mapPane.getChildren().removeAll(borderLines);
+                        selectedCell = null;
+                        return;
+                    }
+
+                    cornerLeftX = Bindings.add(map[indexI][indexJ].translateXProperty(), 0);
+                    cornerRightX = Bindings.add(map[indexI][indexJ].translateXProperty()
+                            , map[indexI][indexJ].fitWidthProperty());
+                    cornerTopY = Bindings.add(map[indexI][indexJ].translateYProperty(), 0);
+                    cornerBottomY = Bindings.add(map[indexI][indexJ].translateYProperty()
+                            , map[indexI][indexJ].fitHeightProperty());
+                    selectedCell = Map.getMap()[indexI][indexJ];
+                }
+                Line line1 = getLine(cornerLeftX, cornerTopY, cornerLeftX, cornerBottomY);
+                Line line2 = getLine(cornerLeftX, cornerTopY, cornerRightX, cornerTopY);
+                Line line3 = getLine(cornerRightX, cornerTopY, cornerRightX, cornerBottomY);
+                Line line4 = getLine(cornerRightX, cornerBottomY, cornerLeftX, cornerBottomY);
+                borderLines.addAll(List.of(line1, line2, line3, line4));
+
+                mapPane.getChildren().addAll(line1, line2, line3, line4);
+            }
+        });
+    }
+
+    private void handleMouseHoverOnCell() {
+        mapPane.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, event -> {
+            hoverTimeline.stop();
+            mapPane.getChildren().remove(showDetailsBox);
+        });
+        mapPane.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, event -> {
+            double mouseX = event.getX(), mouseY = event.getY();
+            double x = map[0][0].getTranslateX();
+            double y = map[0][0].getTranslateY();
+            hoverX = (int) Math.ceil((mouseX - x) / textureSize.get()) - 1;
+            hoverY = (int) Math.ceil((mouseY - y) / textureSize.get()) - 1;
+            hoverTimeline.play();
+        });
+    }
+
+    private void handleMoveOnMap() {
+        AtomicReference<Double> startX = new AtomicReference<>((double) 0);
+        AtomicReference<Double> startY = new AtomicReference<>((double) 0);
+        mapPane.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                startX.set(event.getX());
+                startY.set(event.getY());
+            }
+        });
+        mapPane.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                deltaX.set(deltaX.get() + event.getX() - startX.get());
+                deltaY.set(deltaY.get() + event.getY() - startY.get());
+                changeMapSight();
+            }
+        });
+    }
+
+    private void setupCells() {
+        for (int i = 0; i < MAP_SIZE; i++) {
+            for (int j = 0; j < MAP_SIZE; j++) {
                 map[i][j] = new ImageView(Texture.LAND.getImage());
                 if (i == j) {
                     map[i][j] = new ImageView(Texture.SEA.getImage());
@@ -182,136 +299,6 @@ public class MapMenu extends Application {
                 mapPane.getChildren().add(map[i][j]);
             }
         }
-
-        mapPane.setMaxWidth(App.getWidth());
-        mapPane.setMaxHeight(App.getHeight() - 200);
-        mapPane.setPrefWidth(App.getWidth());
-        mapPane.setPrefHeight(App.getHeight() - 200);
-
-        AtomicReference<Double> startX = new AtomicReference<>((double) 0);
-        AtomicReference<Double> startY = new AtomicReference<>((double) 0);
-        mapPane.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                startX.set(event.getX());
-                startY.set(event.getY());
-            }else if(event.getButton().equals(MouseButton.SECONDARY)){
-                startX.set(event.getX());
-                startY.set(event.getY());
-            }
-        });
-        mapPane.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                deltaX.set(deltaX.get() + event.getX() - startX.get());
-                deltaY.set(deltaY.get() + event.getY() - startY.get());
-                changeMapSight();
-            }else if(event.getButton().equals(MouseButton.SECONDARY)){
-                selectedCells.clear();
-                for (int i = Math.min(startIndexI,endIndexI); i <= Math.max(startIndexI,endIndexI); i++)
-                    for (int j = Math.min(startIndexJ,endIndexJ); j <= Math.max(startIndexJ,endIndexJ); j++) {
-                        map[i][j].setOpacity(1);
-                    }
-
-                double x = map[0][0].getTranslateX();
-                double y = map[0][0].getTranslateY();
-                startIndexI = (int) Math.ceil((startX.get() - x) / textureSize.get()) - 1;
-                startIndexJ = (int) Math.ceil((startY.get() - y) / textureSize.get()) - 1;
-
-                endIndexI = (int) Math.ceil(( event.getX() - x) / textureSize.get()) - 1;
-                endIndexJ = (int) Math.ceil(( event.getY() - y) / textureSize.get()) - 1;
-
-                for (int i = Math.min(startIndexI,endIndexI); i <= Math.max(startIndexI,endIndexI); i++)
-                    for (int j = Math.min(startIndexJ,endIndexJ); j <= Math.max(startIndexJ,endIndexJ); j++) {
-                        selectedCells.add(Map.getMap()[i][j]);
-                        map[i][j].setOpacity(0.5);
-                    }
-
-
-            }
-        });
-
-        mapPane.addEventFilter(MouseEvent.MOUSE_EXITED_TARGET, event -> {
-            hoverTimeline.stop();
-            mapPane.getChildren().remove(showDetailsBox);
-        });
-
-        mapPane.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, event -> {
-            double mouseX = event.getX(), mouseY = event.getY();
-            double x = map[0][0].getTranslateX();
-            double y = map[0][0].getTranslateY();
-            hoverX = (int) Math.ceil((mouseX - x) / textureSize.get()) - 1;
-            hoverY = (int) Math.ceil((mouseY - y) / textureSize.get()) - 1;
-            hoverTimeline.play();
-        });
-        mapPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                double mouseX = event.getX(), mouseY = event.getY();
-                double x = map[0][0].getTranslateX();
-                double y = map[0][0].getTranslateY();
-                int indexI = (int) Math.ceil((mouseX - x) / textureSize.get()) - 1;
-                int indexJ = (int) Math.ceil((mouseY - y) / textureSize.get()) - 1;
-
-                NumberBinding cornerLeftX, cornerRightX, cornerTopY, cornerBottomY;
-                Building targetBuilding = Map.getMap()[indexI][indexJ].getBuilding();
-                int buildingX, buildingY;
-                if (targetBuilding != null) {
-                    if(selectedCell != null) return;
-                    if (GameMenuController.getSelectedBuilding() == targetBuilding) {
-                        mapPane.getChildren().removeAll(borderLines);
-                        GameMenuController.setSelectedBuilding(null);
-                        return;
-                    }
-                    buildingX = targetBuilding.getX1();
-                    buildingY = targetBuilding.getY1();
-                    cornerLeftX = Bindings.add(map[buildingX][buildingY].translateXProperty(), 0);
-                    cornerRightX = Bindings.add(map[buildingX][buildingY].translateXProperty()
-                            , map[buildingX][buildingX].fitWidthProperty().multiply(targetBuilding.getWidth()));
-                    cornerTopY = Bindings.add(map[buildingX][buildingY].translateYProperty(), 0);
-                    cornerBottomY = Bindings.add(map[buildingX][buildingY].translateYProperty()
-                            , map[buildingX][buildingY].fitHeightProperty().multiply(targetBuilding.getHeight()));
-                    GameMenuController.selectBuilding(buildingX, buildingY);
-
-                } else {
-                    if(GameMenuController.getSelectedBuilding() != null) return;
-
-                    if (selectedCell != null && selectedCell != Map.getMap()[indexI][indexJ]) return;
-                    if (selectedCell != null) {
-                        mapPane.getChildren().removeAll(borderLines);
-                        selectedCell = null;
-                        return;
-                    }
-
-                    cornerLeftX = Bindings.add(map[indexI][indexJ].translateXProperty(), 0);
-                    cornerRightX = Bindings.add(map[indexI][indexJ].translateXProperty()
-                            , map[indexI][indexJ].fitWidthProperty());
-                    cornerTopY = Bindings.add(map[indexI][indexJ].translateYProperty(), 0);
-                    cornerBottomY = Bindings.add(map[indexI][indexJ].translateYProperty()
-                            , map[indexI][indexJ].fitHeightProperty());
-                    selectedCell = Map.getMap()[indexI][indexJ];
-                }
-                Line line1 = getLine(cornerLeftX, cornerTopY, cornerLeftX, cornerBottomY);
-                Line line2 = getLine(cornerLeftX, cornerTopY, cornerRightX, cornerTopY);
-                Line line3 = getLine(cornerRightX, cornerTopY, cornerRightX, cornerBottomY);
-                Line line4 = getLine(cornerRightX, cornerBottomY, cornerLeftX, cornerBottomY);
-                borderLines.addAll(List.of(line1, line2, line3, line4));
-
-                mapPane.getChildren().addAll(line1, line2, line3, line4);
-            }
-        });
-
-        KeyCodeCombination zoomInCombination = new KeyCodeCombination(KeyCode.EQUALS, KeyCodeCombination.CONTROL_DOWN);
-        root.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (textureSize.get() / defaultTextureSize < 3)
-                if (zoomInCombination.match(event)) zoom(10);
-        });
-
-        KeyCodeCombination zoomOutCombination = new KeyCodeCombination(KeyCode.MINUS, KeyCodeCombination.CONTROL_DOWN);
-        root.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (zoomOutCombination.match(event))
-                if (textureSize.get() / defaultTextureSize > 1 / 3.0) {
-                    zoom(-10);
-                    if (!canZoom()) zoom(100 / 9.0);
-                }
-        });
     }
 
     private void zoom(double percentage) {
