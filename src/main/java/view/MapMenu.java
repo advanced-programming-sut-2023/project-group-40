@@ -30,13 +30,14 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MapMenu extends Application {
-    private int MAP_SIZE = 200;
-    private final ImageView[][] map = new ImageView[MAP_SIZE][MAP_SIZE];
     private final ArrayList<ImageView> buildings = new ArrayList<>();
     private final ArrayList<Line> borderLines = new ArrayList<>();
     private final SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
     private final SimpleDoubleProperty deltaX = new SimpleDoubleProperty();
     private final SimpleDoubleProperty deltaY = new SimpleDoubleProperty();
+    private final ArrayList<Cell> selectedCells = new ArrayList<>();
+    private final int MAP_SIZE = 200;
+    private final ImageView[][] map = new ImageView[MAP_SIZE][MAP_SIZE];
     Pane root;
     AnchorPane mapPane;
     private double defaultTextureSize;
@@ -45,6 +46,7 @@ public class MapMenu extends Application {
     private VBox showDetailsBox = new VBox();
     private final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
     private Cell selectedCell;
+    private int startIndexI, startIndexJ, endIndexI, endIndexJ;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -163,7 +165,7 @@ public class MapMenu extends Application {
                 Building targetBuilding = Map.getMap()[indexI][indexJ].getBuilding();
                 int buildingX, buildingY;
                 if (targetBuilding != null) {
-                    if(selectedCell != null) return;
+                    if (selectedCell != null) return;
                     if (GameMenuController.getSelectedBuilding() == targetBuilding) {
                         mapPane.getChildren().removeAll(borderLines);
                         GameMenuController.setSelectedBuilding(null);
@@ -179,9 +181,8 @@ public class MapMenu extends Application {
                             , map[buildingX][buildingY].fitHeightProperty().multiply(targetBuilding.getHeight()));
                     GameMenuController.selectBuilding(buildingX, buildingY);
 
-                }
-                else {
-                    if(GameMenuController.getSelectedBuilding() != null) return;
+                } else {
+                    if (GameMenuController.getSelectedBuilding() != null) return;
 
                     if (selectedCell != null && selectedCell != Map.getMap()[indexI][indexJ]) return;
                     if (selectedCell != null) {
@@ -231,6 +232,9 @@ public class MapMenu extends Application {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 startX.set(event.getX());
                 startY.set(event.getY());
+            } else if (event.getButton().equals(MouseButton.SECONDARY)) {
+                startX.set(event.getX());
+                startY.set(event.getY());
             }
         });
         mapPane.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
@@ -238,6 +242,29 @@ public class MapMenu extends Application {
                 deltaX.set(deltaX.get() + event.getX() - startX.get());
                 deltaY.set(deltaY.get() + event.getY() - startY.get());
                 changeMapSight();
+            } else if (event.getButton().equals(MouseButton.SECONDARY)) {
+                selectedCells.clear();
+                for (int i = Math.min(startIndexI, endIndexI); i <= Math.max(startIndexI, endIndexI); i++)
+                    for (int j = Math.min(startIndexJ, endIndexJ); j <= Math.max(startIndexJ, endIndexJ); j++) {
+                        map[i][j].setOpacity(1);
+                    }
+                if (selectedCell != null) return;
+
+                double x = map[0][0].getTranslateX();
+                double y = map[0][0].getTranslateY();
+                startIndexI = (int) Math.ceil((startX.get() - x) / textureSize.get()) - 1;
+                startIndexJ = (int) Math.ceil((startY.get() - y) / textureSize.get()) - 1;
+
+                endIndexI = (int) Math.ceil((event.getX() - x) / textureSize.get()) - 1;
+                endIndexJ = (int) Math.ceil((event.getY() - y) / textureSize.get()) - 1;
+
+                for (int i = Math.min(startIndexI, endIndexI); i <= Math.max(startIndexI, endIndexI); i++)
+                    for (int j = Math.min(startIndexJ, endIndexJ); j <= Math.max(startIndexJ, endIndexJ); j++) {
+                        selectedCells.add(Map.getMap()[i][j]);
+                        map[i][j].setOpacity(0.5);
+                    }
+
+
             }
         });
     }
