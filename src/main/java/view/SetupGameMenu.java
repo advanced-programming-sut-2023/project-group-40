@@ -81,13 +81,15 @@ public class SetupGameMenu extends Application {
         VBox scrollVbox = new VBox();
         //spacing problem
         for (User user : User.getUsers()) {
+            if (Objects.equals(user.getUsername(), MainMenuController.getCurrentUser().getUsername()))
+                continue;
             Label label = new Label(user.getUsername());
             HBox hBox = new HBox(label);
             CheckBox checkBox = new CheckBox();
             hBox.getChildren().add(checkBox);
             checkBox.setOnMouseClicked(event -> {
                 if (checkBox.isSelected()) {
-                    if (Government.getGovernments().size() == countOfPlayers) {
+                    if (Government.getGovernments().size() == countOfPlayers - 1) {
                         checkBox.setSelected(false);
                         return;
                     }
@@ -113,9 +115,12 @@ public class SetupGameMenu extends Application {
 
     private void setActions() {
         startGame.setOnMouseClicked(event -> {
+            Government.addGovernment(MainMenuController.getCurrentUser().getUsername());
+            for (CheckBox checkBox : checkBoxes) checkBox.setSelected(false);
             if (Government.getGovernments().size() < countOfPlayers) {
                 ErrorDialog dialog = new ErrorDialog(root, "you don't select all of player");
                 dialog.make();
+                Government.getGovernments().clear();
                 return;
             }
             Map.initMap(size);

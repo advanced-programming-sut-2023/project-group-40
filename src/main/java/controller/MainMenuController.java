@@ -6,7 +6,7 @@ import model.User;
 import view.MainMenu;
 
 public class MainMenuController {
-    private static User currentUser;
+    private static User currentUser = new User("username1","password","nickname","email","slogan");
 
     public static String logout() {
         return "log out!";
