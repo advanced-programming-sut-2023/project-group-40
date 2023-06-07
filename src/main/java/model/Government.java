@@ -53,6 +53,10 @@ public class Government {
         return governments;
     }
 
+    public static void removeGovernment(String username) {
+        governments.removeIf(government -> government.getOwner() == UserController.getUserByUsername(username));
+    }
+
     public User getOwner() {
         return owner;
     }

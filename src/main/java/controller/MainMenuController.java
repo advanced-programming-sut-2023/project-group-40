@@ -1,7 +1,9 @@
 package controller;
 
 import model.Government;
+import model.Map;
 import model.User;
+import view.MainMenu;
 
 public class MainMenuController {
     private static User currentUser;
@@ -30,5 +32,10 @@ public class MainMenuController {
             throw new RuntimeException("game in progress and you can't access game");
         GameMenuController.setCurrentGovernment(governmentByUser);
         return "you entered in progress game";
+    }
+
+    public static void continueGame() {
+        User user = MainMenuController.getCurrentUser();
+        GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(user));
     }
 }

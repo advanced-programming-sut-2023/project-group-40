@@ -116,7 +116,6 @@ public class UserController {
         if (stayedLoginUser != null) {
             MainMenuController.setCurrentUser(stayedLoginUser);
             System.out.println("user " + stayedLoginUser.getUsername() + " logged in");
-            MainMenu.run();
         }
     }
 }

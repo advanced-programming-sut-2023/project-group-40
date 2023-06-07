@@ -1,6 +1,8 @@
 package view;
 
 import controller.EnvironmentMenuController;
+import controller.GameMenuController;
+import controller.MainMenuController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -28,23 +30,23 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class EnvironmentMenu extends Application {
-    private int MAP_SIZE = 200;
+    private final int MAP_SIZE = Map.getSize();
+    private final int countOfPlayers = GameMenuController.getNumberOfPlayers();
     private final ImageView[][] map = new ImageView[MAP_SIZE][MAP_SIZE];
-    private final ArrayList<ImageView> buildings = new ArrayList<>();
+    private final ArrayList<ImageView> images = new ArrayList<>();
     private final ArrayList<Line> borderLines = new ArrayList<>();
     private final SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
     private final SimpleDoubleProperty deltaX = new SimpleDoubleProperty();
     private final SimpleDoubleProperty deltaY = new SimpleDoubleProperty();
     private String scrollPaneContent = "texture";
-    Pane root;
-    AnchorPane mapPane;
+    private Pane root;
+    private AnchorPane mapPane;
     private double defaultTextureSize;
     private int hoverX;
     private int hoverY;
     private VBox showDetailsBox = new VBox();
     private final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
     private Cell selectedCell;
-    private ArrayList<ImageView> images = new ArrayList<>();
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -69,7 +71,7 @@ public class EnvironmentMenu extends Application {
         EnvironmentMenuController.setMap(map);
         EnvironmentMenuController.setMapPane(mapPane);
         EnvironmentMenuController.setTextureSize(textureSize);
-        EnvironmentMenuController.organizeCastles(2,MAP_SIZE);
+        EnvironmentMenuController.organizeCastles(countOfPlayers,MAP_SIZE);
         HBox hBox = setUpBuildingScrollPane();
         updateScrollPane(hBox);
     }
@@ -176,7 +178,6 @@ public class EnvironmentMenu extends Application {
 
     private void updateScrollPanePicture(HBox hBox,Class<?> aClass) throws ReflectiveOperationException {
         Object arrayObject = aClass.getMethod("values").invoke(null);
-        ;
         for (int i = 0; i < Array.getLength(arrayObject); i++) {
             ImageView imageView = new ImageView(
                     aClass == Texture.class ? ((Texture) Array.get(arrayObject, i)).getImage()
@@ -436,5 +437,4 @@ public class EnvironmentMenu extends Application {
         showDetailsBox.translateYProperty().bind(Bindings.max((hoverY - 1) * textureSize.get() + map[0][0].translateYProperty().get()
                 , showDetailsBox.heightProperty().add(-20)));
     }
-
 }
