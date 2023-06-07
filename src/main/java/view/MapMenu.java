@@ -272,10 +272,10 @@ public class MapMenu extends Application {
     private void setupCells() {
         for (int i = 0; i < MAP_SIZE; i++) {
             for (int j = 0; j < MAP_SIZE; j++) {
-                map[i][j] = new ImageView(Texture.LAND.getImage());
+                map[i][j] = new ImageView(Texture.IRON.getImage());
                 if (i == j) {
-                    map[i][j] = new ImageView(Texture.SEA.getImage());
-                    Map.getMap()[i][j].setTexture(Texture.SEA);
+                    map[i][j] = new ImageView(Texture.IRON.getImage());
+                    Map.getMap()[i][j].setTexture(Texture.IRON);
                 }
                 int finalI = i;
                 int finalJ = j;
