@@ -45,6 +45,8 @@ public class MapMenu extends Application {
     private VBox showDetailsBox = new VBox();
     private final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
     private Cell selectedCell;
+    private final ArrayList<Cell> selectedCells = new ArrayList<>();
+    private int startIndexI,startIndexJ,endIndexI,endIndexJ;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -192,6 +194,9 @@ public class MapMenu extends Application {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 startX.set(event.getX());
                 startY.set(event.getY());
+            }else if(event.getButton().equals(MouseButton.SECONDARY)){
+                startX.set(event.getX());
+                startY.set(event.getY());
             }
         });
         mapPane.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
@@ -199,6 +204,28 @@ public class MapMenu extends Application {
                 deltaX.set(deltaX.get() + event.getX() - startX.get());
                 deltaY.set(deltaY.get() + event.getY() - startY.get());
                 changeMapSight();
+            }else if(event.getButton().equals(MouseButton.SECONDARY)){
+                selectedCells.clear();
+                for (int i = Math.min(startIndexI,endIndexI); i <= Math.max(startIndexI,endIndexI); i++)
+                    for (int j = Math.min(startIndexJ,endIndexJ); j <= Math.max(startIndexJ,endIndexJ); j++) {
+                        map[i][j].setOpacity(1);
+                    }
+
+                double x = map[0][0].getTranslateX();
+                double y = map[0][0].getTranslateY();
+                startIndexI = (int) Math.ceil((startX.get() - x) / textureSize.get()) - 1;
+                startIndexJ = (int) Math.ceil((startY.get() - y) / textureSize.get()) - 1;
+
+                endIndexI = (int) Math.ceil(( event.getX() - x) / textureSize.get()) - 1;
+                endIndexJ = (int) Math.ceil(( event.getY() - y) / textureSize.get()) - 1;
+
+                for (int i = Math.min(startIndexI,endIndexI); i <= Math.max(startIndexI,endIndexI); i++)
+                    for (int j = Math.min(startIndexJ,endIndexJ); j <= Math.max(startIndexJ,endIndexJ); j++) {
+                        selectedCells.add(Map.getMap()[i][j]);
+                        map[i][j].setOpacity(0.5);
+                    }
+
+
             }
         });
 
