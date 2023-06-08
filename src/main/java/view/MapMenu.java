@@ -18,12 +18,11 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.Cell;
-import model.Map;
-import model.Texture;
+import model.*;
 import model.buildings.Building;
 import model.buildings.Buildings;
 
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -50,7 +49,9 @@ public class MapMenu extends Application {
     private final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
     private Cell selectedCell;
     private int startIndexI, startIndexJ, endIndexI, endIndexJ;
-
+    private Label popularityLabel,populationLabel, treasuryLabel;
+    private Label fearRateLabel,taxRateLabel,foodRateLabel,sumRateLabel;
+    private int SCROLL_PANE_HEIGHT = 200;
     @Override
     public void start(Stage stage) throws Exception {
         root = new Pane();
@@ -67,24 +68,138 @@ public class MapMenu extends Application {
         textureSize.set(defaultTextureSize);
         Map.initMap(MAP_SIZE);
         mapPane.setMaxWidth(App.getWidth());
-        mapPane.setMaxHeight(App.getHeight() - 200);
+        mapPane.setMaxHeight(App.getHeight() - SCROLL_PANE_HEIGHT);
         mapPane.setPrefWidth(App.getWidth());
-        mapPane.setPrefHeight(App.getHeight() - 200);
+        mapPane.setPrefHeight(App.getHeight() - SCROLL_PANE_HEIGHT);
         setupMap();
         setUpBuildingScrollPane();
-//        setupScribeReport();
+        setupScribeReport();
+        handleNextTurn();
     }
 
-//    private void setupScribeReport() {
-//        VBox vBox = new VBox();
-//        vBox.translateYProperty().bind();
-//    }
+    private void handleNextTurn() {
+        root.addEventFilter(KeyEvent.KEY_PRESSED,keyEvent -> {
+            GameMenuController.nextTurn();
+            updateSumLabel();
+            updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(),foodRateLabel);
+            updateLabel(GameMenuController.getCurrentGovernment().getFearRate(),fearRateLabel);
+            updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(),taxRateLabel);
+            updateScribeReport();
+        });
+    }
+
+    private void setupScribeReport() {
+        VBox vBox = new VBox();
+        vBox.translateYProperty().bind(vBox.heightProperty().divide(-1).add(App.getHeight()));
+        vBox.translateXProperty().bind(vBox.widthProperty().divide(-1).add(App.getWidth()));
+        vBox.setMaxWidth(100);
+        vBox.setMinWidth(100);
+        vBox.setMaxHeight(SCROLL_PANE_HEIGHT);
+        vBox.setMinHeight(SCROLL_PANE_HEIGHT);
+        vBox.setStyle("-fx-background-color: red");
+
+        popularityLabel = new Label(String.valueOf(GameMenuController.getCurrentGovernment().getPopularity()));
+        String population = String.valueOf(GameMenuController.getCurrentGovernment().getPopulation());
+        String maxPopulation = String.valueOf(GameMenuController.getCurrentGovernment().getMaxPopulation());
+        populationLabel = new Label(population + "/" + maxPopulation);
+        treasuryLabel = new Label(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD)));
+        popularityLabel.setMinWidth(vBox.getMinWidth());
+        popularityLabel.setAlignment(Pos.CENTER);
+        populationLabel.setMinWidth(vBox.getMinWidth());
+        populationLabel.setAlignment(Pos.CENTER);
+        popularityLabel.setOnMouseClicked(event -> {
+            showPopularityFactors();
+        });
+        ImageView coinIcon = new ImageView(new Image(MapMenu.class.getResource("/images/coin.png").toString()));
+        coinIcon.setPreserveRatio(true);
+        coinIcon.fitHeightProperty().bind(treasuryLabel.heightProperty().divide(2));
+        HBox hBox = new HBox(treasuryLabel,coinIcon);
+        hBox.setSpacing(10);
+        hBox.minWidth(vBox.getMinWidth());
+        hBox.setMaxWidth(vBox.getMaxWidth());
+        hBox.setAlignment(Pos.CENTER);
+        vBox.getChildren().addAll(popularityLabel,populationLabel,hBox);
+        root.getChildren().add(vBox);
+    }
+
+    private void showPopularityFactors() {
+        VBox vBox = new VBox(new Label("Popularity Factors"));
+        Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
+        vBox.getStylesheets().add(MapMenu.class.getResource("/css/showFactors.css").toString());
+        vBox.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
+                , true, false))));
+        vBox.setStyle("-fx-padding: 10");
+        vBox.setMinWidth(500);
+        vBox.setMaxWidth(500);
+        vBox.setMinHeight(300);
+        vBox.setMaxHeight(300);
+        vBox.translateXProperty().bind(vBox.widthProperty().divide(-2).add(App.getWidth() / 2));
+        vBox.setTranslateY(10);
+        foodRateLabel = new Label(" 0");
+        fearRateLabel = new Label(" 0");
+        taxRateLabel = new Label(" 0");
+        sumRateLabel = new Label();
+        VBox labelVBox = new VBox(foodRateLabel,fearRateLabel,taxRateLabel);
+        VBox textLabelVBox = new VBox(new Label("food rate"),new Label("fear rate"),new Label("tax rate"));
+        foodRateLabel.setMinWidth(80);
+        fearRateLabel.setMinWidth(80);
+        taxRateLabel.setMinWidth(80);
+        updateSumLabel();
+        updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(),foodRateLabel);
+        updateLabel(GameMenuController.getCurrentGovernment().getFearRate(),fearRateLabel);
+        updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(),taxRateLabel);
+        HBox sumHbox = new HBox(new Label("In The Coming Month"),sumRateLabel);
+        sumHbox.setMinWidth(vBox.getMaxWidth());
+        sumHbox.setAlignment(Pos.CENTER);
+        sumHbox.setTranslateY(30);
+        HBox hBox = new HBox();
+        hBox.setMinWidth(vBox.getMinWidth());
+        hBox.setAlignment(Pos.CENTER);
+        hBox.getChildren().addAll(labelVBox,textLabelVBox);
+        vBox.getChildren().addAll(hBox,sumHbox);
+        root.getChildren().add(vBox);
+    }
+
+    private void updateSumLabel() {
+        int foodRate = GameMenuController.getCurrentGovernment().getFoodRate();
+        int fearRate = GameMenuController.getCurrentGovernment().getFearRate();
+        int taxRate = GameMenuController.getCurrentGovernment().getTaxRate();
+        int preFoodRate = Integer.parseInt(foodRateLabel.getText().substring(1));
+        int preFearRate = Integer.parseInt(fearRateLabel.getText().substring(1));
+        int preTaxRate = Integer.parseInt(taxRateLabel.getText().substring(1));
+        int sum = foodRate + fearRate + taxRate - preFoodRate - preTaxRate - preFearRate;
+        updateLabel(sum,sumRateLabel);
+    }
+
+    private void updateLabel(int rate,Label label) {
+        if (rate < 0) {
+            label.setText(String.valueOf(rate));
+            label.setStyle("-fx-text-fill: red");
+        }
+        else if (rate == 0)  {
+            label.setText(" 0");
+            label.setStyle("-fx-text-fill: white");
+        }
+        else {
+            label.setText("+" + rate);
+            label.setStyle("text-emphasis: green;");
+        }
+    }
+
+    private void updateScribeReport() {
+        popularityLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getPopularity()));
+        String population = String.valueOf(GameMenuController.getCurrentGovernment().getPopulation());
+        String maxPopulation = String.valueOf(GameMenuController.getCurrentGovernment().getMaxPopulation());
+        populationLabel.setText(population + "/" + maxPopulation);
+        treasuryLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD)));
+    }
+
 
     private void setUpBuildingScrollPane() {
         ScrollPane pane = new ScrollPane();
         pane.getStylesheets().add(MapMenu.class.getResource("/css/scrollPane.css").toString());
         pane.translateYProperty().bind(pane.heightProperty().multiply(-1).add(App.getHeight()));
-        pane.setMinHeight(200);
+        pane.setMinHeight(SCROLL_PANE_HEIGHT);
         pane.setMaxWidth(App.getWidth() / 2);
         Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
         HBox hBox = new HBox();

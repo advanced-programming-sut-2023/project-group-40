@@ -7,7 +7,6 @@ import model.buildings.Hovel;
 import model.buildings.Storage;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -20,10 +19,10 @@ public class Government {
     private User owner;
     private int foodRate = -2;
     private int taxRate = 0;
-    private int popularity;
+    private int popularity = 0;
     private int fearRate;
     private Color color = null;
-    private Castle castle;
+    private Castle castle = new Castle(0,0,0,0);
     private int emptySpace = 0;
 
     public Government(User owner) {
@@ -186,9 +185,14 @@ public class Government {
         return null;
     }
 
+    public int getMaxPopulation() {
+        return castle.getMaxPopulation();
+    }
+
     public int getPopulation() {
         return castle.getPopulation();
     }
+
 
     public void decreaseAmountOfFood(int amount) {
         int remainFromFood1 = decreaseAmountOfOneFood(amount, Good.APPLE);

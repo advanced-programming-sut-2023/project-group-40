@@ -5,14 +5,12 @@ import model.buildings.*;
 import model.troops.Troop;
 import model.troops.Troops;
 import view.GameMenu;
-import view.ShopMenu;
-import view.enums.Commands;
 
 import java.lang.reflect.Field;
 
 
 public class GameMenuController {
-    private static Government currentGovernment;
+    private static Government currentGovernment = new Government(new User("user1","pass1","nickname1","email1",null));
     private static Government onGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;
@@ -272,7 +270,7 @@ public class GameMenuController {
         if (!isCoordinateValid(x) || !isCoordinateValid(y))
             return "your coordinates is incorrect!";
         if (count < 0) return "count is invalid";
-        if (currentGovernment.getCastle().getPopulation() < count)
+        if (currentGovernment.getCastle().getMaxPopulation() < count)
             return "you don't have enough population for create this unit";
         if (type.equals("worker")) {
             if (currentGovernment.getAmountOfGood(Good.GOLD) < 10 * count)
@@ -931,5 +929,19 @@ public class GameMenuController {
 
     public static void setSelectedBuilding(Building selectedBuilding) {
         GameMenuController.selectedBuilding = selectedBuilding;
+    }
+
+    public static void nextTurn() {
+        if (isLastGovernment()) {
+            foodVarietyAction();
+            runBuildings();
+            oxTetherAction();
+            checkPopulation();
+            StableAction();
+        }
+        diggingDitch();
+        handleAttacks();
+        setOnGovernment();
+        setDefaults();
     }
 }
