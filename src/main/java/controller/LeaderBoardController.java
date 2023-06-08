@@ -1,39 +1,66 @@
 package controller;
 
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ScrollEvent;
 import model.User;
+import view.ProfileMenu;
+
+import java.util.Comparator;
+import java.util.List;
 
 
 public class LeaderBoardController {
     private final TableView<User> tableView = new TableView<>();
+    private final TableColumn<User, Integer> rankColumn = new TableColumn<>();
     private final TableColumn<User, ImageView> avatarColumn = new TableColumn<>();
     private final TableColumn<User, String> usernameColumn = new TableColumn<>();
     private final TableColumn<User, Integer> scoreColumn = new TableColumn<>();
+    private List<User> allUsers = User.getUsers().stream().sorted(Comparator.comparingInt(User::getHighScore).reversed())
+            .toList();
+    private int start = 1;
 
     {
-        tableView.getColumns().add(avatarColumn);
+        rankColumn.setText("Rank");
+        rankColumn.setResizable(false);
+        rankColumn.setPrefWidth(80);
+
+        avatarColumn.setText("Avatar");
         avatarColumn.setResizable(false);
+        avatarColumn.setPrefWidth(100);
 
-        tableView.getColumns().add(usernameColumn);
+        usernameColumn.setText("Username");
         usernameColumn.setResizable(false);
+        usernameColumn.setPrefWidth(130);
 
-        tableView.getColumns().add(scoreColumn);
+        scoreColumn.setText("High score");
         scoreColumn.setResizable(false);
+        scoreColumn.setPrefWidth(140);
 
+        tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn);
 
+        tableView.setMinWidth(450);
+        tableView.setMinHeight(440);
         tableView.setSortPolicy(param -> false);
     }
 
-    public void showTableView() {
+    public void showTableView(ProfileMenu profileMenu) {
         tableView.getItems().clear();
-        avatarColumn.setCellValueFactory(
-                param -> (ObservableValue<ImageView>) new ImageView(param.getValue().getAvatarPath()));
+        rankColumn.setCellValueFactory(
+                param -> new SimpleIntegerProperty(allUsers.indexOf(param.getValue()) + 1).asObject());
 
+        avatarColumn.setCellValueFactory(param -> {
+            ImageView imageView = new ImageView(param.getValue().getAvatarPath());
+            imageView.setFitWidth(30);
+            imageView.setFitHeight(30);
+            return new SimpleObjectProperty<>(imageView);
+
+        });
 
         usernameColumn.setCellValueFactory(
                 param -> new SimpleStringProperty(param.getValue().getUsername()));
@@ -43,16 +70,42 @@ public class LeaderBoardController {
                 param -> new SimpleIntegerProperty(param.getValue().getHighScore()).asObject());
 
 
+        tableView.getItems().addAll(getUsers(1));
 
-        tableView.getItems().addAll(User.getUsers()/*.stream().sorted((o1, o2) -> {
-            if (o1.getHighScoreByDifficulty(difficulty) < o2.getHighScoreByDifficulty(difficulty)) return 1;
-            else if (o1.getHighScoreByDifficulty(difficulty).equals(o2.getHighScoreByDifficulty(difficulty)))
-                return Integer.compare(o1.getBestTimeByDifficulty(difficulty), o2.getBestTimeByDifficulty(difficulty));
-            return -1;
-        }).limit(10).toList()*/);
+        tableView.addEventFilter(ScrollEvent.SCROLL, event -> {
+            if (event.getDeltaY() > 0)
+                if (start != 1) start -= 10;
+
+            if (event.getDeltaY() < 0)
+                if (start + 10 <= allUsers.size()) start += 10;
+
+            tableView.getItems().clear();
+            tableView.getItems().addAll(getUsers(start));
+        });
+
+        tableView.setRowFactory(param -> {
+            TableRow<User> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    profileMenu.changeAvatar(tableView.getItems().get(row.getIndex()).getAvatarPath());
+                }
+            });
+            return row;
+        });
     }
 
     public TableView<User> getTableView() {
         return tableView;
+    }
+
+    public List<User> getUsers(int start) {
+        return allUsers.subList(start - 1, Math.min(start + 9, allUsers.size()));
+    }
+
+    public void refresh() {
+        allUsers = User.getUsers().stream().sorted(Comparator.comparingInt(User::getHighScore).reversed()).toList();
+        tableView.getItems().clear();
+        tableView.getItems().addAll(getUsers(start));
+        tableView.refresh();
     }
 }

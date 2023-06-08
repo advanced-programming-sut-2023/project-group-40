@@ -8,14 +8,18 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import view.enums.Commands;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,7 +27,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
 
 public class ProfileMenu extends Application {
     private final String EMPTY_SLOGAN = "slogan is empty!";
@@ -32,6 +35,7 @@ public class ProfileMenu extends Application {
     private final Button changePasswordButton = new Button("change password");
     private final Button leaderBoardButton = new Button("leader board");
     private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
+    private final AnchorPane leaderBoardPane = new AnchorPane();
     private Pane root;
     private Bounds usernameBounds;
     private TextField username, newPassword, oldPassword, nickname, email, slogan;
@@ -40,7 +44,6 @@ public class ProfileMenu extends Application {
     private Label passwordLabel;
     private Stage primaryStage;
     private VBox changePasswordVbox;
-    private final AnchorPane leaderBoardPane = new AnchorPane();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -68,7 +71,17 @@ public class ProfileMenu extends Application {
 
     private void setUpLeaderBoard() {
         LeaderBoardController leaderBoardController = new LeaderBoardController();
-        leaderBoardController.showTableView();
+        leaderBoardController.showTableView(this);
+        leaderBoardController.getTableView().translateXProperty().bind(Bindings.add(leaderBoardController.getTableView().widthProperty().divide(-2), leaderBoardPane.widthProperty().divide(2)));
+        leaderBoardController.getTableView().setTranslateY(40);
+
+        leaderBoardPane.prefWidthProperty().bind(leaderBoardController.getTableView().widthProperty().add(60));
+        leaderBoardPane.prefHeightProperty().bind(leaderBoardController.getTableView().heightProperty().add(80));
+
+        leaderBoardPane.translateXProperty().bind(leaderBoardPane.widthProperty().divide(-2).add(App.getWidth() / 2));
+        leaderBoardPane.setTranslateY(40);
+
+        leaderBoardPane.setStyle("-fx-background-color: black");
         leaderBoardPane.getChildren().add(leaderBoardController.getTableView());
     }
 
@@ -267,4 +280,8 @@ public class ProfileMenu extends Application {
         });
     }
 
+    public void changeAvatar(String url) {
+        avatar.setImage(new Image(url, 100, 100, true, true));
+        ProfileMenuController.changeAvatar(url);
+    }
 }
