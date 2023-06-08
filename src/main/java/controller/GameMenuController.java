@@ -226,7 +226,7 @@ public class GameMenuController {
                 Map.getMap()[i][j].setAvailable(false);
                 Map.getMap()[i][j].setPassable(false);
             }
-//        currentGovernment.addBuilding(targetBuilding);
+        currentGovernment.addBuilding(targetBuilding);
 //        if (targetBuilding.getName().equals("Woodcutter")) {
 //            Mine mine = (Mine) targetBuilding;
 //            mine.setProductRate(2 ^ currentGovernment.getCountOfBuilding("Woodcutter"));

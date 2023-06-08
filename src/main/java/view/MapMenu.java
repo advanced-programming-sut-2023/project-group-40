@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -49,9 +50,12 @@ public class MapMenu extends Application {
     private final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
     private Cell selectedCell;
     private int startIndexI, startIndexJ, endIndexI, endIndexJ;
-    private Label popularityLabel,populationLabel, treasuryLabel;
-    private Label fearRateLabel,taxRateLabel,foodRateLabel,sumRateLabel;
+    private Label popularityLabel, populationLabel, treasuryLabel;
+    private Label fearRateLabel, taxRateLabel, foodRateLabel, sumRateLabel;
     private int SCROLL_PANE_HEIGHT = 200;
+    private VBox clipBoardVbox;
+    private Pane blackPane;
+
     @Override
     public void start(Stage stage) throws Exception {
         root = new Pane();
@@ -78,17 +82,23 @@ public class MapMenu extends Application {
     }
 
     private void handleNextTurn() {
-        root.addEventFilter(KeyEvent.KEY_PRESSED,keyEvent -> {
-            GameMenuController.nextTurn();
-            updateSumLabel();
-            updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(),foodRateLabel);
-            updateLabel(GameMenuController.getCurrentGovernment().getFearRate(),fearRateLabel);
-            updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(),taxRateLabel);
-            updateScribeReport();
+        root.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.N) {
+                GameMenuController.nextTurn();
+                updateSumLabel();
+                updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(), foodRateLabel);
+                updateLabel(GameMenuController.getCurrentGovernment().getFearRate(), fearRateLabel);
+                updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(), taxRateLabel);
+                updateScribeReport();
+            }
         });
     }
 
     private void setupScribeReport() {
+        foodRateLabel = new Label(" 0");
+        fearRateLabel = new Label(" 0");
+        taxRateLabel = new Label(" 0");
+        sumRateLabel = new Label();
         VBox vBox = new VBox();
         vBox.translateYProperty().bind(vBox.heightProperty().divide(-1).add(App.getHeight()));
         vBox.translateXProperty().bind(vBox.widthProperty().divide(-1).add(App.getWidth()));
@@ -113,12 +123,12 @@ public class MapMenu extends Application {
         ImageView coinIcon = new ImageView(new Image(MapMenu.class.getResource("/images/coin.png").toString()));
         coinIcon.setPreserveRatio(true);
         coinIcon.fitHeightProperty().bind(treasuryLabel.heightProperty().divide(2));
-        HBox hBox = new HBox(treasuryLabel,coinIcon);
+        HBox hBox = new HBox(treasuryLabel, coinIcon);
         hBox.setSpacing(10);
         hBox.minWidth(vBox.getMinWidth());
         hBox.setMaxWidth(vBox.getMaxWidth());
         hBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(popularityLabel,populationLabel,hBox);
+        vBox.getChildren().addAll(popularityLabel, populationLabel, hBox);
         root.getChildren().add(vBox);
     }
 
@@ -135,28 +145,24 @@ public class MapMenu extends Application {
         vBox.setMaxHeight(300);
         vBox.translateXProperty().bind(vBox.widthProperty().divide(-2).add(App.getWidth() / 2));
         vBox.setTranslateY(10);
-        foodRateLabel = new Label(" 0");
-        fearRateLabel = new Label(" 0");
-        taxRateLabel = new Label(" 0");
-        sumRateLabel = new Label();
-        VBox labelVBox = new VBox(foodRateLabel,fearRateLabel,taxRateLabel);
-        VBox textLabelVBox = new VBox(new Label("food rate"),new Label("fear rate"),new Label("tax rate"));
+        VBox labelVBox = new VBox(foodRateLabel, fearRateLabel, taxRateLabel);
+        VBox textLabelVBox = new VBox(new Label("food rate"), new Label("fear rate"), new Label("tax rate"));
         foodRateLabel.setMinWidth(80);
         fearRateLabel.setMinWidth(80);
         taxRateLabel.setMinWidth(80);
         updateSumLabel();
-        updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(),foodRateLabel);
-        updateLabel(GameMenuController.getCurrentGovernment().getFearRate(),fearRateLabel);
-        updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(),taxRateLabel);
-        HBox sumHbox = new HBox(new Label("In The Coming Month"),sumRateLabel);
+        updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(), foodRateLabel);
+        updateLabel(GameMenuController.getCurrentGovernment().getFearRate(), fearRateLabel);
+        updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(), taxRateLabel);
+        HBox sumHbox = new HBox(new Label("In The Coming Month"), sumRateLabel);
         sumHbox.setMinWidth(vBox.getMaxWidth());
         sumHbox.setAlignment(Pos.CENTER);
         sumHbox.setTranslateY(30);
         HBox hBox = new HBox();
         hBox.setMinWidth(vBox.getMinWidth());
         hBox.setAlignment(Pos.CENTER);
-        hBox.getChildren().addAll(labelVBox,textLabelVBox);
-        vBox.getChildren().addAll(hBox,sumHbox);
+        hBox.getChildren().addAll(labelVBox, textLabelVBox);
+        vBox.getChildren().addAll(hBox, sumHbox);
         root.getChildren().add(vBox);
     }
 
@@ -168,19 +174,17 @@ public class MapMenu extends Application {
         int preFearRate = Integer.parseInt(fearRateLabel.getText().substring(1));
         int preTaxRate = Integer.parseInt(taxRateLabel.getText().substring(1));
         int sum = foodRate + fearRate + taxRate - preFoodRate - preTaxRate - preFearRate;
-        updateLabel(sum,sumRateLabel);
+        updateLabel(sum, sumRateLabel);
     }
 
-    private void updateLabel(int rate,Label label) {
+    private void updateLabel(int rate, Label label) {
         if (rate < 0) {
             label.setText(String.valueOf(rate));
             label.setStyle("-fx-text-fill: red");
-        }
-        else if (rate == 0)  {
+        } else if (rate == 0) {
             label.setText(" 0");
             label.setStyle("-fx-text-fill: white");
-        }
-        else {
+        } else {
             label.setText("+" + rate);
             label.setStyle("text-emphasis: green;");
         }
@@ -258,6 +262,100 @@ public class MapMenu extends Application {
         handleMouseHoverOnCell();
         handleSelectCell();
         handleZoom();
+        handleCopyAndPaste();
+    }
+
+    private void handleCopyAndPaste() {
+        KeyCodeCombination copyKeyCodeCombination = new KeyCodeCombination(KeyCode.C, KeyCodeCombination.CONTROL_DOWN);
+        root.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+            if (copyKeyCodeCombination.match(keyEvent)) {
+                if (GameMenuController.getSelectedBuilding() == null) return;
+                Clipboard clipboard = Clipboard.getSystemClipboard();
+                ClipboardContent content = new ClipboardContent();
+                Building building = GameMenuController.getSelectedBuilding();
+                for (Buildings value : Buildings.values())
+                    if (value.getFullName().equals(building.getName())) {
+                        content.putString(value.getBuildingImage().getUrl());
+                        break;
+                    }
+                clipboard.setContent(content);
+            }
+        });
+
+        KeyCodeCombination pasteKeyCodeCombination = new KeyCodeCombination(KeyCode.V, KeyCodeCombination.CONTROL_DOWN);
+        root.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+            if (pasteKeyCodeCombination.match(keyEvent)) {
+                Clipboard clipboard = Clipboard.getSystemClipboard();
+                if (selectedCell == null) return;
+                if (clipboard.hasString()) {
+                    String url = clipboard.getString();
+                    String[] split = url.split("/");
+                    String result = split[split.length - 1].replaceAll("%20", " ");
+                    String type = result.substring(0, result.length() - 4);
+                    ImageView imageView = new ImageView(url.replaceAll("%20", " "));
+                    buildings.add(imageView);
+                    int width = Buildings.getBuildingObjectByType(type).getWidth();
+                    int height = Buildings.getBuildingObjectByType(type).getHeight();
+                    imageView.fitWidthProperty().bind(textureSize.multiply(width));
+                    imageView.fitHeightProperty().bind(textureSize.multiply(height));
+                    int finalI = 0, finalJ = 0;
+                    for (int i = 0; i < Map.getMap().length; i++)
+                        for (int j = 0; j < Map.getMap().length; j++)
+                            if (selectedCell == Map.getMap()[i][j]) {
+                                finalI = i;
+                                finalJ = j;
+                            }
+                    imageView.translateXProperty().bind(map[finalI][finalJ].translateXProperty());
+                    imageView.translateYProperty().bind(map[finalI][finalJ].translateYProperty());
+                    if (GameMenuController.checkDropBuilding(finalI, finalJ, type)) {
+                        mapPane.getChildren().add(imageView);
+                        GameMenuController.dropBuilding(finalI, finalJ, type);
+                        selectedCell = null;
+                        mapPane.getChildren().removeAll(borderLines);
+                        borderLines.clear();
+                    } else {
+                        for (Line borderLine : borderLines)
+                            borderLine.setStyle("-fx-stroke: red");
+                        new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
+                            mapPane.getChildren().removeAll(borderLines);
+                            borderLines.clear();
+                            selectedCell = null;
+                        })).play();
+                    }
+                }
+            }
+        });
+
+        KeyCodeCombination showKeyCodeCombination = new KeyCodeCombination(KeyCode.P, KeyCodeCombination.CONTROL_DOWN);
+        root.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
+            if (showKeyCodeCombination.match(keyEvent)) {
+                Clipboard clipboard = Clipboard.getSystemClipboard();
+                if (clipBoardVbox != null) {
+                    root.getChildren().remove(blackPane);
+                    root.getChildren().remove(clipBoardVbox);
+                    clipBoardVbox = null;
+                    return;
+                }
+                if (clipboard.hasString()) {
+                    String url = clipboard.getString();
+                    ImageView imageView = new ImageView(url.replaceAll("%20", " "));
+                    clipBoardVbox = new VBox();
+                    Label label = new Label("clipboard");
+                    label.setMaxWidth(App.getWidth());
+                    label.setAlignment(Pos.CENTER);
+                    clipBoardVbox.getChildren().add(label);
+                    clipBoardVbox.translateXProperty().bind(clipBoardVbox.widthProperty().divide(-2).add(App.getWidth() / 2));
+                    clipBoardVbox.setTranslateY(20);
+                    clipBoardVbox.getChildren().add(imageView);
+                    blackPane = new Pane();
+                    blackPane.setStyle("-fx-background-color: rgba(0,0,0,0.5)");
+                    blackPane.setPrefWidth(App.getWidth());
+                    blackPane.setPrefHeight(App.getHeight());
+                    root.getChildren().add(blackPane);
+                    root.getChildren().add(clipBoardVbox);
+                }
+            }
+        });
     }
 
     private void handleZoom() {
@@ -294,7 +392,7 @@ public class MapMenu extends Application {
                         mapPane.getChildren().removeAll(borderLines);
                         GameMenuController.setSelectedBuilding(null);
                         return;
-                    }
+                    } else if (GameMenuController.getSelectedBuilding() != null) return;
                     buildingX = targetBuilding.getX1();
                     buildingY = targetBuilding.getY1();
                     cornerLeftX = Bindings.add(map[buildingX][buildingY].translateXProperty(), 0);
@@ -411,7 +509,8 @@ public class MapMenu extends Application {
                 if (productRate > maxProductRate) maxProductRate = productRate;
                 sumOfProducts += productRate;
                 countOfProducts++;
-            } catch (NoSuchFieldException | IllegalAccessException ignored) {}
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {
+            }
         }
         HBox minProductRateHBox = new HBox();
         minProductRateHBox.setSpacing(10);
@@ -430,7 +529,7 @@ public class MapMenu extends Application {
         Double average = ((sumOfProducts + 0.0) / countOfProducts);
         if (countOfProducts == 0) average = 0.0;
         averageProductRateHBox.getChildren().addAll(new Label("average produce rate: "),
-                new Label(String.format("%.2f",average)));
+                new Label(String.format("%.2f", average)));
         showManyCellsDetailsBox.getChildren().add(averageProductRateHBox);
         showManyCellsDetailsBox.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-background-radius: 10 ; -fx-padding: 8");
         showManyCellsDetailsBox.translateXProperty().bind(showManyCellsDetailsBox.widthProperty().divide(-1).add(App.getWidth()));
@@ -453,8 +552,8 @@ public class MapMenu extends Application {
                     if (event.getDragboard().hasImage()) {
                         String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
                         String[] split = url.split("/");
-                        String result = split[split.length - 1].replaceAll("%20"," ");
-                        String type =result.substring(0, result.length() - 4);
+                        String result = split[split.length - 1].replaceAll("%20", " ");
+                        String type = result.substring(0, result.length() - 4);
                         boolean b = GameMenuController.checkDropBuilding(finalI, finalJ, type);
                         if (b)
                             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -466,8 +565,8 @@ public class MapMenu extends Application {
                     if (event.getDragboard().hasImage()) {
                         String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
                         String[] split = url.split("/");
-                        String result = split[split.length - 1].replaceAll("%20"," ");
-                        String type =result.substring(0, result.length() - 4);
+                        String result = split[split.length - 1].replaceAll("%20", " ");
+                        String type = result.substring(0, result.length() - 4);
                         ImageView imageView = new ImageView(event.getDragboard().getImage());
                         buildings.add(imageView);
                         int width = Buildings.getBuildingObjectByType(type).getWidth();
