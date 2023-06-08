@@ -1,10 +1,12 @@
 package view;
 
+import controller.LeaderBoardController;
 import controller.ProfileMenuController;
 import controller.UserController;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -28,6 +30,7 @@ public class ProfileMenu extends Application {
     private final Button save = new Button("save");
     private final CheckBox sloganCheckBox = new CheckBox("show slogan");
     private final Button changePasswordButton = new Button("change password");
+    private final Button leaderBoardButton = new Button("leader board");
     private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
     private Pane root;
     private Bounds usernameBounds;
@@ -37,6 +40,7 @@ public class ProfileMenu extends Application {
     private Label passwordLabel;
     private Stage primaryStage;
     private VBox changePasswordVbox;
+    private final AnchorPane leaderBoardPane = new AnchorPane();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -59,6 +63,13 @@ public class ProfileMenu extends Application {
         setSizes();
         setActions();
         setupAvatar();
+        setUpLeaderBoard();
+    }
+
+    private void setUpLeaderBoard() {
+        LeaderBoardController leaderBoardController = new LeaderBoardController();
+        leaderBoardController.showTableView();
+        leaderBoardPane.getChildren().add(leaderBoardController.getTableView());
     }
 
     private void setupAvatar() {
@@ -128,7 +139,7 @@ public class ProfileMenu extends Application {
         emailHBox = new HBox(new Label("email :"), email);
         sloganHBox = new HBox(sloganCheckBox);
         CaptchaController.setUpCaptcha();
-        buttonHBox = new HBox(save, changePasswordButton);
+        buttonHBox = new HBox(save, changePasswordButton, leaderBoardButton);
         save.setVisible(false);
         profileMenuVbox.getChildren().addAll(usernameHBox, emailHBox, nicknameHBox, sloganHBox, buttonHBox);
     }
@@ -147,6 +158,7 @@ public class ProfileMenu extends Application {
 
 
     private void setSizes() {
+        profileMenuVbox.setAlignment(Pos.CENTER);
         profileMenuVbox.translateXProperty().bind(profileMenuVbox.widthProperty().divide(-2).add(App.getWidth() / 2));
         profileMenuVbox.translateYProperty().bind(profileMenuVbox.heightProperty().divide(-2).add(App.getHeight() / 2));
         profileMenuVbox.setSpacing(App.getHeight() / 20);
@@ -211,6 +223,12 @@ public class ProfileMenu extends Application {
             changePasswordVbox.getChildren().addAll(oldPasswordHBox, newPasswordHBox, CaptchaController.getCaptchaHBox(), buttons);
             setChangePasswordButtonActions(submit, cancel);
             root.getChildren().add(changePasswordVbox);
+        });
+
+        leaderBoardButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            if (root.getChildren().contains(leaderBoardPane)) {
+                root.getChildren().remove(leaderBoardPane);
+            } else root.getChildren().add(leaderBoardPane);
         });
     }
 

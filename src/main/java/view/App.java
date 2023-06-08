@@ -12,7 +12,7 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         UserController.fetchDatabase();
         setupStage(primaryStage);
-        new LoginMenu().start(primaryStage);
+        new ProfileMenu().start(primaryStage);
     }
 
     public static void setupStage(Stage primaryStage) {
