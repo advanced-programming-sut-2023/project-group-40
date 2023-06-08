@@ -311,14 +311,7 @@ public class EnvironmentMenu extends Application {
         map[i][j].addEventFilter(DragEvent.DRAG_OVER, event -> {
             if (event.getDragboard().hasImage()) {
                 String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
-                String[] split = url.split("/");
-                String type = "";
-                String result = split[split.length - 1].replaceAll("%20", " ");
-                for (int k = 0; k < result.length(); k++) {
-                    if (result.charAt(k) != '.')
-                        type += result.charAt(k);
-                    else break;
-                }
+                String type = MapMenu.getTypeByUrl(url);
                 switch (scrollPaneContent) {
                     case "texture" -> {
                         if (EnvironmentMenuController.checkTexture(finalI, finalJ, Texture.getTextureByName(type)))
@@ -342,14 +335,7 @@ public class EnvironmentMenu extends Application {
         map[i][j].addEventFilter(DragEvent.DRAG_DROPPED, event -> {
             if (event.getDragboard().hasImage()) {
                 String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
-                String[] split = url.split("/");
-                String type = "";
-                String result = split[split.length - 1].replaceAll("%20", " ");
-                for (int k = 0; k < result.length(); k++) {
-                    if (result.charAt(k) != '.')
-                        type += result.charAt(k);
-                    else break;
-                }
+                String type = MapMenu.getTypeByUrl(url);
                 ImageView imageView = new ImageView(event.getDragboard().getImage());
                 imageView.fitWidthProperty().bind(textureSize);
                 imageView.fitHeightProperty().bind(textureSize);

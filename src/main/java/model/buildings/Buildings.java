@@ -60,7 +60,7 @@ public enum Buildings {
     Buildings(String fullName, Building buildingObject) {
         this.fullName = fullName;
         this.buildingObject = buildingObject;
-        String[] buildingNames = new String[]{"diary farmer", "hops farmer", "quarry"};
+        String[] buildingNames = new String[]{"mercenary post", "hops farmer", "barrack"};
         this.buildingImage = new Image(Buildings.class.getResource("/images/buildings/" + buildingNames[new Random().nextInt(0, 3)] + ".png").toString());
     }
 
@@ -70,11 +70,12 @@ public enum Buildings {
         return null;
     }
 
-    public Image getBuildingImage() {
+    public String getName() {
+        return fullName;
+    }
+
+    public Image getImage() {
         return buildingImage;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
 }

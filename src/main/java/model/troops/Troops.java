@@ -1,5 +1,6 @@
 package model.troops;
 
+import javafx.scene.image.Image;
 import model.Good;
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -35,5 +36,17 @@ public enum Troops {
             if (troop.fullName.equals(type))
                 return SerializationUtils.clone(troop.troopObject);
         return null;
+    }
+
+    public Image getImage() {
+        return new Image(Troops.class.getResource("/images/troops/archer.png").toString());
+    }
+
+    public String getName() {
+        return fullName;
+    }
+
+    public String getRegion() {
+        return Troops.getTroopObjectByType(fullName).getRegion();
     }
 }

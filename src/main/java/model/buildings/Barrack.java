@@ -1,7 +1,9 @@
 package model.buildings;
 
 import model.Texture;
+import model.Tree;
 import model.troops.Troop;
+import model.troops.Troops;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,9 +16,9 @@ public class Barrack extends Building {
         super(name, height, width, hp, cost, textures, isIllegal, group);
     }
 
-    public void addTroop(Troop troop, int count) {
+    public void addTroop(String type, int count) {
         for (int i = 0; i < count; i++)
-            troopsList.add(troop);
+            troopsList.add(Troops.getTroopObjectByType(type));
     }
 
     public void removeTroop(Troop troop) {

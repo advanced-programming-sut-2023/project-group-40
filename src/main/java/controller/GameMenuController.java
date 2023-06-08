@@ -7,6 +7,7 @@ import model.troops.Troops;
 import view.GameMenu;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 
 public class GameMenuController {
@@ -264,54 +265,44 @@ public class GameMenuController {
 //            return output;
     }
 
-    public static String createUnit(int x, int y, String type, int count) {
-        if (!Map.getMap()[x][y].isAvailable())
-            return "you can't drop unit because this cell isn't available!";
-        if (!isCoordinateValid(x) || !isCoordinateValid(y))
-            return "your coordinates is incorrect!";
-        if (count < 0) return "count is invalid";
-        if (currentGovernment.getCastle().getMaxPopulation() < count)
-            return "you don't have enough population for create this unit";
+    public static String createUnit(String type, int count, Building building) {
+        if (count <= 0) return "count is invalid!";
+//        if (currentGovernment.getCastle().getPopulation() < count)
+//            return "you don't have enough population!";
         if (type.equals("worker")) {
             if (currentGovernment.getAmountOfGood(Good.GOLD) < 10 * count)
-                return "you don't have enough gold for create worker!";
-            if (selectedBuilding.getName().equals("engineer guild"))
+                return "you don't have enough gold!";
+            if (!selectedBuilding.getName().equals("engineer guild"))
                 return "you can't create " + type + " in " + selectedBuilding.getName();
             currentGovernment.getCastle().changeNumberOfActiveWorkers(count);
             currentGovernment.decreaseAmountOfGood(Good.GOLD, 10 * count);
-        } else {
+        }
+        else {
             Troop troop = Troops.getTroopObjectByType(type);
-            if (Map.getMap()[x][y].getUnit() != null)
-                return "you can't drop unit on this cell!";
-            if (troop == null) return "unit type is invalid";
-            if (currentGovernment.getAmountOfGood(Good.GOLD) < troop.getValue() * count)
-                return "you don't have enough gold for create this unit";
-            if (troop.getWeapon() != null && currentGovernment.getAmountOfGood(troop.getWeapon()) < count)
-                return "you don't have enough weapon for create this unit";
-            if (troop.isHasArmor() && currentGovernment.getAmountOfGood(Good.ARMOR) < count)
-                return "you don't have enough armor for create this unit";
-            if (troop.getName().equals("Black Monk") && !selectedBuilding.getName().equals("Cathedral"))
-                return "you can make Black Monk only in Cathedral";
-            if (troop.getRegion().equals("european") && selectedBuilding.getName().equals("Mercenary Post"))
-                return "you can't create european in Mercenary Post";
-            if (troop.getRegion().equals("arabian") && selectedBuilding.getName().equals("barrack"))
-                return "you can't create arabian in barrack";
-            if (type.equals("engineer") && selectedBuilding.getName().equals("engineer guild"))
-                return "you can create engineer unit only in engineer guild";
-            if (troop.getName().equals("Knight") || troop.getName().equals("Horse Archers")) {
-                if (count > currentGovernment.getCountOfHorses())
-                    return "you don't have enough horses for your Knight unit";
-                else
-                    currentGovernment.changeCountOfHorses(count);
-            }
+            if (troop == null) return "unit type is invalid!";
+//            if (currentGovernment.getAmountOfGood(Good.GOLD) < troop.getValue() * count)
+//                return "you don't have enough gold!";
+//            if (troop.getWeapon() != null && currentGovernment.getAmountOfGood(troop.getWeapon()) < count)
+//                return "you don't have enough weapon!";
+//            if (troop.isHasArmor() && currentGovernment.getAmountOfGood(Good.ARMOR) < count)
+//                return "you don't have enough armor!";
+//            if (troop.getName().equals("Knight") || troop.getName().equals("Horse Archers")) {
+//                if (count > currentGovernment.getCountOfHorses())
+//                    return "you don't have enough horses!";
+//                else
+//                    currentGovernment.changeCountOfHorses(count);
+//            }
             currentGovernment.getCastle().changePopulation(-1 * count);
-            Unit unit = new Unit(x, y, currentGovernment, "standing", troop.getHp() * count);
-            if (troop.getName().startsWith("Archer"))
-                unit.setCanDamage(false);
-            unit.addTroop(troop, count);
-            Map.getMap()[x][y].addUnit(unit);
-            currentGovernment.decreaseAmountOfGood(Good.GOLD, count * troop.getValue());
-            currentGovernment.decreaseAmountOfGood(troop.getWeapon(), count);
+            if (building instanceof Barrack barrack) {
+                barrack.addTroop(type,count);
+                currentGovernment.decreaseAmountOfGood(Good.GOLD, count * troop.getValue());
+                currentGovernment.decreaseAmountOfGood(troop.getWeapon(), count);
+            }
+            else {
+
+            }
+//            if (troop.getName().startsWith("Archer"))
+//                unit.setCanDamage(false);
         }
         return "you successfully create unit";
     }
