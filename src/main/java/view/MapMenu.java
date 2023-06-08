@@ -24,7 +24,9 @@ import model.Texture;
 import model.buildings.Building;
 import model.buildings.Buildings;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -44,6 +46,7 @@ public class MapMenu extends Application {
     private int hoverX;
     private int hoverY;
     private VBox showDetailsBox = new VBox();
+    private VBox showManyCellsDetailsBox = new VBox();
     private final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
     private Cell selectedCell;
     private int startIndexI, startIndexJ, endIndexI, endIndexJ;
@@ -69,7 +72,13 @@ public class MapMenu extends Application {
         mapPane.setPrefHeight(App.getHeight() - 200);
         setupMap();
         setUpBuildingScrollPane();
+//        setupScribeReport();
     }
+
+//    private void setupScribeReport() {
+//        VBox vBox = new VBox();
+//        vBox.translateYProperty().bind();
+//    }
 
     private void setUpBuildingScrollPane() {
         ScrollPane pane = new ScrollPane();
@@ -244,6 +253,7 @@ public class MapMenu extends Application {
                 changeMapSight();
             } else if (event.getButton().equals(MouseButton.SECONDARY)) {
                 selectedCells.clear();
+                showManyCellsDetailsBox.getChildren().clear();
                 for (int i = Math.min(startIndexI, endIndexI); i <= Math.max(startIndexI, endIndexI); i++)
                     for (int j = Math.min(startIndexJ, endIndexJ); j <= Math.max(startIndexJ, endIndexJ); j++) {
                         map[i][j].setOpacity(1);
@@ -263,28 +273,73 @@ public class MapMenu extends Application {
                         selectedCells.add(Map.getMap()[i][j]);
                         map[i][j].setOpacity(0.5);
                     }
-
+                showDetailsOfManyCells();
 
             }
         });
     }
 
+    private void showDetailsOfManyCells() {
+        showManyCellsDetailsBox = new VBox();
+        HashSet<Building> uniqueBuildings = new HashSet<>();
+        for (Cell cell : selectedCells)
+            if (cell.getBuilding() != null)
+                uniqueBuildings.add(cell.getBuilding());
+        int minProductRate = 0, maxProductRate = 0, sumOfProducts = 0, countOfProducts = 0;
+        for (Building uniqueBuilding : uniqueBuildings) {
+            try {
+                Field field = uniqueBuilding.getClass().getDeclaredField("productRate");
+                field.setAccessible(true);
+                Integer productRate = (Integer) field.get(uniqueBuilding);
+                if (minProductRate == 0) minProductRate = productRate;
+                else if (productRate < minProductRate) minProductRate = productRate;
+                if (productRate > maxProductRate) maxProductRate = productRate;
+                sumOfProducts += productRate;
+                countOfProducts++;
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {}
+        }
+        HBox minProductRateHBox = new HBox();
+        minProductRateHBox.setSpacing(10);
+        minProductRateHBox.getChildren().addAll(new Label("min produce rate: "),
+                new Label(String.valueOf(minProductRate)));
+        showManyCellsDetailsBox.getChildren().add(minProductRateHBox);
+
+        HBox maxProductRateHBox = new HBox();
+        maxProductRateHBox.setSpacing(10);
+        maxProductRateHBox.getChildren().addAll(new Label("max produce rate: "),
+                new Label(String.valueOf(maxProductRate)));
+        showManyCellsDetailsBox.getChildren().add(maxProductRateHBox);
+
+        HBox averageProductRateHBox = new HBox();
+        averageProductRateHBox.setSpacing(10);
+        Double average = ((sumOfProducts + 0.0) / countOfProducts);
+        if (countOfProducts == 0) average = 0.0;
+        averageProductRateHBox.getChildren().addAll(new Label("average produce rate: "),
+                new Label(String.format("%.2f",average)));
+        showManyCellsDetailsBox.getChildren().add(averageProductRateHBox);
+        showManyCellsDetailsBox.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-background-radius: 10 ; -fx-padding: 8");
+        showManyCellsDetailsBox.translateXProperty().bind(showManyCellsDetailsBox.widthProperty().divide(-1).add(App.getWidth()));
+        showManyCellsDetailsBox.setTranslateY(10);
+        root.getChildren().add(showManyCellsDetailsBox);
+    }
+
     private void setupCells() {
         for (int i = 0; i < MAP_SIZE; i++) {
             for (int j = 0; j < MAP_SIZE; j++) {
-                map[i][j] = new ImageView(Texture.IRON.getImage());
+                map[i][j] = new ImageView(Texture.DENSE_GRASS_LAND.getImage());
+                Map.getMap()[i][j].setTexture(Texture.DENSE_GRASS_LAND);
                 if (i == j) {
-                    map[i][j] = new ImageView(Texture.IRON.getImage());
-                    Map.getMap()[i][j].setTexture(Texture.IRON);
+                    map[i][j] = new ImageView(Texture.SEA.getImage());
+                    Map.getMap()[i][j].setTexture(Texture.SEA);
                 }
                 int finalI = i;
                 int finalJ = j;
                 map[i][j].addEventFilter(DragEvent.DRAG_OVER, event -> {
                     if (event.getDragboard().hasImage()) {
                         String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
-                        Image image = event.getDragboard().getImage();
                         String[] split = url.split("/");
-                        String type = split[split.length - 1].substring(0, split[split.length - 1].length() - 4);
+                        String result = split[split.length - 1].replaceAll("%20"," ");
+                        String type =result.substring(0, result.length() - 4);
                         boolean b = GameMenuController.checkDropBuilding(finalI, finalJ, type);
                         if (b)
                             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -296,8 +351,8 @@ public class MapMenu extends Application {
                     if (event.getDragboard().hasImage()) {
                         String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
                         String[] split = url.split("/");
-                        String type = split[split.length - 1].substring(0, split[split.length - 1].length() - 4);
-
+                        String result = split[split.length - 1].replaceAll("%20"," ");
+                        String type =result.substring(0, result.length() - 4);
                         ImageView imageView = new ImageView(event.getDragboard().getImage());
                         buildings.add(imageView);
                         int width = Buildings.getBuildingObjectByType(type).getWidth();

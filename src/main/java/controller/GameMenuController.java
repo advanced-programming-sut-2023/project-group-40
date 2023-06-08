@@ -188,18 +188,21 @@ public class GameMenuController {
 
     public static boolean checkDropBuilding(int x, int y, String type) {
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
-        if (targetBuilding == null) return false;
+        if (targetBuilding == null) {
+            return false;
+        }
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
             for (int j = y; j < y + targetBuilding.getWidth(); j++) {
-                if (!Map.getMap()[i][j].isAvailable())
+                if (!Map.getMap()[i][j].isAvailable()) {
                     return false;
-                if (Map.getMap()[i][j].getTexture().getType().equals("water"))
+                }
+                if (Map.getMap()[i][j].getTexture().getType().equals("water")) {
                     return false;
+                }
             }
-
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
             for (int j = y; j < y + targetBuilding.getWidth(); j++) {
-                if (targetBuilding.checkTexture(Map.getMap()[i][j].getTexture()))
+                if (!targetBuilding.checkTexture(Map.getMap()[i][j].getTexture()))
                     return false;
             }
 

@@ -101,7 +101,8 @@ public class LoginMenu extends Application {
                 Errors.PASSWORD_ERROR.getErrorLabel().setText("password is weak!");
                 if (passwordHBox.getChildren().size() == 3)
                     passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
-            } else {
+            }
+            else {
                 passwordHBox.getChildren().remove(Errors.PASSWORD_ERROR.getErrorLabel());
             }
         });
@@ -142,11 +143,12 @@ public class LoginMenu extends Application {
             }
         });
         forgetMyPassword.setOnMouseClicked(mouseEvent -> {
-            if (loginVbox.getChildren().size() == 3) {
+            if (loginVbox.getChildren().size() == 4) {
                 loginVbox.getChildren().add(2, securityQuestionsHBox);
                 loginVbox.getChildren().add(3, securityAnswerHBox);
                 passwordLabel.setText("new password : ");
-            } else {
+            }
+            else {
                 loginVbox.getChildren().remove(securityQuestionsHBox);
                 loginVbox.getChildren().remove(securityAnswerHBox);
             }
