@@ -7,7 +7,9 @@ import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -20,6 +22,7 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.*;
+import model.Map;
 import model.buildings.Building;
 import model.buildings.Buildings;
 import model.troops.Troops;
@@ -27,10 +30,7 @@ import model.troops.Troops;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MapMenu extends Application {
@@ -55,6 +55,10 @@ public class MapMenu extends Application {
     private int startIndexI, startIndexJ, endIndexI, endIndexJ;
     private Label popularityLabel, populationLabel, treasuryLabel;
     private Label fearRateLabel, taxRateLabel, foodRateLabel, sumRateLabel;
+    private final Image redFace =new Image(MapMenu.class.getResource("/images/baseimages/redMask.png").toString(),30,30,false,false);
+    private final Image yellowFace =new Image(MapMenu.class.getResource("/images/baseimages/yellowMask.png").toString(),30,30,false,false);
+    private final Image greenFace =new Image(MapMenu.class.getResource("/images/baseimages/greenMask.png").toString(),30,30,false,false);
+    private ArrayList<ImageView> faces = new ArrayList<>();
     private int SCROLL_PANE_HEIGHT = 200;
     private VBox clipBoardVbox;
     private Pane blackPane;
@@ -89,9 +93,9 @@ public class MapMenu extends Application {
             if (keyEvent.getCode() == KeyCode.N) {
                 GameMenuController.nextTurn();
                 updateSumLabel();
-                updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(), foodRateLabel);
-                updateLabel(GameMenuController.getCurrentGovernment().getFearRate(), fearRateLabel);
-                updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(), taxRateLabel);
+                updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(), foodRateLabel,0);
+                updateLabel(GameMenuController.getCurrentGovernment().getFearRate(), fearRateLabel,1);
+                updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(), taxRateLabel,2);
                 updateScribeReport();
             }
         });
@@ -137,6 +141,7 @@ public class MapMenu extends Application {
     }
 
     private void showPopularityFactors() {
+        popularityLabel.setOnMouseClicked(null);
         VBox vBox = new VBox(new Label("Popularity Factors"));
         Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
         vBox.getStylesheets().add(MapMenu.class.getResource("/css/showFactors.css").toString());
@@ -150,14 +155,17 @@ public class MapMenu extends Application {
         vBox.translateXProperty().bind(vBox.widthProperty().divide(-2).add(App.getWidth() / 2));
         vBox.setTranslateY(10);
         VBox labelVBox = new VBox(foodRateLabel, fearRateLabel, taxRateLabel);
+        faces.add(new ImageView());
+        faces.add(new ImageView());
+        faces.add(new ImageView());
         VBox textLabelVBox = new VBox(new Label("food rate"), new Label("fear rate"), new Label("tax rate"));
         foodRateLabel.setMinWidth(80);
         fearRateLabel.setMinWidth(80);
         taxRateLabel.setMinWidth(80);
         updateSumLabel();
-        updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(), foodRateLabel);
-        updateLabel(GameMenuController.getCurrentGovernment().getFearRate(), fearRateLabel);
-        updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(), taxRateLabel);
+        updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(), foodRateLabel,0);
+        updateLabel(GameMenuController.getCurrentGovernment().getFearRate(), fearRateLabel,1);
+        updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(), taxRateLabel,2);
         HBox sumHbox = new HBox(new Label("In The Coming Month"), sumRateLabel);
         sumHbox.setMinWidth(vBox.getMaxWidth());
         sumHbox.setAlignment(Pos.CENTER);
@@ -165,9 +173,20 @@ public class MapMenu extends Application {
         HBox hBox = new HBox();
         hBox.setMinWidth(vBox.getMinWidth());
         hBox.setAlignment(Pos.CENTER);
-        hBox.getChildren().addAll(labelVBox, textLabelVBox);
+        VBox faceVbox = new VBox();
+        faceVbox.setPadding(new Insets(10,0,0,0));
+        faceVbox.setSpacing(15);
+        faceVbox.getChildren().addAll(faces);
+        hBox.getChildren().addAll(labelVBox, faceVbox,textLabelVBox);
         vBox.getChildren().addAll(hBox, sumHbox);
         root.getChildren().add(vBox);
+        new Timeline(new KeyFrame(Duration.seconds(2),actionEvent -> {
+            root.getChildren().remove(vBox);
+            hBox.getChildren().clear();
+            sumHbox.getChildren().clear();
+            vBox.getChildren().clear();
+            popularityLabel.setOnMouseClicked(event -> showPopularityFactors());
+        })).play();
     }
 
     private void updateSumLabel() {
@@ -178,19 +197,27 @@ public class MapMenu extends Application {
         int preFearRate = Integer.parseInt(fearRateLabel.getText().substring(1));
         int preTaxRate = Integer.parseInt(taxRateLabel.getText().substring(1));
         int sum = foodRate + fearRate + taxRate - preFoodRate - preTaxRate - preFearRate;
-        updateLabel(sum, sumRateLabel);
+        updateLabel(sum, sumRateLabel,-1);
     }
 
-    private void updateLabel(int rate, Label label) {
+    private void updateLabel(int rate, Label label,int index) {
         if (rate < 0) {
             label.setText(String.valueOf(rate));
             label.setStyle("-fx-text-fill: red");
-        } else if (rate == 0) {
+            if (index == -1) return;
+            faces.get(index).setImage(redFace);
+        }
+        else if (rate == 0) {
             label.setText(" 0");
             label.setStyle("-fx-text-fill: white");
-        } else {
+            if (index == -1) return;
+            faces.get(index).setImage(yellowFace);
+        }
+        else {
             label.setText("+" + rate);
             label.setStyle("text-emphasis: green;");
+            if (index == -1) return;
+            faces.get(index).setImage(greenFace);
         }
     }
 
@@ -724,7 +751,7 @@ public class MapMenu extends Application {
                             label.setAlignment(Pos.CENTER);
                             if (result.equals("you successfully create unit"))
                                 label.setStyle("-fx-text-fill: green");
-                            new Timeline(new KeyFrame(Duration.seconds(2),actionEvent -> {
+                            new Timeline(new KeyFrame(Duration.seconds(1),actionEvent -> {
                                 root.getChildren().remove(troopVBox);
                             }));
                         }
