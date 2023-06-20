@@ -17,6 +17,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.DefaultSlogans;
 import model.SecurityQuestions;
 import model.Texture;
 
@@ -30,10 +31,6 @@ public class RegisterMenu extends Application {
     private final Button generateRandomSlogan = new Button("random slogan");
     private final Button register = new Button("register");
     private final CheckBox sloganCheckBox = new CheckBox("activate slogan");
-    private final TextField captchaAnswerTextField = new TextField();
-    private final Image reloadCaptchaImage = new Image(Objects.requireNonNull(RegisterMenu
-            .class.getResource("/images/reloadCaptchaIcon.png")).toExternalForm());
-    private final ImageView captchaRefreshImageView = new ImageView(reloadCaptchaImage);
     private final Button submitButton = new Button("submit");
     VBox loginVbox;
     private Pane root;
@@ -44,12 +41,12 @@ public class RegisterMenu extends Application {
     private Image hideIconImage;
     private Image showIconImage;
     private ImageView eyeIcon;
-    private Bounds usernameBounds, passwordLabelBounds, emailBounds;
-    private ComboBox<String> securityQuestions;
+    private ComboBox<String> securityQuestions,sloganComboBox = new ComboBox<>();
     private Stage primaryStage;
 
     {
         generateRandomSlogan.setVisible(false);
+        sloganComboBox.setVisible(false);
     }
 
     @Override
@@ -76,7 +73,7 @@ public class RegisterMenu extends Application {
         nicknameHBox = new HBox(new Label("nickname :"), nickname);
         sloganHBox = new HBox(new Label("slogan :"), slogan);
         buttonHBox = new HBox(generateRandomPassword, register);
-        sloganToolsHBox = new HBox(sloganCheckBox, generateRandomSlogan);
+        sloganToolsHBox = new HBox(sloganCheckBox, generateRandomSlogan,sloganComboBox);
         loginVbox.getChildren().addAll(usernameHBox, passwordHBox, emailHBox, nicknameHBox, sloganToolsHBox, buttonHBox);
         securityQuestions = new ComboBox<>();
         securityQuestions.getItems().add(SecurityQuestions.NO_1.getQuestion());
@@ -84,6 +81,9 @@ public class RegisterMenu extends Application {
         securityQuestions.getItems().add(SecurityQuestions.NO_3.getQuestion());
         securityQuestionsHBox = new HBox(new Label("security question :"), securityQuestions);
         securityAnswerHBox = new HBox(new Label("security answer : "), securityAnswer);
+        for (DefaultSlogans slogan : DefaultSlogans.values())
+            sloganComboBox.getItems().add(slogan.getSlogan());
+        sloganComboBox.setMaxWidth(200);
         root.getChildren().addAll(loginVbox);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -136,15 +136,20 @@ public class RegisterMenu extends Application {
             Bounds usernameBounds = usernameHBox.getChildren().get(0).getBoundsInParent();
             if (sloganCheckBox.isSelected()) {
                 generateRandomSlogan.setVisible(true);
+                sloganComboBox.setVisible(true);
                 loginVbox.getChildren().add(4, sloganHBox);
                 sloganHBox.setSpacing(20 + usernameBounds.getWidth() - sloganBounds.getWidth());
             } else {
                 generateRandomSlogan.setVisible(false);
+                sloganComboBox.setVisible(false);
                 loginVbox.getChildren().remove(sloganHBox);
             }
         });
         generateRandomSlogan.setOnMouseClicked(event -> {
             slogan.setText(UserController.generateRandomSlogan());
+        });
+        sloganComboBox.valueProperty().addListener((observableValue, s, t1) -> {
+            slogan.setText(sloganComboBox.getValue());
         });
         register.setOnMouseClicked(mouseEvent -> {
             TextFieldController.setSuccessful(true);

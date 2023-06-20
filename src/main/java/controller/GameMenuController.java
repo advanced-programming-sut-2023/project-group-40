@@ -315,7 +315,9 @@ public class GameMenuController {
                     return "enemy is near your building!";
             }
         int consumableStone = (int) Math.ceil((double) (selectedBuilding.getMaxHp() - selectedBuilding.getHp()) / 40);
-        selectedBuilding.getOwner().decreaseAmountOfGood(Good.STONE, consumableStone);
+//        if (consumableStone < selectedBuilding.getOwner().getAmountOfGood(Good.STONE))
+//            return "you don't have enough stone";
+//        selectedBuilding.getOwner().decreaseAmountOfGood(Good.STONE, consumableStone);
         selectedBuilding.setHp(selectedBuilding.getMaxHp());
         return "repair successful";
     }
