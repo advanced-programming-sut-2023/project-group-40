@@ -152,4 +152,5 @@ public class Building implements Serializable, BuildingAction {
         this.y1 = y1;
         this.y2 = y1 + width;
     }
+
 }

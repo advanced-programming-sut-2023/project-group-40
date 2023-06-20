@@ -24,6 +24,7 @@ import javafx.util.Duration;
 import model.*;
 import model.Map;
 import model.buildings.Building;
+import model.buildings.BuildingGroups;
 import model.buildings.Buildings;
 import model.troops.Troops;
 
@@ -58,8 +59,8 @@ public class MapMenu extends Application {
     private final Image redFace =new Image(MapMenu.class.getResource("/images/baseimages/redMask.png").toString(),30,30,false,false);
     private final Image yellowFace =new Image(MapMenu.class.getResource("/images/baseimages/yellowMask.png").toString(),30,30,false,false);
     private final Image greenFace =new Image(MapMenu.class.getResource("/images/baseimages/greenMask.png").toString(),30,30,false,false);
-    private ArrayList<ImageView> faces = new ArrayList<>();
-    private int SCROLL_PANE_HEIGHT = 200;
+    private final ArrayList<ImageView> faces = new ArrayList<>();
+    private final int SCROLL_PANE_HEIGHT = 200;
     private VBox clipBoardVbox;
     private Pane blackPane;
 
@@ -233,7 +234,8 @@ public class MapMenu extends Application {
         ScrollPane pane = new ScrollPane();
         pane.requestFocus();
         pane.getStylesheets().add(EnvironmentMenu.class.getResource("/css/scrollPane.css").toString());
-        pane.translateYProperty().bind(pane.heightProperty().multiply(-1).add(App.getHeight()));
+        pane.translateYProperty().bind(pane.heightProperty().multiply(-1).add(App.getHeight()).add(-50));
+        setupCategoryBox();
         pane.setMinHeight(170);
         pane.setMinWidth(App.getWidth() / 2);
         pane.setMaxWidth(App.getWidth() / 2);
@@ -243,12 +245,71 @@ public class MapMenu extends Application {
                 , true, false))));
         scrollPaneHBox.setSpacing(20);
         try {
-            updateScrollPanePicture(scrollPaneHBox, Buildings.class);
+            updateScrollPanePicture(scrollPaneHBox, Buildings.class,null);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
         pane.setContent(scrollPaneHBox);
         root.getChildren().add(pane);
+    }
+
+    private void setupCategoryBox() {
+        HBox hBox = new HBox();
+        hBox.setSpacing(((App.getWidth()/2) - 300) / 5);
+        hBox.setTranslateY(App.getHeight() - 50);
+        Image image = new Image(EnvironmentMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
+        hBox.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
+                , true, false))));
+        ImageView castleCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(),50,50,false,false));
+        ImageView industryCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(),50,50,false,false));
+        ImageView weaponCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(),50,50,false,false));
+        ImageView townCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(),50,50,false,false));
+        ImageView farmCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(),50,50,false,false));
+        ImageView foodProcessingCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(),50,50,false,false));
+        hBox.getChildren().addAll(castleCategory,industryCategory,weaponCategory,townCategory,farmCategory,foodProcessingCategory);
+        castleCategory.setOnMouseClicked(event -> {
+            try {
+                updateScrollPanePicture(scrollPaneHBox,Buildings.class,BuildingGroups.CASTLE);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        industryCategory.setOnMouseClicked(event -> {
+            try {
+                updateScrollPanePicture(scrollPaneHBox,Buildings.class,BuildingGroups.INDUSTRY);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        weaponCategory.setOnMouseClicked(event -> {
+            try {
+                updateScrollPanePicture(scrollPaneHBox,Buildings.class,BuildingGroups.WEAPON);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        townCategory.setOnMouseClicked(event -> {
+            try {
+                updateScrollPanePicture(scrollPaneHBox,Buildings.class,BuildingGroups.TOWN_BUILDING);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        farmCategory.setOnMouseClicked(event -> {
+            try {
+                updateScrollPanePicture(scrollPaneHBox,Buildings.class,BuildingGroups.FARM);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        foodProcessingCategory.setOnMouseClicked(event -> {
+            try {
+                updateScrollPanePicture(scrollPaneHBox,Buildings.class,BuildingGroups.FOOD_PROCESSING);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        root.getChildren().add(hBox);
     }
 
 
@@ -405,7 +466,7 @@ public class MapMenu extends Application {
                         GameMenuController.setSelectedBuilding(null);
                         try {
                             scrollPaneHBox.getChildren().clear();
-                            updateScrollPanePicture(scrollPaneHBox, Buildings.class);
+                            updateScrollPanePicture(scrollPaneHBox, Buildings.class,null);
                         } catch (ReflectiveOperationException e) {
                             throw new RuntimeException(e);
                         }
@@ -425,7 +486,7 @@ public class MapMenu extends Application {
                     if (name.equals("mercenary post") || name.equals("barrack")) {
                         try {
                             scrollPaneHBox.getChildren().clear();
-                            updateScrollPanePicture(scrollPaneHBox,Troops.class);
+                            updateScrollPanePicture(scrollPaneHBox,Troops.class,null);
                         } catch (ReflectiveOperationException e) {
                             throw new RuntimeException(e);
                         }
@@ -689,7 +750,8 @@ public class MapMenu extends Application {
                 , showDetailsBox.heightProperty().add(-20)));
     }
 
-    private void updateScrollPanePicture(HBox hBox, Class<?> aClass) throws ReflectiveOperationException {
+    private void updateScrollPanePicture(HBox hBox, Class<?> aClass , BuildingGroups buildingGroups) throws ReflectiveOperationException {
+        hBox.getChildren().clear();
         Object arrayObject = aClass.getMethod("values").invoke(null);
         for (int i = 0; i < Array.getLength(arrayObject); i++) {
             ImageView imageView;
@@ -708,7 +770,12 @@ public class MapMenu extends Application {
                     continue;
                 imageView = new ImageView(((Troops) Array.get(arrayObject, i)).getImage());
             }
-            else  imageView = new ImageView(((Buildings) Array.get(arrayObject, i)).getImage());
+            else if (buildingGroups != null){
+                Buildings building  = ((Buildings) Array.get(arrayObject, i));
+                if (Buildings.getBuildingObjectByType(building.getName()).getGroup() != buildingGroups) continue;
+                imageView = new ImageView(building.getImage());
+            }
+            else imageView = new ImageView(((Buildings) Array.get(arrayObject, i)).getImage());
             imageView.setPreserveRatio(true);
             imageView.setFitHeight(80);
             if (aClass == Buildings.class) {
