@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -180,17 +181,43 @@ public class MapMenu extends Application {
         faceVbox.setPadding(new Insets(10, 0, 0, 0));
         faceVbox.setSpacing(15);
         faceVbox.getChildren().addAll(faces);
-        hBox.getChildren().addAll(labelVBox, faceVbox, textLabelVBox);
+        VBox sidebarVBox = new VBox();
+        sidebarVBox.setPadding(new Insets(15, 0, 0, 0));
+        sidebarVBox.setSpacing(10);
+
+        Slider foodRateSlider = new Slider();
+        foodRateSlider.setMin(-2);
+        foodRateSlider.setMax(2);
+        foodRateSlider.setValue(Double.parseDouble(foodRateLabel.getText()));
+        foodRateSlider.valueProperty().addListener((observableValue, number, t1) -> {
+            updateLabel(t1.intValue(),foodRateLabel,0);
+            GameMenuController.setFoodRate(t1.intValue());
+        });
+
+        Slider fearRateSlider = new Slider();
+        fearRateSlider.setMin(-5);
+        fearRateSlider.setMax(5);
+        fearRateSlider.setValue(Double.parseDouble(fearRateLabel.getText()));
+        fearRateSlider.valueProperty().addListener((observableValue, number, t1) -> {
+            updateLabel(t1.intValue(),fearRateLabel,1);
+            GameMenuController.setFearRate(t1.intValue());
+        });
+
+        Slider taxRateSlider = new Slider();
+        taxRateSlider.setMin(-3);
+        taxRateSlider.setMax(8);
+        taxRateSlider.setValue(Double.parseDouble(taxRateLabel.getText()));
+        taxRateSlider.valueProperty().addListener((observableValue, number, t1) -> {
+            updateLabel(t1.intValue(),taxRateLabel,2);
+            GameMenuController.setTaxRate(t1.intValue());
+        });
+        sidebarVBox.getChildren().addAll(foodRateSlider,fearRateSlider,taxRateSlider);
+        vBox.getChildren().addAll(sidebarVBox);
+        hBox.getChildren().addAll(labelVBox, faceVbox, textLabelVBox,sidebarVBox);
         vBox.getChildren().addAll(hBox, sumHbox);
         root.getChildren().add(vBox);
-        new Timeline(new KeyFrame(Duration.seconds(2), actionEvent -> {
-            root.getChildren().remove(vBox);
-            hBox.getChildren().clear();
-            sumHbox.getChildren().clear();
-            vBox.getChildren().clear();
-            popularityLabel.setOnMouseClicked(event -> showPopularityFactors());
-        })).play();
     }
+
 
     private void updateSumLabel() {
         int foodRate = GameMenuController.getCurrentGovernment().getFoodRate();

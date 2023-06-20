@@ -23,10 +23,6 @@ public class GameMenuController {
     }
 
 
-    public static String showPopularityFactors() {
-        return "Popularity Factors: \n 1.food \n 2.tax \n 3.religion \n 4.fear";
-    }
-
     public static String showPopularity() {
         return "rate of your government popularity is " + currentGovernment.getPopularity();
     }
@@ -77,14 +73,10 @@ public class GameMenuController {
         return "set rate-number is successful";
     }
 
-    public static String showFoodRate() {
-        return "your government food rate is: " + currentGovernment.getFoodRate();
-    }
 
     public static String setTaxRate(int rate) {
-        if (!selectedBuilding.getName().equals("Small stone gatehouse"))
-            return "you don't select Small stone gatehouse";
-        if (rate > 8 || rate < -3) return "rate-number is out of bound";
+//        if (!selectedBuilding.getName().equals("Small stone gatehouse"))
+//            return "you don't select Small stone gatehouse";
         if (currentGovernment.getAmountOfGood(Good.GOLD) == 0)
             return "you haven't any gold in your treasury";
         currentGovernment.setTaxRate(rate);
@@ -149,9 +141,6 @@ public class GameMenuController {
         return "set rate-number is successful";
     }
 
-    public static String showTaxRate() {
-        return "your government tax rate is: " + currentGovernment.getTaxRate();
-    }
 
     public static String setFearRate(int rate) {
         for (Building building : currentGovernment.getBuildings()) {
@@ -176,15 +165,7 @@ public class GameMenuController {
             }
         return "set rate-number is successful";
     }
-
-    public static String showFearRate() {
-        return "your government feat rate is: " + currentGovernment.getFearRate();
-    }
-
-    public static boolean isCoordinateValid(int coordinate) {
-        return coordinate > 0 && coordinate <= Map.getSize();
-    }
-
+    
     public static boolean checkDropBuilding(int x, int y, String type) {
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
         if (targetBuilding == null) {

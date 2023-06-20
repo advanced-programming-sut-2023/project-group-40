@@ -16,3 +16,8 @@ Line{
     -fx-stroke-width: 4;
     -fx-stroke: white;
 }
+Slider{
+    -fx-block-increment: 1;
+    -fx-show-tick-labels: true;
+    -fx-show-tick-marks: true;
+}
