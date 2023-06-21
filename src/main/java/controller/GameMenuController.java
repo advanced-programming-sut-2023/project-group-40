@@ -21,7 +21,7 @@ public class GameMenuController {
     public static void setMapSize(int size) {
         Map.initMap(size);
     }
-
+    
 
     public static String showPopularity() {
         return "rate of your government popularity is " + currentGovernment.getPopularity();
@@ -165,7 +165,7 @@ public class GameMenuController {
             }
         return "set rate-number is successful";
     }
-    
+
     public static boolean checkDropBuilding(int x, int y, String type) {
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
         if (targetBuilding == null) {

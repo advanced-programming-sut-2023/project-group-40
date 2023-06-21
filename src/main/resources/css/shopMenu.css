@@ -1,0 +1,79 @@
+Label{
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-min-width: 130;
+    -fx-alignment: center;
+    -fx-min-height: 70;
+}
+TabPane{
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-border-insets:  10 10 10 10;
+    -fx-background-color: green;
+    -fx-background-insets: 20 20 20 20;
+}
+ButtonBarPane{
+    /* ButtonBarPane Colors */
+    -fx-text-fill: white;
+
+}
+/*******************************************************************************
+ * ButtonBarPane                                                               *
+ ******************************************************************************/
+.button-bar-pane {
+    -fx-padding: 0 0 0 0;
+    -fx-text-fill: white;
+    -fx-background-insets: 10 10 10 10;
+}
+
+.button-bar-pane > .tool-bar {
+    -fx-background-color: #3e3e3e;
+    -fx-background-insets: 5 5 5 5;
+    -fx-background-radius: 7 7 7 7;
+    -fx-padding: 10 10 10 10;
+    -fx-border-color: transparent, BUTTON_BAR_PANE_BORDER;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-style: solid;
+}
+
+.button-bar-pane > .tool-bar .button {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+    -fx-font-size: 30;
+    -fx-font-family: "Times New Roman";
+    -fx-background-radius: 7 7 7 7;
+
+}
+
+/*.button-bar-pane > .tool-bar .button:pressed {*/
+/*    -fx-background-color: BUTTON_BAR_PANE_SELECTED;*/
+/*    -fx-background-radius: 10 10 10 10;*/
+/*}*/
+
+.button-bar-pane > .tool-bar .button.selected {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-background-radius: 7 7 7 7;
+}
+VBox {
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-alignment: center;
+}
+HBox{
+    -fx-spacing: 20;
+    -fx-alignment: center;
+}
+Button{
+    -fx-min-width: 250;
+    -fx-background-color: #c4a865;
+    -fx-text-fill: white;
+    -fx-font-size: 30;
+    -fx-font-family: "Times New Roman";
+    -fx-font-weight: bold;
+    -fx-border-color: black;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 3;
+    -fx-min-height: 50;
+}

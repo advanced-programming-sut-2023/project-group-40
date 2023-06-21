@@ -1,5 +1,7 @@
 package model;
 
+import javafx.scene.image.Image;
+
 public enum Good {
     MACE(30, 60, "weapon"),
     SWORD(30, 60, "weapon"),
@@ -24,11 +26,12 @@ public enum Good {
     BREAD(10, 10, "food");
     private final int sellPrice, buyPrice;
     private final String type;
-
+    private final Image image;
     Good(int priceSell, int priceBuy, String type) {
         this.sellPrice = priceSell;
         this.buyPrice = priceBuy;
         this.type = type;
+        this.image = new Image(Good.class.getResource("/images/goods/" + "apple" + ".png").toString());
     }
 
     public int getBuyPrice() {
@@ -41,5 +44,9 @@ public enum Good {
 
     public String getType() {
         return this.type;
+    }
+
+    public Image getImage() {
+        return image;
     }
 }

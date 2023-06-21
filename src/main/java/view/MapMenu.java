@@ -1,6 +1,7 @@
 package view;
 
 import controller.GameMenuController;
+import controller.ShopMenuController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -8,15 +9,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -25,6 +22,7 @@ import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.*;
+import model.Cell;
 import model.Map;
 import model.buildings.Building;
 import model.buildings.BuildingGroups;
@@ -33,11 +31,11 @@ import model.troops.Troops;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MapMenu extends Application {
+    private static Stage stage;
     private final ArrayList<ImageView> buildings = new ArrayList<>();
     private final ArrayList<Line> borderLines = new ArrayList<>();
     private final SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
@@ -69,6 +67,7 @@ public class MapMenu extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        MapMenu.stage = stage;
         root = new Pane();
         mapPane = new AnchorPane();
         root.getChildren().add(mapPane);
@@ -490,7 +489,11 @@ public class MapMenu extends Application {
                     if (selectedCell != null) return;
                     EventHandler<KeyEvent> repairEvent = keyEvent -> {
                         if (keyEvent.getCode() == KeyCode.R) {
-                            showRepairMessage();
+                            Node[] nodes = makePopup(GameMenuController.repair(),"repair successful");
+                            root.getChildren().add(nodes[0]);
+                            nodes[1].setOnMouseClicked(event1 -> {
+                                root.getChildren().remove(nodes[0]);
+                            });
                         }
                     };
                     if (GameMenuController.getSelectedBuilding() == targetBuilding) {
@@ -524,6 +527,15 @@ public class MapMenu extends Application {
                             throw new RuntimeException(e);
                         }
                     }
+                    if (name.equals("shop")) {
+                        try {
+                            GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.GOLD,100);
+                            ShopMenuController.setCurrentGovernment(GameMenuController.getCurrentGovernment());
+                            new ShopMenu().start(stage);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
                 } else {
                     if (GameMenuController.getSelectedBuilding() != null) return;
 
@@ -553,31 +565,31 @@ public class MapMenu extends Application {
         });
     }
 
-    private void showRepairMessage() {
+    public static Node[] makePopup(String result, String successful) {
         VBox messageVbox = new VBox();
         Label label = new Label();
+        ImageView closeIcon = new ImageView(new Image(MapMenu.class.getResource("/images/errorIcon.png").toString(),45,45,false,false));
+        closeIcon.translateXProperty().bind(Bindings.add(0,messageVbox.widthProperty().divide(2).add(-30)));
+        closeIcon.setTranslateY(-3);
+        messageVbox.getChildren().add(closeIcon);
         messageVbox.setMinWidth(500);
         messageVbox.setMaxWidth(500);
         messageVbox.setMaxHeight(150);
         messageVbox.setMinHeight(150);
-        messageVbox.setStyle("-fx-padding: 10");
         messageVbox.setTranslateY(30);
-        Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
-        messageVbox.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
+        Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString(),500,150,false,false);
+        messageVbox.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(500, 150, true, true
                 , true, false))));
         messageVbox.translateXProperty().bind(messageVbox.widthProperty().divide(-2).add(App.getWidth() / 2));
-        String result = GameMenuController.repair();
         label.setText(result);
         label.setStyle("-fx-text-fill: red");
         label.setMinWidth(messageVbox.getMaxWidth());
         label.setAlignment(Pos.CENTER);
-        if (result.equals("repair successful"))
+        label.setTranslateY(-30);
+        if (result.equals(successful))
             label.setStyle("-fx-text-fill: green");
         messageVbox.getChildren().add(label);
-        root.getChildren().add(messageVbox);
-        new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
-            root.getChildren().remove(messageVbox);
-        })).play();
+        return new Node[]{messageVbox,closeIcon};
     }
 
     private void handleMouseHoverOnCell() {
@@ -757,7 +769,7 @@ public class MapMenu extends Application {
         textureSize.set(textureSize.get() * (100 + percentage) / 100);
     }
 
-    private Line getLine(NumberBinding startX, NumberBinding startY, NumberBinding endX, NumberBinding endY) {
+    public static Line getLine(NumberBinding startX, NumberBinding startY, NumberBinding endX, NumberBinding endY) {
         Line line = new Line();
         line.startXProperty().bind(startX);
         line.startYProperty().bind(startY);
