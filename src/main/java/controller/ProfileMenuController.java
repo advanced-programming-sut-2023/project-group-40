@@ -1,33 +1,76 @@
 package controller;
 
+import com.auth0.jwt.JWT;
 import model.User;
+
+import java.io.IOException;
 
 public class ProfileMenuController {
     private static User currentUser = new User("username", "password", "nickname", "email", null);
 
-    public static void changeUsername(String username) {
-        currentUser.setUsername(username);
+    public static void changeUsername(String newUsername) {
+        currentUser.setUsername(newUsername);
+        try {
+            String token = JWT.create().withSubject("change username")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new username",newUsername)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        }catch (IOException ignored){
+        }
     }
 
     public static void changePassword(String newPassword) {
         currentUser.setPassword(newPassword);
+        try {
+            String token = JWT.create().withSubject("change password")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new password",newPassword)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        }catch (IOException ignored){
+        }
     }
 
-    public static String changeNickname(String nickname) {
-        if (nickname == null || nickname.equals("")) return "nickname is empty!";
-        currentUser.setNickname(nickname);
-        return "nickname changed!";
+    public static void changeNickname(String newNickname) {
+        currentUser.setNickname(newNickname);
+        try {
+            String token = JWT.create().withSubject("change nickname")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new nickname",newNickname)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        }catch (IOException ignored){
+        }
     }
 
-    public static String changeEmail(String email) {
-        if (email == null || email.equals("")) return "email is empty!";
-        if (!UserController.checkEmailFormat(email)) return "email is invalid!";
-        currentUser.setEmail(email);
-        return "email changed!";
+    public static void changeEmail(String newEmail) {
+        currentUser.setEmail(newEmail);
+        try {
+            String token = JWT.create().withSubject("change email")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new email",newEmail)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        }catch (IOException ignored){
+        }
     }
 
-    public static void changeSlogan(String slogan) {
-        currentUser.setSlogan(slogan);
+    public static void changeSlogan(String newSlogan) {
+        currentUser.setSlogan(newSlogan);
+        try {
+            String token = JWT.create().withSubject("change slogan")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new slogan",newSlogan)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        }catch (IOException ignored){
+        }
     }
 
     public static boolean isPasswordCorrect(String newPassword) {

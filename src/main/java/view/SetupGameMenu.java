@@ -17,6 +17,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.Government;
 import model.Map;
+import model.PrivateUser;
 import model.User;
 
 import java.util.ArrayList;
@@ -79,8 +80,7 @@ public class SetupGameMenu extends Application {
 
     private void setupList() {
         VBox scrollVbox = new VBox();
-        //spacing problem
-        for (User user : User.getUsers()) {
+        for (PrivateUser user : ConnectToServer.getUsers()) {
             if (Objects.equals(user.getUsername(), MainMenuController.getCurrentUser().getUsername()))
                 continue;
             Label label = new Label(user.getUsername());

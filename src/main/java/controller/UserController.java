@@ -58,31 +58,4 @@ public class UserController {
         return new DigestUtils("SHA3-256").digestAsHex(password);
     }
 
-
-    public static User getUserByUsername(String username) {
-        Stream<User> stream = User.getUsers().stream().filter(user -> user.getUsername().equals(username));
-        Optional<User> user = stream.findAny();
-        return user.orElse(null);
-    }
-
-    public static User getStayedLoginUser() {
-        Optional<User> user = User.getUsers().stream().filter(User::isStayLoggedIn).findFirst();
-        return user.orElse(null);
-    }
-
-    public static String getSecurityQuestionsList() {
-        StringBuilder result = new StringBuilder();
-        for (SecurityQuestions securityQuestion : SecurityQuestions.values())
-            result.append(securityQuestion.getQuestion()).append("\n");
-        return result.toString();
-    }
-
-
-    public static void autoLogin() throws ReflectiveOperationException {
-        User stayedLoginUser = UserController.getStayedLoginUser();
-        if (stayedLoginUser != null) {
-            MainMenuController.setCurrentUser(stayedLoginUser);
-            System.out.println("user " + stayedLoginUser.getUsername() + " logged in");
-        }
-    }
 }

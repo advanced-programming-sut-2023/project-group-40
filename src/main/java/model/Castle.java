@@ -1,6 +1,9 @@
 package model;
 
+import controller.ConnectToServer;
 import controller.GameMenuController;
+
+import java.io.IOException;
 
 public class Castle {
     private final int x1, y1, x2, y2;
@@ -72,7 +75,11 @@ public class Castle {
                 User winner = Government.getGovernments().get(0).getOwner();
                 System.out.println(winner.getUsername() + " wins!");
                 winner.setHighScore(1000 * GameMenuController.getNumberOfPlayers());
-                User.updateRank();
+                try {
+                    ConnectToServer.updateRank();
+                } catch (IOException ignored) {
+
+                }
                 System.exit(0);
             }
         }

@@ -1,5 +1,6 @@
 package view;
 
+import controller.ConnectToServer;
 import controller.MainMenuController;
 import controller.UserController;
 import javafx.animation.KeyFrame;
@@ -128,7 +129,7 @@ public class LoginMenu extends Application {
                 TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
             CaptchaController.checkCaptcha();
             if (TextFieldController.isSuccessful()) {
-                MainMenuController.setCurrentUser(UserController.getUserByUsername(username.getText()));
+//                MainMenuController.setCurrentUser(ConnectToServer.getUserByUsername(username.getText()));
                 SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login succesful!");
                 successfulDialog.make();
                 new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {

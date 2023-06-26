@@ -9,7 +9,7 @@ public class RegisterMenuController {
         User user = new User(username, password, nickname, email, slogan);
         user.setSecurityQuestionNo(securityQuestionNo);
         user.setSecurityAnswer(securityQuestionAnswer);
-        User.addUser(user);
+//        User.addUser(user);
         //UserController.updateDatabase();
     }
 

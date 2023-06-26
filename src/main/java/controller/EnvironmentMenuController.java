@@ -31,7 +31,7 @@ public class EnvironmentMenuController {
     }
 
     public static boolean isPlayerAdded(String username) {
-        return Government.getGovernmentByUser(UserController.getUserByUsername(username)) != null;
+        return Government.getGovernmentByUser(ConnectToServer.getUserByUsername(username)) != null;
     }
 
 

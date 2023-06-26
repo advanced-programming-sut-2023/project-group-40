@@ -97,6 +97,6 @@ public class TradeMenuController {
     }
 
     public static Boolean isGovernmentValid(String username) {
-        return (targetGovernment = Government.getGovernmentByUser(UserController.getUserByUsername(username))) != null;
+        return (targetGovernment = Government.getGovernmentByUser(ConnectToServer.getUserByUsername(username))) != null;
     }
 }

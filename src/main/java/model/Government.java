@@ -1,5 +1,6 @@
 package model;
 
+import controller.ConnectToServer;
 import controller.UserController;
 import model.buildings.Building;
 import model.buildings.GateHouse;
@@ -40,7 +41,7 @@ public class Government {
     }
 
     public static void addGovernment(String username) {
-        Government government = new Government(UserController.getUserByUsername(username));
+        Government government = new Government(ConnectToServer.getUserByUsername(username));
         governments.add(government);
     }
 
@@ -53,7 +54,7 @@ public class Government {
     }
 
     public static void removeGovernment(String username) {
-        governments.removeIf(government -> government.getOwner() == UserController.getUserByUsername(username));
+        governments.removeIf(government -> government.getOwner() == ConnectToServer.getUserByUsername(username));
     }
 
     public User getOwner() {

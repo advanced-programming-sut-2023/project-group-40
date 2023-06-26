@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 public class User {
     private DataOutputStream dataOutputStream;
     private DataInputStream dataInputStream;
-    private static ArrayList<User> users = new ArrayList<>();
     private int highScore;
     private int rank;
     private String username;
@@ -30,29 +29,6 @@ public class User {
         this.nickname = nickname;
         this.email = email;
         this.slogan = slogan;
-    }
-
-    public static ArrayList<User> getUsers() {
-        return users;
-    }
-
-    public static void setUsers(ArrayList<User> users) {
-        User.users = users;
-    }
-
-    public static void addUser(User user) {
-        users.add(user);
-    }
-
-    public static void removeUser(User user) {
-        users.remove(user);
-    }
-
-    public static void updateRank() {
-        users = (ArrayList<User>) users.stream().sorted(Comparator.comparingInt(o -> o.highScore)).collect(Collectors.toList());
-        for (User user : users)
-            user.rank = users.size() - users.indexOf(user);
-        //UserController.updateDatabase();
     }
 
     public void setPassword(String password) {
