@@ -1,6 +1,7 @@
 package view;
 
 import controller.ConnectToServer;
+import controller.MainController;
 import controller.MainMenuController;
 import controller.UserController;
 import javafx.animation.KeyFrame;
@@ -17,6 +18,7 @@ import javafx.util.Duration;
 import model.SecurityQuestions;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Random;
 
@@ -129,18 +131,26 @@ public class LoginMenu extends Application {
                 TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
             CaptchaController.checkCaptcha();
             if (TextFieldController.isSuccessful()) {
-//                MainMenuController.setCurrentUser(ConnectToServer.getUserByUsername(username.getText()));
-                SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login succesful!");
-                successfulDialog.make();
-                new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
-                    successfulDialog.removeDialog();
-                    try {
-                        new MainMenu().start(primaryStage);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                try {
+                    String message = ConnectToServer.login(username.getText(), password.getText());
+                    if(message.startsWith("login verified")) {
+                        SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login successful!");
+                        successfulDialog.make();
+                        new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
+                            successfulDialog.removeDialog();
+                            try {
+                                new MainMenu().start(primaryStage);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        })).play();
+                    } else {
+                        ErrorDialog dialog = new ErrorDialog(root, message);
+                        dialog.make();
                     }
-                })).play();
-
+                } catch (IOException e) {
+                    //throw new RuntimeException(e);
+                }
             }
         });
         forgetMyPassword.setOnMouseClicked(mouseEvent -> {

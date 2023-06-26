@@ -1,7 +1,9 @@
 package view;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import controller.ConnectToServer;
-import controller.RegisterMenuController;
+import controller.MainMenuController;
 import controller.UserController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,9 +18,10 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.DefaultSlogans;
 import model.SecurityQuestions;
+import model.User;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Objects;
 
 public class RegisterMenu extends Application {
     private final Button generateRandomPassword = new Button("random password");
@@ -26,7 +29,7 @@ public class RegisterMenu extends Application {
     private final Button register = new Button("register");
     private final CheckBox sloganCheckBox = new CheckBox("activate slogan");
     private final Button submitButton = new Button("submit");
-    VBox loginVbox;
+    VBox registerVbox;
     private Pane root;
     private TextField username, email, nickname, slogan, securityAnswer;
     private TextField password;
@@ -49,8 +52,8 @@ public class RegisterMenu extends Application {
         Image image = new Image(RegisterMenu.class.getResource("/images/backgrounds/registerMenuBackground.jpg").toString());
         root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(App.getWidth(), App.getHeight(), false, false, true, true))));
         Scene scene = new Scene(root);
-        loginVbox = new VBox();
-        loginVbox.getStylesheets().add(Objects.requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
+        registerVbox = new VBox();
+        registerVbox.getStylesheets().add(Objects.requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
         username = new TextField();
         password = new PasswordField();
         email = new TextField();
@@ -65,7 +68,7 @@ public class RegisterMenu extends Application {
         sloganHBox = new HBox(new Label("slogan :"), slogan);
         buttonHBox = new HBox(generateRandomPassword, register);
         sloganToolsHBox = new HBox(sloganCheckBox, generateRandomSlogan, sloganComboBox);
-        loginVbox.getChildren().addAll(usernameHBox, passwordHBox, emailHBox, nicknameHBox, sloganToolsHBox, buttonHBox);
+        registerVbox.getChildren().addAll(usernameHBox, passwordHBox, emailHBox, nicknameHBox, sloganToolsHBox, buttonHBox);
         securityQuestions = new ComboBox<>();
         securityQuestions.getItems().add(SecurityQuestions.NO_1.getQuestion());
         securityQuestions.getItems().add(SecurityQuestions.NO_2.getQuestion());
@@ -75,7 +78,7 @@ public class RegisterMenu extends Application {
         for (DefaultSlogans slogan : DefaultSlogans.values())
             sloganComboBox.getItems().add(slogan.getSlogan());
         sloganComboBox.setMaxWidth(200);
-        root.getChildren().addAll(loginVbox);
+        root.getChildren().addAll(registerVbox);
         primaryStage.setScene(scene);
         primaryStage.show();
         App.setupStage(primaryStage);
@@ -128,12 +131,12 @@ public class RegisterMenu extends Application {
             if (sloganCheckBox.isSelected()) {
                 generateRandomSlogan.setVisible(true);
                 sloganComboBox.setVisible(true);
-                loginVbox.getChildren().add(4, sloganHBox);
+                registerVbox.getChildren().add(4, sloganHBox);
                 sloganHBox.setSpacing(20 + usernameBounds.getWidth() - sloganBounds.getWidth());
             } else {
                 generateRandomSlogan.setVisible(false);
                 sloganComboBox.setVisible(false);
-                loginVbox.getChildren().remove(sloganHBox);
+                registerVbox.getChildren().remove(sloganHBox);
             }
         });
         generateRandomSlogan.setOnMouseClicked(event -> {
@@ -145,22 +148,28 @@ public class RegisterMenu extends Application {
         register.setOnMouseClicked(mouseEvent -> {
             TextFieldController.setSuccessful(true);
             TextFieldController.checkEmptyUsername(usernameHBox, username);
-            TextFieldController.checkPassword(passwordHBox, password);
-            TextFieldController.checkEmail(emailHBox, email);
             TextFieldController.checkNickname(nicknameHBox, nickname);
+            TextFieldController.checkEmail(emailHBox, email);
+            TextFieldController.checkPassword(passwordHBox, password);
             TextFieldController.checkSlogan(sloganHBox, slogan);
-            try {
-                String register = ConnectToServer.register();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            if (TextFieldController.isSuccessful() ) {
-                SuccessfulDialog dialog = new SuccessfulDialog(root, "register successful");
-                dialog.make();
-                new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
-                    dialog.removeDialog();
-                    chooseSecurityQuestion();
-                })).play();
+            if (TextFieldController.isSuccessful()) {
+                try {
+                    String message = ConnectToServer.register(username.getText(), password.getText(),
+                            nickname.getText(), email.getText(), slogan.getText());
+                    if (message.startsWith("register verified")) {
+                        SuccessfulDialog dialog = new SuccessfulDialog(root, "register successful");
+                        dialog.make();
+                        new Timeline(new KeyFrame(Duration.seconds(2), actionEvent -> {
+                            dialog.removeDialog();
+                            chooseSecurityQuestion();
+                        })).play();
+                    } else {
+                        ErrorDialog dialog = new ErrorDialog(root, message);
+                        dialog.make();
+                    }
+                } catch (IOException e) {
+                    //throw new RuntimeException(e);
+                }
             }
         });
 
@@ -169,29 +178,32 @@ public class RegisterMenu extends Application {
             CaptchaController.checkCaptcha();
             TextFieldController.checkSecurityEmpty(securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
             if (TextFieldController.isSuccessful()) {
-                RegisterMenuController.register(username.getText(), password.getText(), email.getText(), nickname.getText(), slogan.getText(), securityQuestions.getItems().indexOf(securityQuestions.getValue()) + 1, securityAnswer.getText());
                 try {
-                    new LoginMenu().start(primaryStage);
+                    //MainMenuController.setCurrentUser(new Gson().fromJson(message, new TypeToken<User>(){}.getType()));
+                    MainMenuController.setCurrentUser(new User(username.getText(), password.getText(), nickname.getText(), email.getText(), slogan.getText()));
+                    new MainMenu().start(primaryStage);
+                } catch (IOException e) {
+                    //throw new RuntimeException(e);
                 } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    // throw new RuntimeException(e);
                 }
             }
         });
     }
 
     private void chooseSecurityQuestion() {
-        loginVbox.getChildren().clear();
+        registerVbox.getChildren().clear();
         CaptchaController.setUpCaptcha();
-        loginVbox.getChildren().addAll(securityQuestionsHBox, securityAnswerHBox, CaptchaController.getCaptchaHBox());
+        registerVbox.getChildren().addAll(securityQuestionsHBox, securityAnswerHBox, CaptchaController.getCaptchaHBox());
 //        submitButton.translateXProperty().bind(Bindings.add(loginVbox.widthProperty().divide(2),submitButton.translateXProperty().divide(-2)));
-        loginVbox.getChildren().addAll(submitButton);
+        registerVbox.getChildren().addAll(submitButton);
     }
 
     private void setSizes() {
-        loginVbox.translateXProperty().bind(loginVbox.widthProperty().divide(-2).add(App.getWidth() / 2));
-        loginVbox.translateYProperty().bind(loginVbox.heightProperty().divide(-2).add(App.getHeight() / 2));
+        registerVbox.translateXProperty().bind(registerVbox.widthProperty().divide(-2).add(App.getWidth() / 2));
+        registerVbox.translateYProperty().bind(registerVbox.heightProperty().divide(-2).add(App.getHeight() / 2));
         int width = (int) passwordHBox.getChildren().get(1).getBoundsInParent().getHeight();
-        loginVbox.setSpacing(App.getHeight() / 20);
+        registerVbox.setSpacing(App.getHeight() / 20);
         hideIconImage = new Image(LoginMenu.class.getResource("/images/hideIcon.png").toExternalForm(), width, width, false, false);
         showIconImage = new Image(LoginMenu.class.getResource("/images/showIcon.png").toExternalForm(), width, width, false, false);
     }

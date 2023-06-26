@@ -9,8 +9,6 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class User {
-    private DataOutputStream dataOutputStream;
-    private DataInputStream dataInputStream;
     private int highScore;
     private int rank;
     private String username;
@@ -21,7 +19,7 @@ public class User {
     private String securityAnswer;
     private int securityQuestionNo;
     private boolean isStayLoggedIn;
-    private String avatarPath = User.class.getResource("/avatars/1.png").toString();
+    private String avatarPath = User.class.getResource("/avatars/1.png").toExternalForm();
 
     public User(String username, String password, String nickname, String email, String slogan) {
         this.username = username;
@@ -30,6 +28,7 @@ public class User {
         this.email = email;
         this.slogan = slogan;
     }
+
 
     public void setPassword(String password) {
         this.passwordHash = UserController.generatePasswordHash(password);
@@ -114,21 +113,5 @@ public class User {
 
     public void setAvatarPath(String avatarPath) {
         this.avatarPath = avatarPath;
-    }
-
-    public DataOutputStream getDataOutputStream() {
-        return dataOutputStream;
-    }
-
-    public void setDataOutputStream(DataOutputStream dataOutputStream) {
-        this.dataOutputStream = dataOutputStream;
-    }
-
-    public DataInputStream getDataInputStream() {
-        return dataInputStream;
-    }
-
-    public void setDataInputStream(DataInputStream dataInputStream) {
-        this.dataInputStream = dataInputStream;
     }
 }

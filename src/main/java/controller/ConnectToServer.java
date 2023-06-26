@@ -14,25 +14,33 @@ import model.PrivateUser;
 import model.User;
 
 public class ConnectToServer {
-    public static String register() throws IOException {
+    static DataOutputStream dataOutputStream;
+    static DataInputStream dataInputStream;
+    public static String register(String username, String password, String nickname, String email, String slogan) throws IOException {
         Socket socket = new Socket("ap.ali83.ml", 80);
-        DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+        dataOutputStream = new DataOutputStream(socket.getOutputStream());
+        dataInputStream = new DataInputStream(socket.getInputStream());
+        MainController.setupCalender();
 
-        Map<String, Object> headerClaims = new HashMap<>();
-        headerClaims.put("typ", "JWT");
-        Calendar c = Calendar.getInstance();
-        Date now = c.getTime();
-        c.add(Calendar.SECOND, 20);
-        Date expirationDate = c.getTime();
         String token = JWT.create().withSubject("register")
-                .withExpiresAt(expirationDate)
-                .withIssuer("username")
-                .withIssuedAt(now)
-                .withNotBefore(now)
-                .withClaim("password", "password")
-                .withHeader(headerClaims)
-                .sign(Algorithm.HMAC256("ya sattar"));
+                .withExpiresAt(MainController.getExpirationDate())
+                .withIssuer(username)
+                .withClaim("password", password)
+                .withClaim("nickname", nickname)
+                .withClaim("email", email)
+                .withClaim("slogan", slogan)
+                .withHeader(MainController.headerClaims)
+                .sign(MainController.tokenAlgorithm);
+        dataOutputStream.writeUTF(token);
+        return dataInputStream.readUTF();
+    }
+    public static String login(String username, String password) throws IOException{
+        String token = JWT.create().withSubject("login")
+                .withExpiresAt(MainController.getExpirationDate())
+                .withIssuer(username)
+                .withClaim("password", password)
+                .withHeader(MainController.headerClaims)
+                .sign(MainController.tokenAlgorithm);
         dataOutputStream.writeUTF(token);
         return dataInputStream.readUTF();
     }

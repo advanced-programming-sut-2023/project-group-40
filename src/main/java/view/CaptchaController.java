@@ -1,6 +1,5 @@
 package view;
 
-import controller.RegisterMenuController;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
