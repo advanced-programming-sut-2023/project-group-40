@@ -22,6 +22,4 @@ public class GameMenu {
         return coordinates;
     }
 
-
-
 }

@@ -54,13 +54,6 @@ public class UserController {
         return matcher.matches();
     }
 
-    public static boolean isUsernameExists(String username) {
-        return User.getUsers().stream().anyMatch(user -> user.getUsername().equals(username));
-    }
-
-    public static boolean isEmailExists(String email) {
-        return User.getUsers().stream().anyMatch(user -> user.getEmail().equalsIgnoreCase(email));
-    }
     public static String generatePasswordHash(String password) {
         return new DigestUtils("SHA3-256").digestAsHex(password);
     }

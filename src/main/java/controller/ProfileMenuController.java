@@ -22,7 +22,6 @@ public class ProfileMenuController {
     public static String changeEmail(String email) {
         if (email == null || email.equals("")) return "email is empty!";
         if (!UserController.checkEmailFormat(email)) return "email is invalid!";
-        if (UserController.isEmailExists(email)) return "email is exists!";
         currentUser.setEmail(email);
         return "email changed!";
     }

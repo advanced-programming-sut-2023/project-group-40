@@ -209,7 +209,7 @@ public class ProfileMenu extends Application {
             }
         });
         save.setOnMouseClicked(mouseEvent -> {
-            TextFieldController.checkExistUsername(usernameHBox, username);
+            TextFieldController.checkEmptyUsername(usernameHBox, username);
             TextFieldController.checkEmail(emailHBox, email);
             TextFieldController.checkNickname(nicknameHBox, nickname);
             if (TextFieldController.isSuccessful()) {

@@ -1,30 +1,23 @@
 package view;
 
-import com.google.gson.GsonBuilder;
+import controller.ConnectToServer;
 import controller.RegisterMenuController;
 import controller.UserController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.DefaultSlogans;
 import model.SecurityQuestions;
-import model.Texture;
 
-import java.io.*;
-import java.net.Socket;
-import java.nio.file.attribute.UserDefinedFileAttributeView;
+import java.io.IOException;
 import java.util.*;
 
 public class RegisterMenu extends Application {
@@ -37,12 +30,11 @@ public class RegisterMenu extends Application {
     private Pane root;
     private TextField username, email, nickname, slogan, securityAnswer;
     private TextField password;
-    private HBox usernameHBox, passwordHBox, emailHBox, nicknameHBox, buttonHBox, sloganHBox,
-            sloganToolsHBox, securityQuestionsHBox, securityAnswerHBox;
+    private HBox usernameHBox, passwordHBox, emailHBox, nicknameHBox, buttonHBox, sloganHBox, sloganToolsHBox, securityQuestionsHBox, securityAnswerHBox;
     private Image hideIconImage;
     private Image showIconImage;
     private ImageView eyeIcon;
-    private ComboBox<String> securityQuestions,sloganComboBox = new ComboBox<>();
+    private ComboBox<String> securityQuestions, sloganComboBox = new ComboBox<>();
     private Stage primaryStage;
 
     {
@@ -55,12 +47,10 @@ public class RegisterMenu extends Application {
         this.primaryStage = primaryStage;
         root = new Pane();
         Image image = new Image(RegisterMenu.class.getResource("/images/backgrounds/registerMenuBackground.jpg").toString());
-        root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(App.getWidth(), App.getHeight(), false, false
-                , true, true))));
+        root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(App.getWidth(), App.getHeight(), false, false, true, true))));
         Scene scene = new Scene(root);
         loginVbox = new VBox();
-        loginVbox.getStylesheets().add(Objects
-                .requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
+        loginVbox.getStylesheets().add(Objects.requireNonNull(LoginMenu.class.getResource("/css/loginMenu.css")).toExternalForm());
         username = new TextField();
         password = new PasswordField();
         email = new TextField();
@@ -74,7 +64,7 @@ public class RegisterMenu extends Application {
         nicknameHBox = new HBox(new Label("nickname :"), nickname);
         sloganHBox = new HBox(new Label("slogan :"), slogan);
         buttonHBox = new HBox(generateRandomPassword, register);
-        sloganToolsHBox = new HBox(sloganCheckBox, generateRandomSlogan,sloganComboBox);
+        sloganToolsHBox = new HBox(sloganCheckBox, generateRandomSlogan, sloganComboBox);
         loginVbox.getChildren().addAll(usernameHBox, passwordHBox, emailHBox, nicknameHBox, sloganToolsHBox, buttonHBox);
         securityQuestions = new ComboBox<>();
         securityQuestions.getItems().add(SecurityQuestions.NO_1.getQuestion());
@@ -94,7 +84,7 @@ public class RegisterMenu extends Application {
         setActions();
     }
 
-    private void setActions(){
+    private void setActions() {
         eyeIcon = new ImageView(hideIconImage);
         passwordHBox.getChildren().addAll(eyeIcon);
         username.textProperty().addListener((observableValue, s, t1) -> {
@@ -153,16 +143,18 @@ public class RegisterMenu extends Application {
             slogan.setText(sloganComboBox.getValue());
         });
         register.setOnMouseClicked(mouseEvent -> {
-
-
-
             TextFieldController.setSuccessful(true);
-            TextFieldController.checkExistUsername(usernameHBox, username);
+            TextFieldController.checkEmptyUsername(usernameHBox, username);
             TextFieldController.checkPassword(passwordHBox, password);
             TextFieldController.checkEmail(emailHBox, email);
             TextFieldController.checkNickname(nicknameHBox, nickname);
             TextFieldController.checkSlogan(sloganHBox, slogan);
-            if (TextFieldController.isSuccessful()) {
+            try {
+                String register = ConnectToServer.register();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            if (TextFieldController.isSuccessful() ) {
                 SuccessfulDialog dialog = new SuccessfulDialog(root, "register successful");
                 dialog.make();
                 new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
@@ -177,8 +169,7 @@ public class RegisterMenu extends Application {
             CaptchaController.checkCaptcha();
             TextFieldController.checkSecurityEmpty(securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
             if (TextFieldController.isSuccessful()) {
-                RegisterMenuController.register(username.getText(), password.getText(), email.getText(), nickname.getText()
-                        , slogan.getText(), securityQuestions.getItems().indexOf(securityQuestions.getValue()) + 1, securityAnswer.getText());
+                RegisterMenuController.register(username.getText(), password.getText(), email.getText(), nickname.getText(), slogan.getText(), securityQuestions.getItems().indexOf(securityQuestions.getValue()) + 1, securityAnswer.getText());
                 try {
                     new LoginMenu().start(primaryStage);
                 } catch (Exception e) {

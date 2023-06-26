@@ -11,32 +11,13 @@ import javafx.scene.layout.HBox;
 public class TextFieldController {
     private static boolean successful = true;
 
-    public static void checkExistUsername(HBox usernameHBox, TextField username) {
+    public static void checkEmptyUsername(HBox usernameHBox, TextField username) {
         if (username.getText().length() == 0) {
             successful = false;
             Errors.USERNAME_ERROR.getErrorLabel().setText("username is empty!");
             if (usernameHBox.getChildren().size() == 2)
                 usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
-        } else if (UserController.isUsernameExists(username.getText())) {
-            successful = false;
-            Errors.USERNAME_ERROR.getErrorLabel().setText("username is exists!");
-            if (usernameHBox.getChildren().size() == 2)
-                usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
-        } else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
-    }
-
-    public static void checkNotExistUsername(HBox usernameHBox, TextField username) {
-        if (username.getText().length() == 0) {
-            successful = false;
-            Errors.USERNAME_ERROR.getErrorLabel().setText("username is empty!");
-            if (usernameHBox.getChildren().size() == 2)
-                usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
-        } else if (!UserController.isUsernameExists(username.getText())) {
-            successful = false;
-            Errors.USERNAME_ERROR.getErrorLabel().setText("username is not exists!");
-            if (usernameHBox.getChildren().size() == 2)
-                usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
-        } else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
+        }  else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
     }
 
     public static void checkSlogan(HBox sloganHBox, TextField slogan) {
@@ -61,11 +42,8 @@ public class TextFieldController {
             Errors.EMAIL_ERROR.getErrorLabel().setText("email is empty!");
             if (emailHBox.getChildren().size() == 2)
                 emailHBox.getChildren().add(Errors.EMAIL_ERROR.getErrorLabel());
-        } else if (UserController.isEmailExists(email.getText())) {
-            Errors.EMAIL_ERROR.getErrorLabel().setText("email is exists!");
-            if (emailHBox.getChildren().size() == 2)
-                emailHBox.getChildren().add(Errors.EMAIL_ERROR.getErrorLabel());
-        } else emailHBox.getChildren().remove(Errors.EMAIL_ERROR.getErrorLabel());
+        }
+        else emailHBox.getChildren().remove(Errors.EMAIL_ERROR.getErrorLabel());
     }
 
     public static void checkPassword(HBox passwordHBox, TextField password) {
@@ -125,7 +103,6 @@ public class TextFieldController {
 
     public static void checkSecurity(TextField username, ComboBox<String> securityQuestions, HBox securityQuestionsHBox,
                                      HBox securityAnswerHBox, TextField securityAnswer) {
-        if (!UserController.isUsernameExists(username.getText())) return;
         if (securityQuestions.getItems().indexOf(securityQuestions.getValue()) + 1
                 != LoginMenuController.getSecurityQuestionNo(username.getText())) {
             if (securityQuestionsHBox.getChildren().size() == 2)

@@ -122,7 +122,7 @@ public class LoginMenu extends Application {
         });
         login.setOnMouseClicked(mouseEvent -> {
             TextFieldController.setSuccessful(true);
-            TextFieldController.checkNotExistUsername(usernameHBox, username);
+            TextFieldController.checkEmptyUsername(usernameHBox, username);
             TextFieldController.checkPassword(passwordHBox, passwordLabel, username, password);
             if (forgetMyPassword.isSelected())
                 TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
