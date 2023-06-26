@@ -61,32 +61,6 @@ public class UserController {
     public static boolean isEmailExists(String email) {
         return User.getUsers().stream().anyMatch(user -> user.getEmail().equalsIgnoreCase(email));
     }
-
-    public static void fetchDatabase() {
-        if (!new File(User.getPATH()).exists()) return;
-        try (FileReader reader = new FileReader(User.getPATH())) {
-            ArrayList<User> copy = new Gson().fromJson(reader, new TypeToken<List<User>>() {
-            }.getType());
-            if (copy != null) User.setUsers(copy);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void updateDatabase() {
-        File file = new File(User.getPATH());
-        try {
-            if (!file.exists()) file.createNewFile();
-        } catch (IOException e) {
-            System.out.println("update database failed");
-        }
-        try (FileWriter writer = new FileWriter(User.getPATH(), false)) {
-            writer.write(new Gson().toJson(User.getUsers()));
-        } catch (IOException e) {
-            System.out.println("update database failed");
-        }
-    }
-
     public static String generatePasswordHash(String password) {
         return new DigestUtils("SHA3-256").digestAsHex(password);
     }

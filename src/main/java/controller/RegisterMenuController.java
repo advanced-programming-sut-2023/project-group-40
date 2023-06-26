@@ -10,7 +10,7 @@ public class RegisterMenuController {
         user.setSecurityQuestionNo(securityQuestionNo);
         user.setSecurityAnswer(securityQuestionAnswer);
         User.addUser(user);
-        UserController.updateDatabase();
+        //UserController.updateDatabase();
     }
 
 }

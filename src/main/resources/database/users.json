@@ -1,0 +1,15 @@
+[
+  {
+    "highScore": 0,
+    "rank": 0,
+    "username": "username",
+    "passwordHash": "e1dc97a1608d949d4ff97f9692900a663d182e62fca11032d02901196a6a3de2",
+    "nickname": "username",
+    "email": "2@2.2",
+    "slogan": "",
+    "securityAnswer": "dd",
+    "securityQuestionNo": 1,
+    "isStayLoggedIn": false,
+    "avatarPath": "file:/C:/Users/emran/Desktop/java.project/project-group-40/target/classes/avatars/1.png"
+  }
+]

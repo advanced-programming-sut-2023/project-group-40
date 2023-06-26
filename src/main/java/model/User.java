@@ -2,12 +2,15 @@ package model;
 
 import controller.UserController;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class User {
-    private static final String PATH = "src/main/resources/database/users.json";
+    private DataOutputStream dataOutputStream;
+    private DataInputStream dataInputStream;
     private static ArrayList<User> users = new ArrayList<>();
     private int highScore;
     private int rank;
@@ -49,11 +52,7 @@ public class User {
         users = (ArrayList<User>) users.stream().sorted(Comparator.comparingInt(o -> o.highScore)).collect(Collectors.toList());
         for (User user : users)
             user.rank = users.size() - users.indexOf(user);
-        UserController.updateDatabase();
-    }
-
-    public static String getPATH() {
-        return PATH;
+        //UserController.updateDatabase();
     }
 
     public void setPassword(String password) {
@@ -139,5 +138,21 @@ public class User {
 
     public void setAvatarPath(String avatarPath) {
         this.avatarPath = avatarPath;
+    }
+
+    public DataOutputStream getDataOutputStream() {
+        return dataOutputStream;
+    }
+
+    public void setDataOutputStream(DataOutputStream dataOutputStream) {
+        this.dataOutputStream = dataOutputStream;
+    }
+
+    public DataInputStream getDataInputStream() {
+        return dataInputStream;
+    }
+
+    public void setDataInputStream(DataInputStream dataInputStream) {
+        this.dataInputStream = dataInputStream;
     }
 }

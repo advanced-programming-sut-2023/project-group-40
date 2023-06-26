@@ -1,5 +1,6 @@
 package view;
 
+import com.google.gson.GsonBuilder;
 import controller.RegisterMenuController;
 import controller.UserController;
 import javafx.animation.KeyFrame;
@@ -21,10 +22,10 @@ import model.DefaultSlogans;
 import model.SecurityQuestions;
 import model.Texture;
 
-import java.io.File;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Timer;
+import java.io.*;
+import java.net.Socket;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
+import java.util.*;
 
 public class RegisterMenu extends Application {
     private final Button generateRandomPassword = new Button("random password");
@@ -93,7 +94,7 @@ public class RegisterMenu extends Application {
         setActions();
     }
 
-    private void setActions() {
+    private void setActions(){
         eyeIcon = new ImageView(hideIconImage);
         passwordHBox.getChildren().addAll(eyeIcon);
         username.textProperty().addListener((observableValue, s, t1) -> {
@@ -152,6 +153,9 @@ public class RegisterMenu extends Application {
             slogan.setText(sloganComboBox.getValue());
         });
         register.setOnMouseClicked(mouseEvent -> {
+
+
+
             TextFieldController.setSuccessful(true);
             TextFieldController.checkExistUsername(usernameHBox, username);
             TextFieldController.checkPassword(passwordHBox, password);

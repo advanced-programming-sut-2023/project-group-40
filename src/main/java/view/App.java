@@ -10,9 +10,10 @@ public class App extends Application {
     private static double width,height;
     @Override
     public void start(Stage primaryStage) throws Exception {
-        UserController.fetchDatabase();
+       // UserController.fetchDatabase();
         setupStage(primaryStage);
-        new ShopMenu().start(primaryStage);
+       // new ShopMenu().start(primaryStage);
+        new LoginMenu().start(primaryStage);
     }
 
     public static void setupStage(Stage primaryStage) {
