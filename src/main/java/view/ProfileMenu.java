@@ -34,7 +34,7 @@ public class ProfileMenu extends Application {
     private final CheckBox sloganCheckBox = new CheckBox("show slogan");
     private final Button changePasswordButton = new Button("change password");
     private final Button leaderBoardButton = new Button("leader board");
-    private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
+    private final ImageView avatar = new ImageView(new Image(ProfileMenu.class.getResource("/avatars/") + ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
     private final AnchorPane leaderBoardPane = new AnchorPane();
     private Pane root;
     private Bounds usernameBounds;

@@ -155,7 +155,7 @@ public class RegisterMenu extends Application {
                 try {
                     String message = ConnectToServer.register(username.getText(), password.getText(),
                             nickname.getText(), email.getText(), slogan.getText());
-                    if (message.startsWith("register verified")) {
+                    if (message.startsWith("your register verified")) {
                         SuccessfulDialog dialog = new SuccessfulDialog(root, "register successful");
                         dialog.make();
                         new Timeline(new KeyFrame(Duration.seconds(2), actionEvent -> {
@@ -181,10 +181,9 @@ public class RegisterMenu extends Application {
                     String message = ConnectToServer.securityAnswer(securityAnswer.getText(), Integer.parseInt(securityQuestions.getValue().substring(0,1)));
                     MainMenuController.setCurrentUser(new Gson().fromJson(message, User.class));
                     new MainMenu().start(primaryStage);
-                } catch (IOException e) {
-                    //throw new RuntimeException(e);
                 } catch (Exception e) {
-                    // throw new RuntimeException(e);
+                    e.printStackTrace();
+                    System.exit(0);
                 }
             }
         });

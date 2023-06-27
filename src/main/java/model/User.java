@@ -113,4 +113,5 @@ public class User {
     public void setAvatarPath(String avatarPath) {
         this.avatarPath = avatarPath;
     }
+
 }

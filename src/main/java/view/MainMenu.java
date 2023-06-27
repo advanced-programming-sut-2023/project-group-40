@@ -77,7 +77,7 @@ public class MainMenu extends Application {
             try {
                 new ProfileMenu().start(primaryStage);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         });
         logout.setOnMouseClicked(event -> {

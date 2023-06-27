@@ -12,15 +12,15 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import model.PrivateUser;
 import model.User;
+import view.ProfileMenu;
 
 public class ConnectToServer {
     static DataOutputStream dataOutputStream;
     static DataInputStream dataInputStream;
     public static String register(String username, String password, String nickname, String email, String slogan) throws IOException {
-        Socket socket = new Socket("151.241.23.248", 80);
+        Socket socket = new Socket("2.190.254.123", 80);
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
         dataInputStream = new DataInputStream(socket.getInputStream());
-        System.out.println("111");
         MainController.setupCalender();
 
         String token = JWT.create().withSubject("register")
@@ -43,6 +43,8 @@ public class ConnectToServer {
                 .withHeader(MainController.headerClaims)
                 .sign(MainController.tokenAlgorithm);
         dataOutputStream.writeUTF(token);
+        MainController.dataOutputStream = dataOutputStream;
+        MainController.dataInputStream = dataInputStream;
         return dataInputStream.readUTF();
     }
     public static String login(String username, String password) throws IOException{
@@ -72,9 +74,11 @@ public class ConnectToServer {
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-            return new Gson().fromJson(MainController.dataInputStream.readUTF()
-                    , new TypeToken<List<PrivateUser>>() {
-            }.getType());
+            List<PrivateUser> privateUsers = new Gson().fromJson(MainController.dataInputStream.readUTF(), new TypeToken<List<PrivateUser>>() {}.getType());
+            for (PrivateUser privateUser : privateUsers) {
+                privateUser.setAvatarPath(ProfileMenu.class.getResource("/avatars/") + ProfileMenuController.getCurrentUser().getAvatarPath());
+            }
+            return privateUsers;
         }catch (IOException exception){
             return new ArrayList<>();
         }
