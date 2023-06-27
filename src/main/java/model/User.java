@@ -2,6 +2,8 @@ package model;
 
 import controller.UserController;
 
+import java.nio.Buffer;
+
 public class User {
     private int highScore;
     private int rank;
@@ -13,7 +15,7 @@ public class User {
     private String securityAnswer;
     private int securityQuestionNo;
     private boolean isOnline;
-    private String avatarPath;
+    private byte[] avatarByteArray;
 
     public User(String username, String password, String nickname, String email, String slogan) {
         this.username = username;
@@ -101,12 +103,12 @@ public class User {
         this.securityQuestionNo = securityQuestionNo;
     }
 
-    public String getAvatarPath() {
-        return avatarPath;
+    public byte[] getAvatarByteArray() {
+        return avatarByteArray;
     }
 
-    public void setAvatarPath(String avatarPath) {
-        this.avatarPath = avatarPath;
+    public void setAvatarByteArray(byte[] avatarByteArray) {
+        this.avatarByteArray = avatarByteArray;
     }
 
 }

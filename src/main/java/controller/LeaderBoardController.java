@@ -10,8 +10,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import model.PrivateUser;
+import model.User;
 import view.ProfileMenu;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 
@@ -54,7 +56,7 @@ public class LeaderBoardController {
                 param -> new SimpleIntegerProperty(allUsers.indexOf(param.getValue()) + 1).asObject());
 
         avatarColumn.setCellValueFactory(param -> {
-            ImageView imageView = new ImageView(param.getValue().getAvatarPath());
+            ImageView imageView = new ImageView(new Image(new ByteArrayInputStream(param.getValue().getAvatarByteArray()), 100, 100, false, false));
             imageView.setFitWidth(30);
             imageView.setFitHeight(30);
             return new SimpleObjectProperty<>(imageView);
@@ -74,23 +76,32 @@ public class LeaderBoardController {
         tableView.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (event.getDeltaY() > 0)
                 if (start != 1) start -= 10;
-
             if (event.getDeltaY() < 0)
                 if (start + 10 <= allUsers.size()) start += 10;
-
             tableView.getItems().clear();
             tableView.getItems().addAll(getUsers(start));
         });
-
         tableView.setRowFactory(param -> {
             TableRow<PrivateUser> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2) {
-                    ProfileMenuController.changeAvatar(tableView.getItems().get(row.getIndex()).getAvatarPath());
-                    profileMenu.getAvatar().setImage(new Image(tableView.getItems().get(row.getIndex()).getAvatarPath(), 100, 100, true, true));
+
+//                    ProfileMenuController.changeAvatar(tableView.getItems().get(row.getIndex()).getAvatarPath());
+                    profileMenu.getAvatar().setImage(new Image(new ByteArrayInputStream(tableView.getItems().get(row.getIndex()).getAvatarByteArray()), 100, 100, true, true));
                 }
             });
             return row;
+        });
+
+        tableView.setRowFactory(userTableView -> new TableRow<>() {
+            @Override
+            protected void updateItem(PrivateUser user, boolean b) {
+                if (!b && user.isOnline())
+                    setStyle("-fx-background-color: rgba(56,111,6,0.8)");
+                else if (!b)
+                    setStyle("-fx-background-color: rgba(255,0,0,0.8)");
+                super.updateItem(user, b);
+            }
         });
     }
 

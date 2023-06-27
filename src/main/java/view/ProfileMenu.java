@@ -21,12 +21,17 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.Buffer;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
 
 public class ProfileMenu extends Application {
     private final String EMPTY_SLOGAN = "slogan is empty!";
@@ -34,7 +39,12 @@ public class ProfileMenu extends Application {
     private final CheckBox sloganCheckBox = new CheckBox("show slogan");
     private final Button changePasswordButton = new Button("change password");
     private final Button leaderBoardButton = new Button("leader board");
-    private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath().contains("\\") ? ProfileMenuController.getCurrentUser().getAvatarPath() : ProfileMenu.class.getResource("/avatars/") + ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
+    private final ImageView avatar = new ImageView(ByteArrayToImage(ProfileMenuController.getCurrentUser().getAvatarByteArray()));
+
+    private Image ByteArrayToImage(byte[] avatarByteArray) {
+        return new Image(new ByteArrayInputStream(avatarByteArray), 100, 100, false, false);
+    }
+
     private final AnchorPane leaderBoardPane = new AnchorPane();
     private Pane root;
     private Bounds usernameBounds;

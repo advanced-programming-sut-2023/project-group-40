@@ -2,7 +2,10 @@ package controller;
 
 import com.auth0.jwt.JWT;
 import model.User;
-
+import java.io.ByteArrayOutputStream;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import javax.imageio.ImageIO;
 import java.io.IOException;
 
 public class ProfileMenuController {
@@ -86,15 +89,20 @@ public class ProfileMenuController {
     }
 
     public static void changeAvatar(String avatarPath) {
-        String universalPath = avatarPath.split("classes/avatars/")[avatarPath.split("classes/avatars/").length - 1];
-        currentUser.setAvatarPath(universalPath);
         try {
             String token = JWT.create().withSubject("change avatar")
                     .withExpiresAt(MainController.getExpirationDate())
-                    .withClaim("new avatar", universalPath)
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
+
+            BufferedImage bImage = ImageIO.read(new File(avatarPath));
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "jpg", bos );
+            byte [] data = bos.toByteArray();
+            currentUser.setAvatarByteArray(data);
+            MainController.dataOutputStream.write(data);
+
             LeaderBoardController.refresh();
         } catch (IOException ignored) {
         }

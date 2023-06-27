@@ -7,6 +7,7 @@ module project.group {
     requires com.google.gson;
     requires org.apache.commons.lang3;
     requires com.auth0.jwt;
+    requires java.desktop;
 
     exports view;
     opens view to javafx.fxml;

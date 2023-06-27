@@ -22,7 +22,7 @@ public class ConnectToServer {
     static {
         try {
             MainController.setupCalender();
-            Socket socket = new Socket("2.190.254.123", 80);
+            Socket socket = new Socket("192.168.1.10", 80);
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
             dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
@@ -91,11 +91,6 @@ public class ConnectToServer {
             dataOutputStream.writeUTF(token);
             List<PrivateUser> privateUsers = new Gson().fromJson(dataInputStream.readUTF(), new TypeToken<List<PrivateUser>>() {
             }.getType());
-            for (PrivateUser privateUser : privateUsers) {
-                privateUser.setAvatarPath(privateUser.getAvatarPath().contains("\\")
-                        ? privateUser.getAvatarPath()
-                        : ProfileMenu.class.getResource("/avatars/") + privateUser.getAvatarPath());
-            }
             return privateUsers;
         } catch (IOException exception) {
             return new ArrayList<>();
