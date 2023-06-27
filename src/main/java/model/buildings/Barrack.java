@@ -1,7 +1,6 @@
 package model.buildings;
 
 import model.Texture;
-import model.Tree;
 import model.troops.Troop;
 import model.troops.Troops;
 

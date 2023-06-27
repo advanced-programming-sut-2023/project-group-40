@@ -1,22 +1,15 @@
 package view;
 
-import controller.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import controller.MainMenuController;
+import controller.ProfileMenuController;
 import javafx.application.Application;
-import javafx.geometry.Bounds;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import model.SecurityQuestions;
 
-import java.io.File;
 import java.util.Objects;
-import java.util.Random;
 
 public class MainMenu extends Application {
     private static Stage primaryStage;

@@ -7,11 +7,10 @@ import model.troops.Troops;
 import view.GameMenu;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 
 
 public class GameMenuController {
-    private static Government currentGovernment = new Government(new User("user1","pass1","nickname1","email1",null));
+    private static Government currentGovernment = new Government(new User("user1", "pass1", "nickname1", "email1", null));
     private static Government onGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;
@@ -21,7 +20,7 @@ public class GameMenuController {
     public static void setMapSize(int size) {
         Map.initMap(size);
     }
-    
+
 
     public static String showPopularity() {
         return "rate of your government popularity is " + currentGovernment.getPopularity();
@@ -257,8 +256,7 @@ public class GameMenuController {
                 return "you can't create " + type + " in " + selectedBuilding.getName();
             currentGovernment.getCastle().changeNumberOfActiveWorkers(count);
             currentGovernment.decreaseAmountOfGood(Good.GOLD, 10 * count);
-        }
-        else {
+        } else {
             Troop troop = Troops.getTroopObjectByType(type);
             if (troop == null) return "unit type is invalid!";
 //            if (currentGovernment.getAmountOfGood(Good.GOLD) < troop.getValue() * count)
@@ -275,11 +273,10 @@ public class GameMenuController {
 //            }
             currentGovernment.getCastle().changePopulation(-1 * count);
             if (building instanceof Barrack barrack) {
-                barrack.addTroop(type,count);
+                barrack.addTroop(type, count);
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, count * troop.getValue());
                 currentGovernment.decreaseAmountOfGood(troop.getWeapon(), count);
-            }
-            else {
+            } else {
 
             }
 //            if (troop.getName().startsWith("Archer"))

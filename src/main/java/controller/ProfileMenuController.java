@@ -6,18 +6,18 @@ import model.User;
 import java.io.IOException;
 
 public class ProfileMenuController {
-    private static User currentUser = new User("username", "password", "nickname", "email", null);
+    private static User currentUser;
 
     public static void changeUsername(String newUsername) {
         currentUser.setUsername(newUsername);
         try {
             String token = JWT.create().withSubject("change username")
                     .withExpiresAt(MainController.getExpirationDate())
-                    .withClaim("new username",newUsername)
+                    .withClaim("new username", newUsername)
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        }catch (IOException ignored){
+        } catch (IOException ignored) {
         }
     }
 
@@ -26,11 +26,11 @@ public class ProfileMenuController {
         try {
             String token = JWT.create().withSubject("change password")
                     .withExpiresAt(MainController.getExpirationDate())
-                    .withClaim("new password",newPassword)
+                    .withClaim("new password", UserController.generatePasswordHash(newPassword))
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        }catch (IOException ignored){
+        } catch (IOException ignored) {
         }
     }
 
@@ -39,11 +39,11 @@ public class ProfileMenuController {
         try {
             String token = JWT.create().withSubject("change nickname")
                     .withExpiresAt(MainController.getExpirationDate())
-                    .withClaim("new nickname",newNickname)
+                    .withClaim("new nickname", newNickname)
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        }catch (IOException ignored){
+        } catch (IOException ignored) {
         }
     }
 
@@ -52,11 +52,11 @@ public class ProfileMenuController {
         try {
             String token = JWT.create().withSubject("change email")
                     .withExpiresAt(MainController.getExpirationDate())
-                    .withClaim("new email",newEmail)
+                    .withClaim("new email", newEmail)
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        }catch (IOException ignored){
+        } catch (IOException ignored) {
         }
     }
 
@@ -65,11 +65,11 @@ public class ProfileMenuController {
         try {
             String token = JWT.create().withSubject("change slogan")
                     .withExpiresAt(MainController.getExpirationDate())
-                    .withClaim("new slogan",newSlogan)
+                    .withClaim("new slogan", newSlogan)
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        }catch (IOException ignored){
+        } catch (IOException ignored) {
         }
     }
 
@@ -86,6 +86,17 @@ public class ProfileMenuController {
     }
 
     public static void changeAvatar(String avatarPath) {
-        currentUser.setAvatarPath(avatarPath);
+        String universalPath = avatarPath.split("classes/avatars/")[avatarPath.split("classes/avatars/").length - 1];
+        currentUser.setAvatarPath(universalPath);
+        try {
+            String token = JWT.create().withSubject("change avatar")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new avatar", universalPath)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+            LeaderBoardController.refresh();
+        } catch (IOException ignored) {
+        }
     }
 }

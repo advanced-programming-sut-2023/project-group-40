@@ -1,6 +1,5 @@
 package view;
 
-import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -8,7 +7,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextAlignment;
 
 public class ErrorDialog {
     private final Label contentLabel;
@@ -45,11 +43,9 @@ public class ErrorDialog {
         contentLabel.setMinWidth(vBox.getMinWidth());
         contentLabel.setTranslateY(20);
         Button okButton = new Button("OK");
-        okButton.setTranslateY(10);
+        okButton.setTranslateY(35);
         okButton.setStyle("-fx-background-color: red");
-        okButton.setOnMouseClicked(mouseEvent -> {
-            removeDialog();
-        });
+        okButton.setOnMouseClicked(mouseEvent -> removeDialog());
         vBox.getChildren().addAll(imageView, label, contentLabel, okButton);
         root.getChildren().add(vBox);
     }

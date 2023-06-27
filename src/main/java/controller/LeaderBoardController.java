@@ -6,27 +6,25 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import model.PrivateUser;
-import model.User;
 import view.ProfileMenu;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 
 public class LeaderBoardController {
-    private final TableView<PrivateUser> tableView = new TableView<>();
-    private final TableColumn<PrivateUser, Integer> rankColumn = new TableColumn<>();
-    private final TableColumn<PrivateUser, ImageView> avatarColumn = new TableColumn<>();
-    private final TableColumn<PrivateUser, String> usernameColumn = new TableColumn<>();
-    private final TableColumn<PrivateUser, Integer> scoreColumn = new TableColumn<>();
-    private List<PrivateUser> allUsers = ConnectToServer.getUsers();
-    private int start = 1;
+    private static final TableView<PrivateUser> tableView = new TableView<>();
+    private static final TableColumn<PrivateUser, Integer> rankColumn = new TableColumn<>();
+    private static final TableColumn<PrivateUser, ImageView> avatarColumn = new TableColumn<>();
+    private static final TableColumn<PrivateUser, String> usernameColumn = new TableColumn<>();
+    private static final TableColumn<PrivateUser, Integer> scoreColumn = new TableColumn<>();
+    private static List<PrivateUser> allUsers = ConnectToServer.getUsers();
+    private static int start = 1;
 
-    {
+    static {
         rankColumn.setText("Rank");
         rankColumn.setResizable(false);
         rankColumn.setPrefWidth(80);
@@ -50,7 +48,7 @@ public class LeaderBoardController {
         tableView.setSortPolicy(param -> false);
     }
 
-    public void showTableView(ProfileMenu profileMenu) {
+    public static void showTableView(ProfileMenu profileMenu) {
         tableView.getItems().clear();
         rankColumn.setCellValueFactory(
                 param -> new SimpleIntegerProperty(allUsers.indexOf(param.getValue()) + 1).asObject());
@@ -88,22 +86,23 @@ public class LeaderBoardController {
             TableRow<PrivateUser> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2) {
-                    profileMenu.changeAvatar(tableView.getItems().get(row.getIndex()).getAvatarPath());
+                    ProfileMenuController.changeAvatar(tableView.getItems().get(row.getIndex()).getAvatarPath());
+                    profileMenu.getAvatar().setImage(new Image(tableView.getItems().get(row.getIndex()).getAvatarPath(), 100, 100, true, true));
                 }
             });
             return row;
         });
     }
 
-    public TableView<PrivateUser> getTableView() {
+    public static TableView<PrivateUser> getTableView() {
         return tableView;
     }
 
-    public List<PrivateUser> getUsers(int start) {
+    public static List<PrivateUser> getUsers(int start) {
         return allUsers.subList(start - 1, Math.min(start + 9, allUsers.size()));
     }
 
-    public void refresh() {
+    public static void refresh() {
         allUsers = ConnectToServer.getUsers();
         tableView.getItems().clear();
         tableView.getItems().addAll(getUsers(start));

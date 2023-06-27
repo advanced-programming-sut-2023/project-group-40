@@ -1,15 +1,10 @@
 package view;
 
-import controller.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import controller.ConnectToServer;
+import controller.GameMenuController;
+import controller.MainMenuController;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
-import javafx.collections.ObservableList;
-import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -18,7 +13,6 @@ import javafx.stage.Stage;
 import model.Government;
 import model.Map;
 import model.PrivateUser;
-import model.User;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -27,15 +21,14 @@ public class SetupGameMenu extends Application {
     private static Stage primaryStage;
     private final ComboBox<String> gameModeComboBox = new ComboBox<>();
     private final ScrollPane scrollPane = new ScrollPane();
-    private Pane root;
     private final VBox mainVbox = new VBox();
-    private int countOfPlayers = 2;
     private final ArrayList<CheckBox> checkBoxes = new ArrayList<>();
     private final Button startGame = new Button("start game");
-    private int size = 200;
     private final Button firstSizeButton = new Button("200 x 200");
     private final Button secondSizeButton = new Button("400 x 400");
-
+    private Pane root;
+    private int countOfPlayers = 2;
+    private int size = 200;
 
     @Override
     public void start(Stage primaryStage) throws Exception {

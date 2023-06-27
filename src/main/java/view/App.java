@@ -1,24 +1,11 @@
 package view;
 
-import controller.UserController;
 import javafx.application.Application;
-import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.net.Socket;
 
 
 public class App extends Application {
-    private static double width,height;
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-       // UserController.fetchDatabase();
-        setupStage(primaryStage);
-       // new ShopMenu().start(primaryStage);
-        new LoginMenu().start(primaryStage);
-    }
+    private static double width, height;
 
     public static void setupStage(Stage primaryStage) {
 //        primaryStage.setResizable(false);
@@ -38,5 +25,13 @@ public class App extends Application {
 
     public static double getWidth() {
         return width;
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // UserController.fetchDatabase();
+        setupStage(primaryStage);
+        // new ShopMenu().start(primaryStage);
+        new LoginMenu().start(primaryStage);
     }
 }

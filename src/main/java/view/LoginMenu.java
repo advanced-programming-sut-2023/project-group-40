@@ -1,8 +1,6 @@
 package view;
 
 import controller.ConnectToServer;
-import controller.MainController;
-import controller.MainMenuController;
 import controller.UserController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -17,10 +15,8 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.SecurityQuestions;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Random;
 
 public class LoginMenu extends Application {
     private final Button login = new Button("login");
@@ -99,16 +95,6 @@ public class LoginMenu extends Application {
                     usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
             } else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
         });
-        password.textProperty().addListener((observableValue, s, t1) -> {
-            if (!UserController.checkPasswordFormat(t1)) {
-                Errors.PASSWORD_ERROR.getErrorLabel().setText("password is weak!");
-                if (passwordHBox.getChildren().size() == 3)
-                    passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
-            }
-            else {
-                passwordHBox.getChildren().remove(Errors.PASSWORD_ERROR.getErrorLabel());
-            }
-        });
         eyeIcon.setOnMouseClicked(mouseEvent -> {
             String currentText = password.getText();
             passwordHBox.getChildren().remove(password);
@@ -127,13 +113,13 @@ public class LoginMenu extends Application {
             TextFieldController.setSuccessful(true);
             TextFieldController.checkEmptyUsername(usernameHBox, username);
             TextFieldController.checkPassword(passwordHBox, passwordLabel, username, password);
-            if (forgetMyPassword.isSelected())
-                TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
+//            if (forgetMyPassword.isSelected())
+//                TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
             CaptchaController.checkCaptcha();
             if (TextFieldController.isSuccessful()) {
                 try {
                     String message = ConnectToServer.login(username.getText(), password.getText());
-                    if(message.startsWith("login verified")) {
+                    if (message.startsWith("your login verified")) {
                         SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login successful!");
                         successfulDialog.make();
                         new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
@@ -158,8 +144,7 @@ public class LoginMenu extends Application {
                 loginVbox.getChildren().add(2, securityQuestionsHBox);
                 loginVbox.getChildren().add(3, securityAnswerHBox);
                 passwordLabel.setText("new password : ");
-            }
-            else {
+            } else {
                 loginVbox.getChildren().remove(securityQuestionsHBox);
                 loginVbox.getChildren().remove(securityAnswerHBox);
             }

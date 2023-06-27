@@ -1,6 +1,5 @@
 package model.buildings;
 
-import controller.GameMenuController;
 import model.Good;
 import model.Texture;
 

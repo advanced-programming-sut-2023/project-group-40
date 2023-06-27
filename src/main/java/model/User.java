@@ -2,12 +2,6 @@ package model;
 
 import controller.UserController;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.stream.Collectors;
-
 public class User {
     private int highScore;
     private int rank;
@@ -19,7 +13,7 @@ public class User {
     private String securityAnswer;
     private int securityQuestionNo;
     private boolean isOnline;
-    private String avatarPath = User.class.getResource("/avatars/1.png").toExternalForm();
+    private String avatarPath;
 
     public User(String username, String password, String nickname, String email, String slogan) {
         this.username = username;
@@ -87,6 +81,10 @@ public class User {
         return slogan;
     }
 
+    public void setSlogan(String slogan) {
+        this.slogan = slogan;
+    }
+
     public boolean isOnline() {
         return isOnline;
     }
@@ -95,9 +93,6 @@ public class User {
         isOnline = online;
     }
 
-    public void setSlogan(String slogan) {
-        this.slogan = slogan;
-    }
     public int getSecurityQuestionNo() {
         return securityQuestionNo;
     }

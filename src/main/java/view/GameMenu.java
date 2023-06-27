@@ -1,11 +1,6 @@
 package view;
 
-import controller.GameMenuController;
-import controller.ShopMenuController;
-import controller.TradeMenuController;
 import view.enums.Commands;
-
-import java.util.regex.Matcher;
 
 public class GameMenu {
     private static boolean gameStarted = false;

@@ -1,7 +1,6 @@
 package model;
 
 import controller.ConnectToServer;
-import controller.UserController;
 import model.buildings.Building;
 import model.buildings.GateHouse;
 import model.buildings.Hovel;
@@ -23,7 +22,7 @@ public class Government {
     private int popularity = 0;
     private int fearRate;
     private Color color = null;
-    private Castle castle = new Castle(0,0,0,0);
+    private Castle castle = new Castle(0, 0, 0, 0);
     private int emptySpace = 0;
 
     public Government(User owner) {

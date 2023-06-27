@@ -10,18 +10,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainController {
+    static final Algorithm tokenAlgorithm = Algorithm.HMAC256("ya sattar");
     static DataOutputStream dataOutputStream;
     static DataInputStream dataInputStream;
     static Calendar c;
-    static Map<String, Object> headerClaims = new HashMap<>() {{put("typ", "JWT");}};
-    static final Algorithm tokenAlgorithm = Algorithm.HMAC256("ya sattar");
+    static Map<String, Object> headerClaims = new HashMap<>() {{
+        put("typ", "JWT");
+    }};
 
-    public static void setupCalender(){
+    public static void setupCalender() {
         c = Calendar.getInstance();
         c.add(Calendar.MINUTE, 20);
     }
-    public static Date getExpirationDate(){
+
+    public static Date getExpirationDate() {
         return c.getTime();
     }
+
 
 }

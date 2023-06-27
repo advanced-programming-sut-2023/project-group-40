@@ -1,15 +1,10 @@
 package model;
 
-import controller.UserController;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-
 public class PrivateUser {
-    private int highScore;
-    private int rank;
-    private boolean isOnline;
-    private String username;
+    private final int highScore;
+    private final int rank;
+    private final boolean isOnline;
+    private final String username;
     private String avatarPath;
 
     public PrivateUser(String username, int rank, boolean isOnline, int highScore, String avatarPath) {

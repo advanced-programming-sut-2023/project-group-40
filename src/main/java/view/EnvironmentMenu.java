@@ -2,13 +2,11 @@ package view;
 
 import controller.EnvironmentMenuController;
 import controller.GameMenuController;
-import controller.MainMenuController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
-import javafx.beans.property.DoublePropertyBase;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

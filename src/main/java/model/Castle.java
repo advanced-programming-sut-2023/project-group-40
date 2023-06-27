@@ -7,8 +7,8 @@ import java.io.IOException;
 
 public class Castle {
     private final int x1, y1, x2, y2;
-    private int hp = 10000;
     private final int maxPopulation = 5;
+    private int hp = 10000;
     private int population = 0;
     private int numberOfActiveWorker = 5;
     private Government government;
@@ -27,7 +27,6 @@ public class Castle {
     public int getPopulation() {
         return population;
     }
-
 
 
     public void changePopulation(int amount) {

@@ -34,7 +34,7 @@ public class ProfileMenu extends Application {
     private final CheckBox sloganCheckBox = new CheckBox("show slogan");
     private final Button changePasswordButton = new Button("change password");
     private final Button leaderBoardButton = new Button("leader board");
-    private final ImageView avatar = new ImageView(new Image(ProfileMenu.class.getResource("/avatars/") + ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
+    private final ImageView avatar = new ImageView(new Image(ProfileMenuController.getCurrentUser().getAvatarPath().contains("\\") ? ProfileMenuController.getCurrentUser().getAvatarPath() : ProfileMenu.class.getResource("/avatars/") + ProfileMenuController.getCurrentUser().getAvatarPath(), 100, 100, false, false));
     private final AnchorPane leaderBoardPane = new AnchorPane();
     private Pane root;
     private Bounds usernameBounds;
@@ -44,6 +44,7 @@ public class ProfileMenu extends Application {
     private Label passwordLabel;
     private Stage primaryStage;
     private VBox changePasswordVbox;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -70,19 +71,18 @@ public class ProfileMenu extends Application {
     }
 
     private void setUpLeaderBoard() {
-        LeaderBoardController leaderBoardController = new LeaderBoardController();
-        leaderBoardController.showTableView(this);
-        leaderBoardController.getTableView().translateXProperty().bind(Bindings.add(leaderBoardController.getTableView().widthProperty().divide(-2), leaderBoardPane.widthProperty().divide(2)));
-        leaderBoardController.getTableView().setTranslateY(40);
+        LeaderBoardController.showTableView(this);
+        LeaderBoardController.getTableView().translateXProperty().bind(Bindings.add(LeaderBoardController.getTableView().widthProperty().divide(-2), leaderBoardPane.widthProperty().divide(2)));
+        LeaderBoardController.getTableView().setTranslateY(40);
 
-        leaderBoardPane.prefWidthProperty().bind(leaderBoardController.getTableView().widthProperty().add(60));
-        leaderBoardPane.prefHeightProperty().bind(leaderBoardController.getTableView().heightProperty().add(80));
+        leaderBoardPane.prefWidthProperty().bind(LeaderBoardController.getTableView().widthProperty().add(60));
+        leaderBoardPane.prefHeightProperty().bind(LeaderBoardController.getTableView().heightProperty().add(80));
 
         leaderBoardPane.translateXProperty().bind(leaderBoardPane.widthProperty().divide(-2).add(App.getWidth() / 2));
         leaderBoardPane.setTranslateY(40);
 
         leaderBoardPane.setStyle("-fx-background-color: black");
-        leaderBoardPane.getChildren().add(leaderBoardController.getTableView());
+        leaderBoardPane.getChildren().add(LeaderBoardController.getTableView());
     }
 
     private void setupAvatar() {
@@ -133,6 +133,7 @@ public class ProfileMenu extends Application {
             List<File> files = dragEvent.getDragboard().getFiles();
             try {
                 avatar.setImage(new Image(new FileInputStream(files.get(0)), 100, 100, true, true));
+                ProfileMenuController.changeAvatar(files.get(0).getAbsolutePath());
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -218,6 +219,7 @@ public class ProfileMenu extends Application {
                 ProfileMenuController.changeEmail(email.getText());
                 if (!slogan.getText().equals(EMPTY_SLOGAN))
                     ProfileMenuController.changeSlogan(slogan.getText());
+                new SuccessfulDialog(root, "save successful!").make();
             }
         });
         changePasswordButton.setOnMouseClicked(mouseEvent -> {
@@ -239,6 +241,7 @@ public class ProfileMenu extends Application {
         });
 
         leaderBoardButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            LeaderBoardController.refresh();
             if (root.getChildren().contains(leaderBoardPane)) {
                 root.getChildren().remove(leaderBoardPane);
             } else root.getChildren().add(leaderBoardPane);
@@ -280,8 +283,7 @@ public class ProfileMenu extends Application {
         });
     }
 
-    public void changeAvatar(String url) {
-        avatar.setImage(new Image(url, 100, 100, true, true));
-        ProfileMenuController.changeAvatar(url);
+    public ImageView getAvatar() {
+        return avatar;
     }
 }

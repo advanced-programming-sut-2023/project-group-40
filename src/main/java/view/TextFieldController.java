@@ -1,6 +1,5 @@
 package view;
 
-import controller.LoginMenuController;
 import controller.ProfileMenuController;
 import controller.UserController;
 import javafx.scene.control.ComboBox;
@@ -17,7 +16,7 @@ public class TextFieldController {
             Errors.USERNAME_ERROR.getErrorLabel().setText("username is empty!");
             if (usernameHBox.getChildren().size() == 2)
                 usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
-        }  else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
+        } else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
     }
 
     public static void checkSlogan(HBox sloganHBox, TextField slogan) {
@@ -42,8 +41,12 @@ public class TextFieldController {
             Errors.EMAIL_ERROR.getErrorLabel().setText("email is empty!");
             if (emailHBox.getChildren().size() == 2)
                 emailHBox.getChildren().add(Errors.EMAIL_ERROR.getErrorLabel());
-        }
-        else emailHBox.getChildren().remove(Errors.EMAIL_ERROR.getErrorLabel());
+        } else if (!UserController.checkEmailFormat(email.getText())) {
+            successful = false;
+            Errors.EMAIL_ERROR.getErrorLabel().setText("email format incorrect!");
+            if (emailHBox.getChildren().size() == 2)
+                emailHBox.getChildren().add(Errors.EMAIL_ERROR.getErrorLabel());
+        } else emailHBox.getChildren().remove(Errors.EMAIL_ERROR.getErrorLabel());
     }
 
     public static void checkPassword(HBox passwordHBox, TextField password) {
@@ -64,17 +67,6 @@ public class TextFieldController {
         if (password.getText().length() == 0) {
             successful = false;
             Errors.PASSWORD_ERROR.getErrorLabel().setText("password is empty!");
-            if (passwordHBox.getChildren().size() == 3)
-                passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
-        } else if (!UserController.checkPasswordFormat(password.getText())) {
-            successful = false;
-            Errors.PASSWORD_ERROR.getErrorLabel().setText("password is weak!");
-            if (passwordHBox.getChildren().size() == 3)
-                passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
-        } else if (!passwordLabel.getText().equals("new password : ") &&
-                !LoginMenuController.isPasswordCorrect(username.getText(), password.getText())) {
-            successful = false;
-            Errors.PASSWORD_ERROR.getErrorLabel().setText("password is incorrect!");
             if (passwordHBox.getChildren().size() == 3)
                 passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
         } else passwordHBox.getChildren().remove(Errors.PASSWORD_ERROR.getErrorLabel());
@@ -101,20 +93,20 @@ public class TextFieldController {
         } else newPasswordHBox.getChildren().remove(Errors.PASSWORD_ERROR.getErrorLabel());
     }
 
-    public static void checkSecurity(TextField username, ComboBox<String> securityQuestions, HBox securityQuestionsHBox,
-                                     HBox securityAnswerHBox, TextField securityAnswer) {
-        if (securityQuestions.getItems().indexOf(securityQuestions.getValue()) + 1
-                != LoginMenuController.getSecurityQuestionNo(username.getText())) {
-            if (securityQuestionsHBox.getChildren().size() == 2)
-                securityQuestionsHBox.getChildren().add(Errors.SECURITY_QUESTION_ERROR.getErrorLabel());
-            successful = false;
-        }
-        if (!securityAnswer.getText().equals(LoginMenuController.getSecurityAnswer(username.getText()))) {
-            if (securityAnswerHBox.getChildren().size() == 2)
-                securityAnswerHBox.getChildren().add(Errors.SECURITY_ANSWER_ERROR.getErrorLabel());
-            successful = false;
-        } else securityAnswerHBox.getChildren().remove(Errors.SECURITY_ANSWER_ERROR.getErrorLabel());
-    }
+//    public static void checkSecurity(TextField username, ComboBox<String> securityQuestions, HBox securityQuestionsHBox,
+//                                     HBox securityAnswerHBox, TextField securityAnswer) {
+//        if (securityQuestions.getItems().indexOf(securityQuestions.getValue()) + 1
+//                != LoginMenuController.getSecurityQuestionNo(username.getText())) {
+//            if (securityQuestionsHBox.getChildren().size() == 2)
+//                securityQuestionsHBox.getChildren().add(Errors.SECURITY_QUESTION_ERROR.getErrorLabel());
+//            successful = false;
+//        }
+//        if (!securityAnswer.getText().equals(LoginMenuController.getSecurityAnswer(username.getText()))) {
+//            if (securityAnswerHBox.getChildren().size() == 2)
+//                securityAnswerHBox.getChildren().add(Errors.SECURITY_ANSWER_ERROR.getErrorLabel());
+//            successful = false;
+//        } else securityAnswerHBox.getChildren().remove(Errors.SECURITY_ANSWER_ERROR.getErrorLabel());
+//    }
 
     public static boolean isSuccessful() {
         return successful;

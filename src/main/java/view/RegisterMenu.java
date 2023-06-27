@@ -28,6 +28,7 @@ public class RegisterMenu extends Application {
     private final Button register = new Button("register");
     private final CheckBox sloganCheckBox = new CheckBox("activate slogan");
     private final Button submitButton = new Button("submit");
+    private final ComboBox<String> sloganComboBox = new ComboBox<>();
     VBox registerVbox;
     private Pane root;
     private TextField username, email, nickname, slogan, securityAnswer;
@@ -36,7 +37,7 @@ public class RegisterMenu extends Application {
     private Image hideIconImage;
     private Image showIconImage;
     private ImageView eyeIcon;
-    private ComboBox<String> securityQuestions, sloganComboBox = new ComboBox<>();
+    private ComboBox<String> securityQuestions;
     private Stage primaryStage;
 
     {
@@ -178,7 +179,7 @@ public class RegisterMenu extends Application {
             TextFieldController.checkSecurityEmpty(securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
             if (TextFieldController.isSuccessful()) {
                 try {
-                    String message = ConnectToServer.securityAnswer(securityAnswer.getText(), Integer.parseInt(securityQuestions.getValue().substring(0,1)));
+                    String message = ConnectToServer.securityAnswer(securityAnswer.getText(), Integer.parseInt(securityQuestions.getValue().substring(0, 1)));
                     MainMenuController.setCurrentUser(new Gson().fromJson(message, User.class));
                     new MainMenu().start(primaryStage);
                 } catch (Exception e) {

@@ -1,7 +1,6 @@
 package model;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public enum Tree {
     DESERT_SHRUB("desert shrub"),
@@ -23,7 +22,7 @@ public enum Tree {
     }
 
     public Image getImage() {
-        return new Image(Tree.class.getResource("/images/trees/"+name + ".png").toString());
+        return new Image(Tree.class.getResource("/images/trees/" + name + ".png").toString());
     }
 
     public String getName() {

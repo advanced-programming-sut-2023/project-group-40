@@ -17,10 +17,12 @@ public class Church extends Building {
         super(name, height, width, hp, cost, textures, isIllegal, group);
         this.increasePopularity = increasePopularity;
     }
+
     public void addTroop(String type, int count) {
         for (int i = 0; i < count; i++)
             troopsList.add(Troops.getTroopObjectByType(type));
     }
+
     @Override
     public void action() {
         GameMenuController.getCurrentGovernment().changePopularity(increasePopularity);

@@ -27,6 +27,7 @@ public enum Good {
     private final int sellPrice, buyPrice;
     private final String type;
     private final Image image;
+
     Good(int priceSell, int priceBuy, String type) {
         this.sellPrice = priceSell;
         this.buyPrice = priceBuy;
