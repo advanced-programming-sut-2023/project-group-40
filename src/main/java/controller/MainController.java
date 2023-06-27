@@ -17,7 +17,7 @@ public class MainController {
     static final Algorithm tokenAlgorithm = Algorithm.HMAC256("ya sattar");
 
     public static void setupCalender(){
-        Calendar c = Calendar.getInstance();
+        c = Calendar.getInstance();
         c.add(Calendar.MINUTE, 20);
     }
     public static Date getExpirationDate(){

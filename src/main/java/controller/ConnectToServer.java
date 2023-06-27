@@ -17,18 +17,29 @@ public class ConnectToServer {
     static DataOutputStream dataOutputStream;
     static DataInputStream dataInputStream;
     public static String register(String username, String password, String nickname, String email, String slogan) throws IOException {
-        Socket socket = new Socket("ap.ali83.ml", 80);
+        Socket socket = new Socket("151.241.23.248", 80);
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
         dataInputStream = new DataInputStream(socket.getInputStream());
+        System.out.println("111");
         MainController.setupCalender();
 
         String token = JWT.create().withSubject("register")
                 .withExpiresAt(MainController.getExpirationDate())
                 .withIssuer(username)
-                .withClaim("password", password)
+                .withClaim("passwordHash", UserController.generatePasswordHash(password))
                 .withClaim("nickname", nickname)
                 .withClaim("email", email)
                 .withClaim("slogan", slogan)
+                .withHeader(MainController.headerClaims)
+                .sign(MainController.tokenAlgorithm);
+        dataOutputStream.writeUTF(token);
+        return dataInputStream.readUTF();
+    }
+    public static String securityAnswer(String securityAnswer, int securityNumber) throws IOException{
+        String token = JWT.create().withSubject("securityAnswer")
+                .withExpiresAt(MainController.getExpirationDate())
+                .withClaim("securityAnswer", securityAnswer)
+                .withClaim("securityNumber", securityNumber)
                 .withHeader(MainController.headerClaims)
                 .sign(MainController.tokenAlgorithm);
         dataOutputStream.writeUTF(token);

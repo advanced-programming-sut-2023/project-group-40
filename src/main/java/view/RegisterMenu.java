@@ -1,7 +1,6 @@
 package view;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import controller.ConnectToServer;
 import controller.MainMenuController;
 import controller.UserController;
@@ -168,7 +167,7 @@ public class RegisterMenu extends Application {
                         dialog.make();
                     }
                 } catch (IOException e) {
-                    //throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         });
@@ -179,8 +178,8 @@ public class RegisterMenu extends Application {
             TextFieldController.checkSecurityEmpty(securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
             if (TextFieldController.isSuccessful()) {
                 try {
-                    //MainMenuController.setCurrentUser(new Gson().fromJson(message, new TypeToken<User>(){}.getType()));
-                    MainMenuController.setCurrentUser(new User(username.getText(), password.getText(), nickname.getText(), email.getText(), slogan.getText()));
+                    String message = ConnectToServer.securityAnswer(securityAnswer.getText(), Integer.parseInt(securityQuestions.getValue().substring(0,1)));
+                    MainMenuController.setCurrentUser(new Gson().fromJson(message, User.class));
                     new MainMenu().start(primaryStage);
                 } catch (IOException e) {
                     //throw new RuntimeException(e);

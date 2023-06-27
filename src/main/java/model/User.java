@@ -18,7 +18,7 @@ public class User {
     private String slogan;
     private String securityAnswer;
     private int securityQuestionNo;
-    private boolean isStayLoggedIn;
+    private boolean isOnline;
     private String avatarPath = User.class.getResource("/avatars/1.png").toExternalForm();
 
     public User(String username, String password, String nickname, String email, String slogan) {
@@ -87,18 +87,17 @@ public class User {
         return slogan;
     }
 
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
+
     public void setSlogan(String slogan) {
         this.slogan = slogan;
     }
-
-    public boolean isStayLoggedIn() {
-        return isStayLoggedIn;
-    }
-
-    public void setStayLoggedIn(boolean stayLoggedIn) {
-        isStayLoggedIn = stayLoggedIn;
-    }
-
     public int getSecurityQuestionNo() {
         return securityQuestionNo;
     }
