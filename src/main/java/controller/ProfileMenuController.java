@@ -2,10 +2,7 @@ package controller;
 
 import com.auth0.jwt.JWT;
 import model.User;
-import java.io.ByteArrayOutputStream;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import javax.imageio.ImageIO;
+
 import java.io.IOException;
 
 public class ProfileMenuController {

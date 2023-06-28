@@ -6,7 +6,6 @@ import com.google.gson.reflect.TypeToken;
 import model.FriendStatus;
 import model.PrivateUser;
 import model.User;
-import view.ProfileMenu;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -17,7 +16,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import static controller.MainController.*;
+import static controller.MainController.dataInputStream;
+import static controller.MainController.dataOutputStream;
 
 public class ConnectToServer {
 
@@ -46,8 +46,7 @@ public class ConnectToServer {
         try {
             dataOutputStream.writeUTF(token);
             return dataInputStream.readUTF();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             System.exit(0);
             return null;
@@ -64,7 +63,7 @@ public class ConnectToServer {
         try {
             dataOutputStream.writeUTF(token);
             return dataInputStream.readUTF();
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             System.exit(0);
             return null;
@@ -86,7 +85,7 @@ public class ConnectToServer {
                 MainMenuController.setCurrentUser(new Gson().fromJson(s, User.class));
                 return dataInputStream.readUTF();
             } else return s;
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             System.exit(0);
             return null;
@@ -102,7 +101,7 @@ public class ConnectToServer {
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             dataOutputStream.writeUTF(token);
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             System.exit(0);
         }
@@ -148,12 +147,12 @@ public class ConnectToServer {
         }
     }
 
-    public static void changeRequestStatus(String username,String action) {
+    public static void changeRequestStatus(String username, String action) {
         try {
             String token = JWT.create().withSubject("change request status")
                     .withExpiresAt(MainController.getExpirationDate())
-                    .withClaim("username",username)
-                    .withClaim("action",action)
+                    .withClaim("username", username)
+                    .withClaim("action", action)
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             dataOutputStream.writeUTF(token);

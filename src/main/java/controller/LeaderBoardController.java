@@ -1,26 +1,25 @@
 package controller;
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.*;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.VBox;
-import javafx.util.Callback;
 import model.FriendStatus;
 import model.PrivateUser;
 import model.User;
 import view.ProfileMenu;
 
-import java.awt.image.Kernel;
 import java.io.ByteArrayInputStream;
-import java.security.Key;
 import java.util.List;
+
+import static controller.ConnectToServer.getUsers;
 
 
 public class LeaderBoardController {
@@ -53,14 +52,15 @@ public class LeaderBoardController {
         lastSeenColumn.setPrefWidth(200);
 
         friendStatusColumn.setText("status");
-        scoreColumn.setResizable(false);
-        scoreColumn.setPrefWidth(250);
+        friendStatusColumn.setResizable(false);
+        friendStatusColumn.setPrefWidth(200);
 
         scoreColumn.setText("High score");
         scoreColumn.setResizable(false);
         scoreColumn.setPrefWidth(140);
 
         tableView.setMinWidth(450);
+        tableView.setMaxWidth(Double.MAX_VALUE);
         tableView.setMinHeight(440);
         tableView.setSortPolicy(param -> false);
     }
@@ -93,15 +93,15 @@ public class LeaderBoardController {
         scoreColumn.setCellValueFactory(
                 param -> new SimpleIntegerProperty(param.getValue().getHighScore()).asObject());
 
-        tableView.getItems().addAll(get10Users(1));
+        tableView.getItems().addAll(get10Users(allUsers, 1));
 
         tableView.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (event.getDeltaY() > 0)
                 if (start != 1) start -= 10;
             if (event.getDeltaY() < 0)
                 if (start + 10 <= allUsers.size()) start += 10;
-            tableView.getItems().clear();
-            tableView.getItems().addAll(get10Users(start));
+            profileMenu.filter();
+            tableView.refresh();
         });
 
         tableView.setRowFactory(param -> {
@@ -119,16 +119,15 @@ public class LeaderBoardController {
                 row.addEventFilter(KeyEvent.KEY_PRESSED, event2 -> {
                     User user = MainMenuController.getCurrentUser();
                     System.out.println(event2.getCode());
-                    if (event2.getCode() == KeyCode.F) {
-                        user.getRequestOutbox().put(tableView.getItems().get(row.getIndex()).getUsername(), FriendStatus.NO_ACTION);
+                    if (event2.getCode() == KeyCode.F && LeaderBoardController.state == 0)
                         ConnectToServer.changeRequestStatus(tableView.getItems().get(row.getIndex()).getUsername(), "follow");
-                    } else if (event2.getCode() == KeyCode.A) {
-                        user.getFriends().add(tableView.getItems().get(row.getIndex()).getUsername());
-                        user.getRequestInbox().put(tableView.getItems().get(row.getIndex()).getUsername(), FriendStatus.ACCEPTED);
+                    else if (event2.getCode() == KeyCode.A && LeaderBoardController.state == 2)
                         ConnectToServer.changeRequestStatus(tableView.getItems().get(row.getIndex()).getUsername(), "accept");
-                    } else if (event2.getCode() == KeyCode.R) {
-                        user.getRequestInbox().put(tableView.getItems().get(row.getIndex()).getUsername(), FriendStatus.REJECTED);
+                    else if (event2.getCode() == KeyCode.R && LeaderBoardController.state == 2)
                         ConnectToServer.changeRequestStatus(tableView.getItems().get(row.getIndex()).getUsername(), "reject");
+                    if (LeaderBoardController.state == 2) {
+                        allUsers = getUsers();
+                        profileMenu.refreshState2();
                     }
                 });
                 if (event.getClickCount() == 2) {
@@ -145,8 +144,8 @@ public class LeaderBoardController {
         return tableView;
     }
 
-    public static List<PrivateUser> get10Users(int start) {
-        return allUsers.subList(start - 1, Math.min(start + 9, allUsers.size()));
+    public static List<PrivateUser> get10Users(List<PrivateUser> list, int start) {
+        return list.subList(start - 1, Math.min(start + 9, list.size()));
     }
 
     public static void setState(int state) {

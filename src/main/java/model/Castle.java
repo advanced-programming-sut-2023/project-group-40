@@ -3,8 +3,6 @@ package model;
 import controller.ConnectToServer;
 import controller.GameMenuController;
 
-import java.io.IOException;
-
 public class Castle {
     private final int x1, y1, x2, y2;
     private final int maxPopulation = 5;

@@ -19,7 +19,6 @@ import model.DefaultSlogans;
 import model.SecurityQuestions;
 import model.User;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class RegisterMenu extends Application {

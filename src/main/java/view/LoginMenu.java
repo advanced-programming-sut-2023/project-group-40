@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.SecurityQuestions;
 
-import java.io.IOException;
 import java.util.Objects;
 
 public class LoginMenu extends Application {

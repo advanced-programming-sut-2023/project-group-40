@@ -5,9 +5,10 @@ public class PrivateUser {
     private final int rank;
     private final boolean isOnline;
     private final String username;
+    private final String lastSeen;
     private byte[] avatarByteArray;
-    private String lastSeen;
-    public PrivateUser(String username, int rank, boolean isOnline, int highScore,byte[] avatarPath,String lastSeen) {
+
+    public PrivateUser(String username, int rank, boolean isOnline, int highScore, byte[] avatarPath, String lastSeen) {
         this.username = username;
         this.rank = rank;
         this.isOnline = isOnline;

@@ -1,31 +1,35 @@
-ComboBox{
+ComboBox {
     -fx-font-size: 30;
     -fx-font-weight: bold;
 }
 
-HBox{
+HBox {
     -fx-spacing: 20;
 }
-Label{
+
+Label {
     -fx-font-size: 30;
     -fx-font-weight: bold;
     -fx-min-width: 250;
     -fx-max-width: 450;
     -fx-text-fill: black;
 }
-CheckBox{
+
+CheckBox {
     -fx-font-size: 30;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
-ScrollPane{
+
+ScrollPane {
     -fx-padding: 20;
 }
 
-VBox{
+VBox {
     -fx-spacing: 20;
 }
-Button{
+
+Button {
     -fx-font-size: 30;
     -fx-font-weight: bold;
     -fx-min-width: 350;

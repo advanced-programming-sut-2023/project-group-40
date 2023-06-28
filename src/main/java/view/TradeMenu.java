@@ -19,9 +19,32 @@ import java.util.regex.Matcher;
 
 public class TradeMenu {
     private static String targetUsername;
+    private final Button backButton = new Button("back");
+    private final Button enterButton = new Button("enter map menu");
     Pane root;
-    private Button backButton = new Button("back");
-    private Button enterButton = new Button("enter map menu");
+
+    public static String sendRequest(Matcher matcher) {
+        String resourceType = Commands.eraseQuot(matcher.group("resourceType"));
+        int resourceAmount = Integer.parseInt(matcher.group("resourceAmount"));
+        int price = Integer.parseInt(matcher.group("price"));
+        String message = Commands.eraseQuot(matcher.group("message"));
+        return TradeMenuController.sendRequest(resourceType, resourceAmount, price, message, targetUsername);
+    }
+
+    public static String showTradeList(Matcher matcher) {
+        return TradeMenuController.showTradeList();
+    }
+
+    public static String acceptTrade(Matcher matcher) {
+        int id = Integer.parseInt(matcher.group("id"));
+        String message = Commands.eraseQuot(matcher.group("message"));
+        return TradeMenuController.acceptTrade(id, message);
+    }
+
+    public static String showTradeHistory(Matcher matcher) {
+        return TradeMenuController.showTradeHistory();
+    }
+
     public void start(Stage stage) throws Exception {
         root = new Pane();
         Scene scene = new Scene(root);
@@ -40,9 +63,9 @@ public class TradeMenu {
         bar.setMaxWidth(App.getWidth());
         bar.translateXProperty().bind(bar.widthProperty().divide(-2).add(App.getWidth() / 2));
         backButton.setTranslateX(20);
-        backButton.setTranslateY(App.getHeight()- 100);
+        backButton.setTranslateY(App.getHeight() - 100);
         enterButton.setTranslateX(App.getWidth() - 290);
-        enterButton.setTranslateY(App.getHeight()- 100);
+        enterButton.setTranslateY(App.getHeight() - 100);
         backButton.setOnMouseClicked(event -> {
             try {
                 new ShopMenu().start(stage);
@@ -53,7 +76,7 @@ public class TradeMenu {
         enterButton.setOnMouseClicked(event -> {
             // TODO: 6/29/2023
         });
-        root.getChildren().addAll(backButton,enterButton);
+        root.getChildren().addAll(backButton, enterButton);
         VBox vbox = new VBox(bar);
 
         root.getChildren().add(vbox);
@@ -114,30 +137,5 @@ public class TradeMenu {
         }
         VBox vBox = new VBox(imageHBox1, imageHBox2, goodVBox);
         return vBox;
-    }
-
-
-    public static String sendRequest(Matcher matcher) {
-        String resourceType = Commands.eraseQuot(matcher.group("resourceType"));
-        int resourceAmount = Integer.parseInt(matcher.group("resourceAmount"));
-        int price = Integer.parseInt(matcher.group("price"));
-        String message = Commands.eraseQuot(matcher.group("message"));
-        return TradeMenuController.sendRequest(resourceType, resourceAmount, price, message, targetUsername);
-    }
-
-
-
-    public static String showTradeList(Matcher matcher) {
-        return TradeMenuController.showTradeList();
-    }
-
-    public static String acceptTrade(Matcher matcher) {
-        int id = Integer.parseInt(matcher.group("id"));
-        String message = Commands.eraseQuot(matcher.group("message"));
-        return TradeMenuController.acceptTrade(id, message);
-    }
-
-    public static String showTradeHistory(Matcher matcher) {
-        return TradeMenuController.showTradeHistory();
     }
 }

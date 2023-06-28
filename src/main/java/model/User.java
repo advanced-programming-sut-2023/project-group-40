@@ -12,6 +12,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class User {
+    public static final byte[][] avatarsByteArray = new byte[10][];
+
+    static {
+        try {
+            for (int i = 1; i <= 10; i++) {
+                BufferedImage bImage = ImageIO.read(new File(PrivateUser.class.getResource("/avatars/" + i + ".png").toURI()));
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ImageIO.write(bImage, "png", bos);
+                avatarsByteArray[i - 1] = bos.toByteArray();
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private final String lastSeen;
     private int highScore;
     private int rank;
     private String username;
@@ -23,25 +39,11 @@ public class User {
     private int securityQuestionNo;
     private boolean isOnline;
     private byte[] avatarByteArray;
-    private String lastSeen;
-    private HashMap<String,FriendStatus> requestInbox = new HashMap<>();
-    private HashMap<String,FriendStatus> requestOutbox = new HashMap<>();
+    private HashMap<String, FriendStatus> requestInbox = new HashMap<>();
+    private HashMap<String, FriendStatus> requestOutbox = new HashMap<>();
     private HashSet<String> friends = new HashSet<>();
 
-    public static final byte [][] avatarsByteArray = new byte[10][];
-    static {
-        try {
-            for (int i = 1; i <= 10; i++) {
-                BufferedImage bImage = ImageIO.read(new File(PrivateUser.class.getResource("/avatars/"+i+".png").toURI()));
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "png", bos);
-                avatarsByteArray[i - 1] = bos.toByteArray();
-            }
-        } catch (IOException | URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    public User(String username, String password, String nickname, String email, String slogan,String lastSeen) {
+    public User(String username, String password, String nickname, String email, String slogan, String lastSeen) {
         this.username = username;
         this.passwordHash = UserController.generatePasswordHash(password);
         this.nickname = nickname;
@@ -140,23 +142,23 @@ public class User {
         return requestInbox;
     }
 
+    public void setRequestInbox(HashMap<String, FriendStatus> requestInbox) {
+        this.requestInbox = requestInbox;
+    }
+
     public HashSet<String> getFriends() {
         return friends;
+    }
+
+    public void setFriends(HashSet<String> friends) {
+        this.friends = friends;
     }
 
     public HashMap<String, FriendStatus> getRequestOutbox() {
         return requestOutbox;
     }
 
-    public void setRequestInbox(HashMap<String, FriendStatus> requestInbox) {
-        this.requestInbox = requestInbox;
-    }
-
     public void setRequestOutbox(HashMap<String, FriendStatus> requestOutbox) {
         this.requestOutbox = requestOutbox;
-    }
-
-    public void setFriends(HashSet<String> friends) {
-        this.friends = friends;
     }
 }

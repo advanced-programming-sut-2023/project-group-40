@@ -1,11 +1,13 @@
 package view;
 
-import controller.*;
+import controller.LeaderBoardController;
+import controller.MainMenuController;
+import controller.ProfileMenuController;
+import controller.UserController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -27,8 +29,9 @@ import model.User;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static controller.ConnectToServer.getUsers;
@@ -45,12 +48,11 @@ public class ProfileMenu extends Application {
     private final Button showMyRequests = new Button("show my requests");
     private final ImageView avatar = new ImageView(ByteArrayToImage(ProfileMenuController.getCurrentUser().getAvatarByteArray()));
     private final AnchorPane leaderBoardPane = new AnchorPane();
+    private final TextField searchBar = new TextField();
     private Pane root;
-    private Bounds usernameBounds;
     private TextField username, newPassword, oldPassword, nickname, email, slogan;
     private VBox profileMenuVbox;
     private HBox usernameHBox, nicknameHBox, emailHBox, sloganHBox, buttonHBox, oldPasswordHBox, newPasswordHBox;
-    private Label passwordLabel;
     private Stage primaryStage;
     private VBox changePasswordVbox;
 
@@ -98,17 +100,30 @@ public class ProfileMenu extends Application {
 
     private void setUpLeaderBoard() {
         LeaderBoardController.showTableView(this);
-        LeaderBoardController.getTableView().translateXProperty().bind(Bindings.add(LeaderBoardController.getTableView().widthProperty().divide(-2), leaderBoardPane.widthProperty().divide(2)));
-        LeaderBoardController.getTableView().setTranslateY(40);
+        LeaderBoardController.getTableView().translateXProperty().bind(Bindings.add(LeaderBoardController.getTableView().widthProperty().divide(-2), App.getWidth() / 2));
+        LeaderBoardController.getTableView().setTranslateY(110);
 
-        leaderBoardPane.prefWidthProperty().bind(LeaderBoardController.getTableView().widthProperty().add(60));
-        leaderBoardPane.prefHeightProperty().bind(LeaderBoardController.getTableView().heightProperty().add(80));
-
-        leaderBoardPane.translateXProperty().bind(leaderBoardPane.widthProperty().divide(-2).add(App.getWidth() / 2));
-        leaderBoardPane.setTranslateY(40);
-
-        leaderBoardPane.setStyle("-fx-background-color: black");
         leaderBoardPane.getChildren().add(LeaderBoardController.getTableView());
+
+        searchBar.setPromptText("Search...");
+        searchBar.setStyle("-fx-border-color: black; -fx-border-radius: 5px;-fx-background-radius: 5px;-fx-font-size: 30px");
+        searchBar.translateXProperty().bind(Bindings.add(searchBar.widthProperty().divide(-2), App.getWidth() / 2));
+        searchBar.setTranslateY(30);
+        searchBar.visibleProperty().bind(leaderBoardPane.visibleProperty());
+        searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+            switch (state) {
+                case 0 -> refreshState0();
+                case 1 -> refreshState1();
+                case 2 -> refreshState2();
+            }
+        });
+        root.getChildren().add(searchBar);
+    }
+
+    public void filter() {
+        String text = searchBar.getText();
+        tableView.getItems().clear();
+        tableView.getItems().addAll(get10Users(allUsers.stream().filter(privateUser -> privateUser.getUsername().startsWith(text)).toList(), start));
     }
 
     private void setupAvatar() {
@@ -178,9 +193,13 @@ public class ProfileMenu extends Application {
 
     private void setupBoxes() {
         usernameHBox = new HBox(new Label("username :"), username);
+        usernameHBox.setAlignment(Pos.CENTER);
         nicknameHBox = new HBox(new Label("nickname :"), nickname);
+        nicknameHBox.setAlignment(Pos.CENTER);
         emailHBox = new HBox(new Label("email :"), email);
+        emailHBox.setAlignment(Pos.CENTER);
         sloganHBox = new HBox(sloganCheckBox);
+        sloganHBox.setAlignment(Pos.CENTER);
         CaptchaController.setUpCaptcha();
         buttonHBox = new HBox(save, changePasswordButton, leaderBoardButton, showMyFriends, showMyRequests);
         save.setVisible(false);
@@ -274,16 +293,19 @@ public class ProfileMenu extends Application {
 
         leaderBoardButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             leaderBoardPane.setVisible(!leaderBoardPane.isVisible());
+            allUsers = getUsers();
             refreshState0();
         });
 
         showMyFriends.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             leaderBoardPane.setVisible(!leaderBoardPane.isVisible());
+            allUsers = getUsers();
             refreshState1();
         });
 
         showMyRequests.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             leaderBoardPane.setVisible(!leaderBoardPane.isVisible());
+            allUsers = getUsers();
             refreshState2();
         });
 
@@ -296,37 +318,37 @@ public class ProfileMenu extends Application {
 
     private void refreshState0() {
         LeaderBoardController.setState(0);
-        allUsers = getUsers();
         tableView.getColumns().clear();
         tableView.getItems().clear();
         tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn, lastSeenColumn);
-        tableView.getItems().addAll(get10Users(start));
+        tableView.getItems().addAll(get10Users(allUsers, start));
+        filter();
         tableView.refresh();
     }
 
     private void refreshState1() {
         LeaderBoardController.setState(1);
         User user = MainMenuController.getCurrentUser();
-        allUsers = getUsers();
         tableView.getColumns().clear();
         tableView.getItems().clear();
         Stream<PrivateUser> privateUsers = allUsers.stream().filter(privateUser -> user.getFriends().contains(privateUser.getUsername()));
         tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn, lastSeenColumn);
         allUsers = privateUsers.toList();
-        tableView.getItems().addAll(get10Users(start));
+        tableView.getItems().addAll(get10Users(allUsers, start));
+        filter();
         tableView.refresh();
     }
 
-    private void refreshState2() {
+    public void refreshState2() {
         LeaderBoardController.setState(2);
-        allUsers = getUsers();
         tableView.getColumns().clear();
         tableView.getItems().clear();
         User user = MainMenuController.getCurrentUser();
         Stream<PrivateUser> privateUsers = allUsers.stream().filter(privateUser -> user.getRequestInbox().containsKey(privateUser.getUsername()));
         tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn, lastSeenColumn, friendStatusColumn);
         allUsers = privateUsers.toList();
-        tableView.getItems().addAll(get10Users(start));
+        tableView.getItems().addAll(get10Users(allUsers, start));
+        filter();
         tableView.refresh();
     }
 
