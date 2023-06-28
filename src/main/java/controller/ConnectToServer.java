@@ -3,6 +3,7 @@ package controller;
 import com.auth0.jwt.JWT;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import model.FriendStatus;
 import model.PrivateUser;
 import model.User;
 import view.ProfileMenu;
@@ -12,10 +13,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
-import static controller.MainController.dataInputStream;
-import static controller.MainController.dataOutputStream;
+import static controller.MainController.*;
 
 public class ConnectToServer {
 
@@ -113,6 +115,13 @@ public class ConnectToServer {
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             dataOutputStream.writeUTF(token);
+            User currentUser = MainMenuController.getCurrentUser();
+            currentUser.setFriends(new Gson().fromJson(dataInputStream.readUTF(), new TypeToken<HashSet<String>>() {
+            }.getType()));
+            currentUser.setRequestInbox(new Gson().fromJson(dataInputStream.readUTF(), new TypeToken<HashMap<String, FriendStatus>>() {
+            }.getType()));
+            currentUser.setRequestOutbox(new Gson().fromJson(dataInputStream.readUTF(), new TypeToken<HashMap<String, FriendStatus>>() {
+            }.getType()));
             List<PrivateUser> privateUsers = new Gson().fromJson(dataInputStream.readUTF(), new TypeToken<List<PrivateUser>>() {
             }.getType());
             return privateUsers;

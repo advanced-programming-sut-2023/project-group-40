@@ -24,9 +24,9 @@ public class User {
     private boolean isOnline;
     private byte[] avatarByteArray;
     private String lastSeen;
-    private final HashMap<String,FriendStatus> requestInbox = new HashMap<>();
-    private final HashMap<String,FriendStatus> requestOutbox = new HashMap<>();
-    private final HashSet<String> friends = new HashSet<>();
+    private HashMap<String,FriendStatus> requestInbox = new HashMap<>();
+    private HashMap<String,FriendStatus> requestOutbox = new HashMap<>();
+    private HashSet<String> friends = new HashSet<>();
 
     public static final byte [][] avatarsByteArray = new byte[10][];
     static {
@@ -146,5 +146,17 @@ public class User {
 
     public HashMap<String, FriendStatus> getRequestOutbox() {
         return requestOutbox;
+    }
+
+    public void setRequestInbox(HashMap<String, FriendStatus> requestInbox) {
+        this.requestInbox = requestInbox;
+    }
+
+    public void setRequestOutbox(HashMap<String, FriendStatus> requestOutbox) {
+        this.requestOutbox = requestOutbox;
+    }
+
+    public void setFriends(HashSet<String> friends) {
+        this.friends = friends;
     }
 }
