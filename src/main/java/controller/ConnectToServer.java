@@ -138,4 +138,19 @@ public class ConnectToServer {
             return null;
         }
     }
+
+    public static void changeRequestStatus(String username,String action) {
+        try {
+            String token = JWT.create().withSubject("change request status")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("username",username)
+                    .withClaim("action",action)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            dataOutputStream.writeUTF(token);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+    }
 }

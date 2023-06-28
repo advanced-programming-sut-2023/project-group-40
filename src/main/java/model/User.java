@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class User {
     private int highScore;
@@ -22,6 +24,10 @@ public class User {
     private boolean isOnline;
     private byte[] avatarByteArray;
     private String lastSeen;
+    private final HashMap<String,FriendStatus> requestInbox = new HashMap<>();
+    private final HashMap<String,FriendStatus> requestOutbox = new HashMap<>();
+    private final HashSet<String> friends = new HashSet<>();
+
     public static final byte [][] avatarsByteArray = new byte[10][];
     static {
         try {
@@ -130,7 +136,15 @@ public class User {
         this.avatarByteArray = avatarByteArray;
     }
 
-    public String getLastSeen() {
-        return lastSeen;
+    public HashMap<String, FriendStatus> getRequestInbox() {
+        return requestInbox;
+    }
+
+    public HashSet<String> getFriends() {
+        return friends;
+    }
+
+    public HashMap<String, FriendStatus> getRequestOutbox() {
+        return requestOutbox;
     }
 }

@@ -1,19 +1,25 @@
 package controller;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.VBox;
+import model.FriendStatus;
 import model.PrivateUser;
+import model.User;
 import view.ProfileMenu;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 public class LeaderBoardController {
@@ -23,8 +29,13 @@ public class LeaderBoardController {
     private static final TableColumn<PrivateUser, String> lastSeenColumn = new TableColumn<>();
     private static final TableColumn<PrivateUser, String> usernameColumn = new TableColumn<>();
     private static final TableColumn<PrivateUser, Integer> scoreColumn = new TableColumn<>();
+    private static final TableColumn<PrivateUser, FriendStatus> friendStatusColumn = new TableColumn<>();
+    private static final TableColumn<PrivateUser, VBox> actionColumn = new TableColumn<>();
+    private static final TableColumn<PrivateUser, Button> sendRequestColumn = new TableColumn<>();
+
     private static List<PrivateUser> allUsers = ConnectToServer.getUsers();
     private static int start = 1;
+    private static int state = 0;
 
     static {
         rankColumn.setText("Rank");
@@ -39,15 +50,25 @@ public class LeaderBoardController {
         usernameColumn.setResizable(false);
         usernameColumn.setPrefWidth(130);
 
-        lastSeenColumn.setText("lastSeen");
+        lastSeenColumn.setText("last seen");
         lastSeenColumn.setResizable(false);
         lastSeenColumn.setPrefWidth(200);
+
+        friendStatusColumn.setText("status");
+        scoreColumn.setResizable(false);
+        scoreColumn.setPrefWidth(150);
+
+        actionColumn.setText("Accept/Reject");
+        actionColumn.setResizable(false);
+        actionColumn.setPrefWidth(200);
+
+        sendRequestColumn.setText("send Request");
+        sendRequestColumn.setResizable(false);
+        sendRequestColumn.setPrefWidth(100);
 
         scoreColumn.setText("High score");
         scoreColumn.setResizable(false);
         scoreColumn.setPrefWidth(140);
-
-        tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn,lastSeenColumn);
 
         tableView.setMinWidth(450);
         tableView.setMinHeight(440);
@@ -72,12 +93,58 @@ public class LeaderBoardController {
         usernameColumn.setCellValueFactory(
                 param -> new SimpleStringProperty(param.getValue().getUsername()));
 
+        friendStatusColumn.setCellValueFactory(param -> {
+            User user = MainMenuController.getCurrentUser();
+            FriendStatus friendStatus = user.getRequestInbox().get(param.getValue().getUsername());
+            if (friendStatus == null) return null;
+            return new SimpleObjectProperty<>(friendStatus);
+        });
+
+        actionColumn.setCellValueFactory(param -> {
+            User user = MainMenuController.getCurrentUser();
+            FriendStatus friendStatus = user.getRequestInbox().get(param.getValue().getUsername());
+            if (friendStatus != FriendStatus.NO_ACTION) return null;
+
+            Button accept  = new Button("accept");
+            accept.setStyle("-fx-text-fill: white ;-fx-background-color: green; -fx-min-width: 100");
+            Button reject = new Button("reject");
+            accept.setStyle("-fx-text-fill: white ;-fx-background-color: red; -fx-min-width: 100");
+            accept.setOnMouseClicked(event -> {
+                user.getFriends().add(param.getValue().getUsername());
+                user.getRequestInbox().put(param.getValue().getUsername(),FriendStatus.ACCEPTED);
+                ConnectToServer.changeRequestStatus(param.getValue().getUsername(),"accept");
+            });
+            reject.setOnMouseClicked(event -> {
+                user.getRequestInbox().put(param.getValue().getUsername(),FriendStatus.REJECTED);
+                ConnectToServer.changeRequestStatus(param.getValue().getUsername(),"reject");
+            });
+            VBox vBox = new VBox();
+            vBox.getChildren().addAll(accept,reject);
+            vBox.setSpacing(20);
+            return new SimpleObjectProperty<>(vBox);
+        });
+
+        sendRequestColumn.setCellValueFactory(param -> {
+            User user = MainMenuController.getCurrentUser();
+            FriendStatus friendStatus = user.getRequestInbox().get(param.getValue().getUsername());
+            if (friendStatus != FriendStatus.NO_ACTION) return null;
+
+            Button followButton  = new Button("follow");
+            followButton.setStyle("-fx-text-fill: white ;-fx-background-color: #07074c; -fx-min-width: 100");
+
+            followButton.setOnMouseClicked(event -> {
+                user.getRequestOutbox().put(param.getValue().getUsername(),FriendStatus.NO_ACTION);
+                ConnectToServer.changeRequestStatus(param.getValue().getUsername(),"follow");
+            });
+
+            return new SimpleObjectProperty<>(followButton);
+        });
 
         scoreColumn.setCellValueFactory(
                 param -> new SimpleIntegerProperty(param.getValue().getHighScore()).asObject());
 
 
-        tableView.getItems().addAll(getUsers(1));
+        tableView.getItems().addAll(getUsers(allUsers,1));
 
         tableView.addEventFilter(ScrollEvent.SCROLL, event -> {
             if (event.getDeltaY() > 0)
@@ -85,7 +152,7 @@ public class LeaderBoardController {
             if (event.getDeltaY() < 0)
                 if (start + 10 <= allUsers.size()) start += 10;
             tableView.getItems().clear();
-            tableView.getItems().addAll(getUsers(start));
+            tableView.getItems().addAll(getUsers(allUsers,start));
         });
         tableView.setRowFactory(param -> {
             TableRow<PrivateUser> row = new TableRow<>();
@@ -112,18 +179,46 @@ public class LeaderBoardController {
         return tableView;
     }
 
-    public static List<PrivateUser> getUsers(int start) {
-        return allUsers.subList(start - 1, Math.min(start + 9, allUsers.size()));
+    public static List<PrivateUser> getUsers(List<PrivateUser> users,int start) {
+        return users.subList(start - 1, Math.min(start + 9, users.size()));
     }
 
     public static void refresh() {
         allUsers = ConnectToServer.getUsers();
+        Platform.runLater(() -> {
+            tableView.getColumns().clear();
+        });
         tableView.getItems().clear();
-        tableView.getItems().addAll(getUsers(start));
+        if (state == 0) {
+            Platform.runLater(() -> {
+                tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn,lastSeenColumn,sendRequestColumn);
+                tableView.getItems().addAll(getUsers(allUsers,start));
+            });
+
+        }
+        else if (state == 1) {
+            User user = MainMenuController.getCurrentUser();
+            Stream<PrivateUser> privateUsers = allUsers.stream().filter(privateUser -> user.getFriends().contains(privateUser.getUsername()));
+            Platform.runLater(() -> {
+                tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn,lastSeenColumn);
+                tableView.getItems().addAll(getUsers(privateUsers.toList(),start));
+            });
+        }else {
+            User user = MainMenuController.getCurrentUser();
+            Stream<PrivateUser> privateUsers = allUsers.stream().filter(privateUser -> user.getRequestInbox().containsKey(privateUser.getUsername()));
+            Platform.runLater(() -> {
+                tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn,lastSeenColumn,friendStatusColumn,actionColumn);
+                tableView.getItems().addAll(getUsers(privateUsers.toList(),start));
+            });
+        }
         tableView.refresh();
     }
 
     public static void setAllUsers(List<PrivateUser> allUsers) {
         LeaderBoardController.allUsers = allUsers;
+    }
+
+    public static void setState(int state) {
+        LeaderBoardController.state = state;
     }
 }

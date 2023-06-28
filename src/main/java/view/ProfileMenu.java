@@ -37,6 +37,8 @@ public class ProfileMenu extends Application {
     private final CheckBox sloganCheckBox = new CheckBox("show slogan");
     private final Button changePasswordButton = new Button("change password");
     private final Button leaderBoardButton = new Button("leader board");
+    private final Button showMyFriends = new Button("show my friends");
+    private final Button showMyRequests = new Button("show my requests");
     private final ImageView avatar = new ImageView(ByteArrayToImage(ProfileMenuController.getCurrentUser().getAvatarByteArray()));
 
     private Image ByteArrayToImage(byte[] avatarByteArray) {
@@ -178,7 +180,7 @@ public class ProfileMenu extends Application {
         emailHBox = new HBox(new Label("email :"), email);
         sloganHBox = new HBox(sloganCheckBox);
         CaptchaController.setUpCaptcha();
-        buttonHBox = new HBox(save, changePasswordButton, leaderBoardButton);
+        buttonHBox = new HBox(save, changePasswordButton, leaderBoardButton,showMyFriends,showMyRequests);
         save.setVisible(false);
         profileMenuVbox.getChildren().addAll(usernameHBox, emailHBox, nicknameHBox, sloganHBox, buttonHBox);
     }
@@ -266,16 +268,23 @@ public class ProfileMenu extends Application {
         });
 
         leaderBoardButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            LeaderBoardController.setState(0);
             LeaderBoardController.refresh();
-
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-            executor.scheduleAtFixedRate(() -> {
-                LeaderBoardController.setAllUsers(ConnectToServer.getUsers());
-                LeaderBoardController.refresh();
-            }, 0, 5, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(LeaderBoardController::refresh, 0, 5, TimeUnit.SECONDS);
             if (root.getChildren().contains(leaderBoardPane)) {
                 root.getChildren().remove(leaderBoardPane);
             } else root.getChildren().add(leaderBoardPane);
+        });
+
+        showMyFriends.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            LeaderBoardController.setState(1);
+            LeaderBoardController.refresh();
+        });
+
+        showMyRequests.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            LeaderBoardController.setState(2);
+            LeaderBoardController.refresh();
         });
     }
 
