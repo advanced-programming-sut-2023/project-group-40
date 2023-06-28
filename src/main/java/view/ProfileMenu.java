@@ -1,6 +1,8 @@
 package view;
 
 import controller.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Bounds;
@@ -18,6 +20,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import model.PrivateUser;
 import model.User;
 
 import javax.imageio.ImageIO;
@@ -25,10 +29,10 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+
+import static controller.ConnectToServer.getUsers;
+import static controller.LeaderBoardController.*;
 
 
 public class ProfileMenu extends Application {
@@ -40,11 +44,6 @@ public class ProfileMenu extends Application {
     private final Button showMyFriends = new Button("show my friends");
     private final Button showMyRequests = new Button("show my requests");
     private final ImageView avatar = new ImageView(ByteArrayToImage(ProfileMenuController.getCurrentUser().getAvatarByteArray()));
-
-    private Image ByteArrayToImage(byte[] avatarByteArray) {
-        return new Image(new ByteArrayInputStream(avatarByteArray), 100, 100, false, false);
-    }
-
     private final AnchorPane leaderBoardPane = new AnchorPane();
     private Pane root;
     private Bounds usernameBounds;
@@ -55,6 +54,23 @@ public class ProfileMenu extends Application {
     private Stage primaryStage;
     private VBox changePasswordVbox;
 
+    private static byte[] convertPathToByteArray(String avatarPath) {
+        try {
+            File file = new File(avatarPath.substring(6));
+            BufferedImage bImage = ImageIO.read(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "png", bos);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+            return null;
+        }
+    }
+
+    private Image ByteArrayToImage(byte[] avatarByteArray) {
+        return new Image(new ByteArrayInputStream(avatarByteArray), 100, 100, false, false);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -122,7 +138,7 @@ public class ProfileMenu extends Application {
                 imageView.setOnMouseClicked(mouseEvent2 -> {
                     avatar.setImage(new Image(imageView.getImage().getUrl(), 100, 100, true, true));
                     String url = imageView.getImage().getUrl();
-                    int index = Integer.parseInt(url.substring(url.length() - 5,url.length() - 4));
+                    int index = Integer.parseInt(url.substring(url.length() - 5, url.length() - 4));
                     ProfileMenuController.changeAvatar(User.avatarsByteArray[index]);
                 });
             }
@@ -147,8 +163,8 @@ public class ProfileMenu extends Application {
                 avatar.setImage(new Image(new FileInputStream(files.get(0)), 100, 100, true, true));
                 ProfileMenuController.changeAvatar(convertPathToByteArray(files.get(0).getAbsolutePath()));
             } catch (FileNotFoundException e) {
-               e.printStackTrace();
-               System.exit(0);
+                e.printStackTrace();
+                System.exit(0);
             }
             dragEvent.consume();
         });
@@ -160,27 +176,13 @@ public class ProfileMenu extends Application {
         });
     }
 
-    private static byte[] convertPathToByteArray(String avatarPath) {
-        try {
-            File file = new File(avatarPath.substring(6));
-            BufferedImage bImage = ImageIO.read(file);
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ImageIO.write(bImage, "png", bos);
-            return bos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(0);
-            return null;
-        }
-    }
-
     private void setupBoxes() {
         usernameHBox = new HBox(new Label("username :"), username);
         nicknameHBox = new HBox(new Label("nickname :"), nickname);
         emailHBox = new HBox(new Label("email :"), email);
         sloganHBox = new HBox(sloganCheckBox);
         CaptchaController.setUpCaptcha();
-        buttonHBox = new HBox(save, changePasswordButton, leaderBoardButton,showMyFriends,showMyRequests);
+        buttonHBox = new HBox(save, changePasswordButton, leaderBoardButton, showMyFriends, showMyRequests);
         save.setVisible(false);
         profileMenuVbox.getChildren().addAll(usernameHBox, emailHBox, nicknameHBox, sloganHBox, buttonHBox);
     }
@@ -206,6 +208,9 @@ public class ProfileMenu extends Application {
     }
 
     private void setActions() {
+        root.getChildren().add(leaderBoardPane);
+        leaderBoardPane.setVisible(false);
+
         username.setEditable(false);
         username.setOnMouseClicked(mouseEvent -> {
             username.setEditable(true);
@@ -268,24 +273,61 @@ public class ProfileMenu extends Application {
         });
 
         leaderBoardButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            LeaderBoardController.setState(0);
-            LeaderBoardController.refresh();
-            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-            executor.scheduleAtFixedRate(LeaderBoardController::refresh, 0, 5, TimeUnit.SECONDS);
-            if (root.getChildren().contains(leaderBoardPane)) {
-                root.getChildren().remove(leaderBoardPane);
-            } else root.getChildren().add(leaderBoardPane);
+            leaderBoardPane.setVisible(!leaderBoardPane.isVisible());
+            refreshState0();
         });
 
         showMyFriends.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            LeaderBoardController.setState(1);
-            LeaderBoardController.refresh();
+            leaderBoardPane.setVisible(!leaderBoardPane.isVisible());
+            refreshState1();
         });
 
         showMyRequests.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
-            LeaderBoardController.setState(2);
-            LeaderBoardController.refresh();
+            leaderBoardPane.setVisible(!leaderBoardPane.isVisible());
+            refreshState2();
         });
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), actionEvent -> {
+            if (state == 0) refreshState0();
+        }));
+        timeline.setCycleCount(-1);
+        timeline.play();
+    }
+
+    private void refreshState0() {
+        LeaderBoardController.setState(0);
+        allUsers = getUsers();
+        tableView.getColumns().clear();
+        tableView.getItems().clear();
+        tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn, lastSeenColumn);
+        tableView.getItems().addAll(get10Users(start));
+        tableView.refresh();
+    }
+
+    private void refreshState1() {
+        LeaderBoardController.setState(1);
+        User user = MainMenuController.getCurrentUser();
+        allUsers = getUsers();
+        tableView.getColumns().clear();
+        tableView.getItems().clear();
+        Stream<PrivateUser> privateUsers = allUsers.stream().filter(privateUser -> user.getFriends().contains(privateUser.getUsername()));
+        tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn, lastSeenColumn);
+        allUsers = privateUsers.toList();
+        tableView.getItems().addAll(get10Users(start));
+        tableView.refresh();
+    }
+
+    private void refreshState2() {
+        LeaderBoardController.setState(2);
+        allUsers = getUsers();
+        tableView.getColumns().clear();
+        tableView.getItems().clear();
+        User user = MainMenuController.getCurrentUser();
+        Stream<PrivateUser> privateUsers = allUsers.stream().filter(privateUser -> user.getRequestInbox().containsKey(privateUser.getUsername()));
+        tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn, lastSeenColumn, friendStatusColumn);
+        allUsers = privateUsers.toList();
+        tableView.getItems().addAll(get10Users(start));
+        tableView.refresh();
     }
 
     private void setChangePasswordButtonActions(Button submit, Button cancel) {

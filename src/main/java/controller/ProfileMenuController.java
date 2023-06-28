@@ -107,7 +107,7 @@ public class ProfileMenuController {
             MainController.dataOutputStream.writeUTF(token);
             currentUser.setAvatarByteArray(avatarByteArray);
             MainController.dataOutputStream.write(avatarByteArray);
-            LeaderBoardController.refresh();
+//            LeaderBoardController.refresh();
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(0);
