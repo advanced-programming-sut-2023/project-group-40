@@ -4,7 +4,7 @@ import model.Government;
 import model.User;
 
 public class MainMenuController {
-    private static User currentUser = new User("username1", "password", "nickname", "email", "slogan");
+    private static User currentUser;
 
     public static String logout() {
         return "log out!";

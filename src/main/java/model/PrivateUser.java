@@ -6,13 +6,14 @@ public class PrivateUser {
     private final boolean isOnline;
     private final String username;
     private byte[] avatarByteArray;
-
-    public PrivateUser(String username, int rank, boolean isOnline, int highScore,byte[] avatarPath) {
+    private String lastSeen;
+    public PrivateUser(String username, int rank, boolean isOnline, int highScore,byte[] avatarPath,String lastSeen) {
         this.username = username;
         this.rank = rank;
         this.isOnline = isOnline;
         this.highScore = highScore;
         this.avatarByteArray = avatarPath;
+        this.lastSeen = lastSeen;
     }
 
     public int getHighScore() {
@@ -37,5 +38,9 @@ public class PrivateUser {
 
     public void setAvatarByteArray(byte[] avatarByteArray) {
         this.avatarByteArray = avatarByteArray;
+    }
+
+    public String getLastSeen() {
+        return lastSeen;
     }
 }

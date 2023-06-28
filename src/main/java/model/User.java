@@ -21,6 +21,7 @@ public class User {
     private int securityQuestionNo;
     private boolean isOnline;
     private byte[] avatarByteArray;
+    private String lastSeen;
     public static final byte [][] avatarsByteArray = new byte[10][];
     static {
         try {
@@ -34,12 +35,13 @@ public class User {
             throw new RuntimeException(e);
         }
     }
-    public User(String username, String password, String nickname, String email, String slogan) {
+    public User(String username, String password, String nickname, String email, String slogan,String lastSeen) {
         this.username = username;
         this.passwordHash = UserController.generatePasswordHash(password);
         this.nickname = nickname;
         this.email = email;
         this.slogan = slogan;
+        this.lastSeen = lastSeen;
     }
 
 
@@ -128,4 +130,7 @@ public class User {
         this.avatarByteArray = avatarByteArray;
     }
 
+    public String getLastSeen() {
+        return lastSeen;
+    }
 }

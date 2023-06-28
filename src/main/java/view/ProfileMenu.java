@@ -25,6 +25,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -265,12 +267,12 @@ public class ProfileMenu extends Application {
 
         leaderBoardButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             LeaderBoardController.refresh();
-            ScheduledThreadPoolExecutor threadPool
-                    = new ScheduledThreadPoolExecutor(2);
-            threadPool.schedule(() -> {
+
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+            executor.scheduleAtFixedRate(() -> {
                 LeaderBoardController.setAllUsers(ConnectToServer.getUsers());
                 LeaderBoardController.refresh();
-            }, 5, TimeUnit.SECONDS);
+            }, 0, 5, TimeUnit.SECONDS);
             if (root.getChildren().contains(leaderBoardPane)) {
                 root.getChildren().remove(leaderBoardPane);
             } else root.getChildren().add(leaderBoardPane);

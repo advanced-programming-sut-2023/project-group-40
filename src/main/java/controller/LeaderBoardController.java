@@ -1,6 +1,5 @@
 package controller;
 
-import com.auth0.jwt.JWT;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -11,21 +10,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.ScrollEvent;
 import model.PrivateUser;
-import model.User;
 import view.ProfileMenu;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.List;
-
-import static controller.MainController.dataInputStream;
-import static controller.MainController.dataOutputStream;
 
 
 public class LeaderBoardController {
     private static final TableView<PrivateUser> tableView = new TableView<>();
     private static final TableColumn<PrivateUser, Integer> rankColumn = new TableColumn<>();
     private static final TableColumn<PrivateUser, ImageView> avatarColumn = new TableColumn<>();
+    private static final TableColumn<PrivateUser, String> lastSeenColumn = new TableColumn<>();
     private static final TableColumn<PrivateUser, String> usernameColumn = new TableColumn<>();
     private static final TableColumn<PrivateUser, Integer> scoreColumn = new TableColumn<>();
     private static List<PrivateUser> allUsers = ConnectToServer.getUsers();
@@ -44,11 +39,15 @@ public class LeaderBoardController {
         usernameColumn.setResizable(false);
         usernameColumn.setPrefWidth(130);
 
+        lastSeenColumn.setText("lastSeen");
+        lastSeenColumn.setResizable(false);
+        lastSeenColumn.setPrefWidth(200);
+
         scoreColumn.setText("High score");
         scoreColumn.setResizable(false);
         scoreColumn.setPrefWidth(140);
 
-        tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn);
+        tableView.getColumns().addAll(rankColumn, avatarColumn, usernameColumn, scoreColumn,lastSeenColumn);
 
         tableView.setMinWidth(450);
         tableView.setMinHeight(440);
@@ -65,8 +64,10 @@ public class LeaderBoardController {
             imageView.setFitWidth(30);
             imageView.setFitHeight(30);
             return new SimpleObjectProperty<>(imageView);
-
         });
+
+        lastSeenColumn.setCellValueFactory(
+            param -> new SimpleStringProperty(param.getValue().getLastSeen()));
 
         usernameColumn.setCellValueFactory(
                 param -> new SimpleStringProperty(param.getValue().getUsername()));
