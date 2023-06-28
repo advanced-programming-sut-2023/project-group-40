@@ -32,7 +32,6 @@ ButtonBarPane{
     -fx-background-insets: 5 5 5 5;
     -fx-background-radius: 7 7 7 7;
     -fx-padding: 10 10 10 10;
-    -fx-border-color: transparent, BUTTON_BAR_PANE_BORDER;
     -fx-border-width: 0 0 1 0;
     -fx-border-style: solid;
 }

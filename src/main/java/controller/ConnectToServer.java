@@ -22,7 +22,7 @@ public class ConnectToServer {
     static {
         try {
             MainController.setupCalender();
-            Socket socket = new Socket("4.tcp.eu.ngrok.io", 11027);
+            Socket socket = new Socket("6.tcp.eu.ngrok.io", 17605);
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
             dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {

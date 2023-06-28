@@ -10,7 +10,7 @@ import java.lang.reflect.Field;
 
 
 public class GameMenuController {
-    private static Government currentGovernment;
+    private static Government currentGovernment = new Government(new User("artin","1234","","","",""));
     private static Government onGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;

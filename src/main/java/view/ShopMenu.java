@@ -16,6 +16,8 @@ import java.util.Objects;
 
 public class ShopMenu {
     private Pane root;
+    private Button backButton = new Button("back");
+    private Button enterButton = new Button("enter trade menu");
 
     public void start(Stage stage) throws Exception {
         root = new Pane();
@@ -34,7 +36,23 @@ public class ShopMenu {
         bar.addPage("weapon", makeVBox("weapon"));
         bar.setMaxWidth(App.getWidth());
         bar.translateXProperty().bind(bar.widthProperty().divide(-2).add(App.getWidth() / 2));
+        backButton.setTranslateX(20);
+        backButton.setTranslateY(App.getHeight()- 100);
+        enterButton.setTranslateX(App.getWidth() - 290);
+        enterButton.setTranslateY(App.getHeight()- 100);
+        backButton.setOnMouseClicked(event -> {
+            // TODO: 6/29/2023
+        });
+        enterButton.setOnMouseClicked(event -> {
+            try {
+                new TradeMenu().start(stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        root.getChildren().addAll(backButton,enterButton);
         VBox vbox = new VBox(bar);
+
         root.getChildren().add(vbox);
     }
 
