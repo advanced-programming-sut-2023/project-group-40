@@ -22,16 +22,16 @@ public class ConnectToServer {
     static {
         try {
             MainController.setupCalender();
-            Socket socket = new Socket("192.168.1.10", 80);
+            Socket socket = new Socket("4.tcp.eu.ngrok.io", 18108);
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
             dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(0);
         }
     }
 
-    public static String register(String username, String password, String nickname, String email, String slogan) throws
-            IOException {
+    public static String register(String username, String password, String nickname, String email, String slogan) {
         String token = JWT.create().withSubject("register")
                 .withExpiresAt(MainController.getExpirationDate())
                 .withIssuer(username)
@@ -41,45 +41,69 @@ public class ConnectToServer {
                 .withClaim("slogan", slogan)
                 .withHeader(MainController.headerClaims)
                 .sign(MainController.tokenAlgorithm);
-        dataOutputStream.writeUTF(token);
-        return dataInputStream.readUTF();
+        try {
+            dataOutputStream.writeUTF(token);
+            return dataInputStream.readUTF();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+            return null;
+        }
     }
 
-    public static String securityAnswer(String securityAnswer, int securityNumber) throws IOException {
+    public static String securityAnswer(String securityAnswer, int securityNumber) {
         String token = JWT.create().withSubject("securityAnswer")
                 .withExpiresAt(MainController.getExpirationDate())
                 .withClaim("securityAnswer", securityAnswer)
                 .withClaim("securityNumber", securityNumber)
                 .withHeader(MainController.headerClaims)
                 .sign(MainController.tokenAlgorithm);
-        dataOutputStream.writeUTF(token);
-        return dataInputStream.readUTF();
-    }
-
-    public static String login(String username, String password) throws IOException {
-        String token = JWT.create().withSubject("login")
-                .withExpiresAt(MainController.getExpirationDate())
-                .withIssuer(username)
-                .withClaim("passwordHash", UserController.generatePasswordHash(password))
-                .withHeader(MainController.headerClaims)
-                .sign(MainController.tokenAlgorithm);
-        dataOutputStream.writeUTF(token);
-
-        String s = dataInputStream.readUTF();
-        if (s.startsWith("{")) {
-            MainMenuController.setCurrentUser(new Gson().fromJson(s, User.class));
+        try {
+            dataOutputStream.writeUTF(token);
             return dataInputStream.readUTF();
-        } else return s;
+        }catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+            return null;
+        }
     }
 
-    public static void updateRank() throws IOException {
-        User user = MainMenuController.getCurrentUser();
-        String token = JWT.create().withSubject("update rank")
-                .withExpiresAt(MainController.getExpirationDate())
-                .withClaim("score", user.getHighScore())
-                .withHeader(MainController.headerClaims)
-                .sign(MainController.tokenAlgorithm);
-        dataOutputStream.writeUTF(token);
+    public static String login(String username, String password) {
+        try {
+            String token = JWT.create().withSubject("login")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withIssuer(username)
+                    .withClaim("passwordHash", UserController.generatePasswordHash(password))
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            dataOutputStream.writeUTF(token);
+
+            String s = dataInputStream.readUTF();
+            if (s.startsWith("{")) {
+                MainMenuController.setCurrentUser(new Gson().fromJson(s, User.class));
+                return dataInputStream.readUTF();
+            } else return s;
+        }catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+            return null;
+        }
+    }
+
+    public static void updateRank() {
+        try {
+            User user = MainMenuController.getCurrentUser();
+            String token = JWT.create().withSubject("update rank")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("score", user.getHighScore())
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            dataOutputStream.writeUTF(token);
+        }catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 
     public static List<PrivateUser> getUsers() {
@@ -92,7 +116,9 @@ public class ConnectToServer {
             List<PrivateUser> privateUsers = new Gson().fromJson(dataInputStream.readUTF(), new TypeToken<List<PrivateUser>>() {
             }.getType());
             return privateUsers;
-        } catch (IOException exception) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
             return new ArrayList<>();
         }
     }
@@ -106,7 +132,9 @@ public class ConnectToServer {
                     .sign(MainController.tokenAlgorithm);
             dataOutputStream.writeUTF(token);
             return new Gson().fromJson(dataInputStream.readUTF(), User.class);
-        } catch (IOException exception) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
             return null;
         }
     }

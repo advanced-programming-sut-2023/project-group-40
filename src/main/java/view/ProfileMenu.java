@@ -1,8 +1,6 @@
 package view;
 
-import controller.LeaderBoardController;
-import controller.ProfileMenuController;
-import controller.UserController;
+import controller.*;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Bounds;
@@ -20,18 +18,16 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.User;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.Buffer;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 
 public class ProfileMenu extends Application {
     private final String EMPTY_SLOGAN = "slogan is empty!";
@@ -121,7 +117,9 @@ public class ProfileMenu extends Application {
             for (ImageView imageView : imageViews) {
                 imageView.setOnMouseClicked(mouseEvent2 -> {
                     avatar.setImage(new Image(imageView.getImage().getUrl(), 100, 100, true, true));
-                    ProfileMenuController.changeAvatar(imageView.getImage().getUrl());
+                    String url = imageView.getImage().getUrl();
+                    int index = Integer.parseInt(url.substring(url.length() - 5,url.length() - 4));
+                    ProfileMenuController.changeAvatar(User.avatarsByteArray[index]);
                 });
             }
             avatarBox[0].getChildren().addAll(firstRowHbox, secondRowHbox);
@@ -137,15 +135,16 @@ public class ProfileMenu extends Application {
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file == null) return;
             avatar.setImage(new Image(file.getAbsolutePath(), 100, 100, true, true));
-            ProfileMenuController.changeAvatar(file.getAbsolutePath());
+            ProfileMenuController.changeAvatar(convertPathToByteArray(file.getAbsolutePath()));
         });
         avatar.setOnDragDropped(dragEvent -> {
             List<File> files = dragEvent.getDragboard().getFiles();
             try {
                 avatar.setImage(new Image(new FileInputStream(files.get(0)), 100, 100, true, true));
-                ProfileMenuController.changeAvatar(files.get(0).getAbsolutePath());
+                ProfileMenuController.changeAvatar(convertPathToByteArray(files.get(0).getAbsolutePath()));
             } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
+               e.printStackTrace();
+               System.exit(0);
             }
             dragEvent.consume();
         });
@@ -155,6 +154,20 @@ public class ProfileMenu extends Application {
             }
             dragEvent.consume();
         });
+    }
+
+    private static byte[] convertPathToByteArray(String avatarPath) {
+        try {
+            File file = new File(avatarPath.substring(6));
+            BufferedImage bImage = ImageIO.read(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(bImage, "png", bos);
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+            return null;
+        }
     }
 
     private void setupBoxes() {
@@ -252,6 +265,12 @@ public class ProfileMenu extends Application {
 
         leaderBoardButton.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
             LeaderBoardController.refresh();
+            ScheduledThreadPoolExecutor threadPool
+                    = new ScheduledThreadPoolExecutor(2);
+            threadPool.schedule(() -> {
+                LeaderBoardController.setAllUsers(ConnectToServer.getUsers());
+                LeaderBoardController.refresh();
+            }, 5, TimeUnit.SECONDS);
             if (root.getChildren().contains(leaderBoardPane)) {
                 root.getChildren().remove(leaderBoardPane);
             } else root.getChildren().add(leaderBoardPane);

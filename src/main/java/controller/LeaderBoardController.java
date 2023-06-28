@@ -1,5 +1,6 @@
 package controller;
 
+import com.auth0.jwt.JWT;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,7 +15,11 @@ import model.User;
 import view.ProfileMenu;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
+
+import static controller.MainController.dataInputStream;
+import static controller.MainController.dataOutputStream;
 
 
 public class LeaderBoardController {
@@ -85,8 +90,7 @@ public class LeaderBoardController {
             TableRow<PrivateUser> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2) {
-
-//                    ProfileMenuController.changeAvatar(tableView.getItems().get(row.getIndex()).getAvatarPath());
+                    ProfileMenuController.changeAvatar(tableView.getItems().get(row.getIndex()).getAvatarByteArray());
                     profileMenu.getAvatar().setImage(new Image(new ByteArrayInputStream(tableView.getItems().get(row.getIndex()).getAvatarByteArray()), 100, 100, true, true));
                 }
             });
@@ -98,8 +102,6 @@ public class LeaderBoardController {
             protected void updateItem(PrivateUser user, boolean b) {
                 if (!b && user.isOnline())
                     setStyle("-fx-background-color: rgba(56,111,6,0.8)");
-                else if (!b)
-                    setStyle("-fx-background-color: rgba(255,0,0,0.8)");
                 super.updateItem(user, b);
             }
         });
@@ -118,5 +120,9 @@ public class LeaderBoardController {
         tableView.getItems().clear();
         tableView.getItems().addAll(getUsers(start));
         tableView.refresh();
+    }
+
+    public static void setAllUsers(List<PrivateUser> allUsers) {
+        LeaderBoardController.allUsers = allUsers;
     }
 }

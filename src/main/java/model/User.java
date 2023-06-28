@@ -2,7 +2,12 @@ package model;
 
 import controller.UserController;
 
-import java.nio.Buffer;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class User {
     private int highScore;
@@ -16,7 +21,19 @@ public class User {
     private int securityQuestionNo;
     private boolean isOnline;
     private byte[] avatarByteArray;
-
+    public static final byte [][] avatarsByteArray = new byte[10][];
+    static {
+        try {
+            for (int i = 1; i <= 10; i++) {
+                BufferedImage bImage = ImageIO.read(new File(PrivateUser.class.getResource("/avatars/"+i+".png").toURI()));
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ImageIO.write(bImage, "png", bos);
+                avatarsByteArray[i - 1] = bos.toByteArray();
+            }
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public User(String username, String password, String nickname, String email, String slogan) {
         this.username = username;
         this.passwordHash = UserController.generatePasswordHash(password);

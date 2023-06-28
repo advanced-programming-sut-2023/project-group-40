@@ -74,11 +74,7 @@ public class Castle {
                 User winner = Government.getGovernments().get(0).getOwner();
                 System.out.println(winner.getUsername() + " wins!");
                 winner.setHighScore(1000 * GameMenuController.getNumberOfPlayers());
-                try {
-                    ConnectToServer.updateRank();
-                } catch (IOException ignored) {
-
-                }
+                ConnectToServer.updateRank();
                 System.exit(0);
             }
         }

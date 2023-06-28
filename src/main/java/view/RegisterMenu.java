@@ -153,22 +153,18 @@ public class RegisterMenu extends Application {
             TextFieldController.checkPassword(passwordHBox, password);
             TextFieldController.checkSlogan(sloganHBox, slogan);
             if (TextFieldController.isSuccessful()) {
-                try {
-                    String message = ConnectToServer.register(username.getText(), password.getText(),
-                            nickname.getText(), email.getText(), slogan.getText());
-                    if (message.startsWith("your register verified")) {
-                        SuccessfulDialog dialog = new SuccessfulDialog(root, "register successful");
-                        dialog.make();
-                        new Timeline(new KeyFrame(Duration.seconds(2), actionEvent -> {
-                            dialog.removeDialog();
-                            chooseSecurityQuestion();
-                        })).play();
-                    } else {
-                        ErrorDialog dialog = new ErrorDialog(root, message);
-                        dialog.make();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                String message = ConnectToServer.register(username.getText(), password.getText(),
+                        nickname.getText(), email.getText(), slogan.getText());
+                if (message.startsWith("your register verified")) {
+                    SuccessfulDialog dialog = new SuccessfulDialog(root, "register successful");
+                    dialog.make();
+                    new Timeline(new KeyFrame(Duration.seconds(2), actionEvent -> {
+                        dialog.removeDialog();
+                        chooseSecurityQuestion();
+                    })).play();
+                } else {
+                    ErrorDialog dialog = new ErrorDialog(root, message);
+                    dialog.make();
                 }
             }
         });

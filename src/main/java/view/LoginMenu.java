@@ -117,25 +117,21 @@ public class LoginMenu extends Application {
 //                TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
             CaptchaController.checkCaptcha();
             if (TextFieldController.isSuccessful()) {
-                try {
-                    String message = ConnectToServer.login(username.getText(), password.getText());
-                    if (message.startsWith("your login verified")) {
-                        SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login successful!");
-                        successfulDialog.make();
-                        new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
-                            successfulDialog.removeDialog();
-                            try {
-                                new MainMenu().start(primaryStage);
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-                        })).play();
-                    } else {
-                        ErrorDialog dialog = new ErrorDialog(root, message);
-                        dialog.make();
-                    }
-                } catch (IOException e) {
-                    //throw new RuntimeException(e);
+                String message = ConnectToServer.login(username.getText(), password.getText());
+                if (message.startsWith("your login verified")) {
+                    SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login successful!");
+                    successfulDialog.make();
+                    new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
+                        successfulDialog.removeDialog();
+                        try {
+                            new MainMenu().start(primaryStage);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    })).play();
+                } else {
+                    ErrorDialog dialog = new ErrorDialog(root, message);
+                    dialog.make();
                 }
             }
         });

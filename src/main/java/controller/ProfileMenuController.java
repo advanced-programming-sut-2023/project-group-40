@@ -20,7 +20,9 @@ public class ProfileMenuController {
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 
@@ -33,7 +35,9 @@ public class ProfileMenuController {
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 
@@ -46,7 +50,9 @@ public class ProfileMenuController {
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 
@@ -59,7 +65,9 @@ public class ProfileMenuController {
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 
@@ -72,7 +80,9 @@ public class ProfileMenuController {
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 
@@ -88,23 +98,19 @@ public class ProfileMenuController {
         ProfileMenuController.currentUser = currentUser;
     }
 
-    public static void changeAvatar(String avatarPath) {
+    public static void changeAvatar(byte[] avatarByteArray) {
         try {
             String token = JWT.create().withSubject("change avatar")
                     .withExpiresAt(MainController.getExpirationDate())
                     .withHeader(MainController.headerClaims)
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
-
-            BufferedImage bImage = ImageIO.read(new File(avatarPath));
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ImageIO.write(bImage, "jpg", bos );
-            byte [] data = bos.toByteArray();
-            currentUser.setAvatarByteArray(data);
-            MainController.dataOutputStream.write(data);
-
+            currentUser.setAvatarByteArray(avatarByteArray);
+            MainController.dataOutputStream.write(avatarByteArray);
             LeaderBoardController.refresh();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 }
