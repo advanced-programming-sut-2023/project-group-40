@@ -583,7 +583,6 @@ public class MapMenu extends Application {
                     if (name.equals("shop")) {
                         try {
                             GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.GOLD, 100);
-                            ShopMenuController.setCurrentGovernment(GameMenuController.getCurrentGovernment());
                             new ShopMenu().start(stage);
                         } catch (Exception e) {
                             throw new RuntimeException(e);

@@ -2,10 +2,11 @@ package controller;
 
 import model.Good;
 import model.Government;
+import model.User;
 
 
 public class ShopMenuController {
-    private static Government currentGovernment;
+    private static Government currentGovernment = GameMenuController.getCurrentGovernment();
 
     public static String buy(String name, int count) {
         Good good = Good.valueOf(name.toUpperCase());
@@ -33,7 +34,4 @@ public class ShopMenuController {
         return "sell successful";
     }
 
-    public static void setCurrentGovernment(Government currentGovernment) {
-        ShopMenuController.currentGovernment = currentGovernment;
-    }
 }

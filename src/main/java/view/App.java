@@ -1,7 +1,12 @@
 package view;
 
+import controller.GameMenuController;
+import controller.ShopMenuController;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import model.Good;
+import model.buildings.Buildings;
+import model.buildings.Storage;
 
 
 public class App extends Application {
@@ -32,6 +37,9 @@ public class App extends Application {
         // UserController.fetchDatabase();
         setupStage(primaryStage);
         // new ShopMenu().start(primaryStage);
-        new LoginMenu().start(primaryStage);
+        GameMenuController.getCurrentGovernment().getBuildings().add(Buildings.getBuildingObjectByType("stockpile"));
+        GameMenuController.getCurrentGovernment().getBuildings().add(Buildings.getBuildingObjectByType("granary"));
+        GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.GOLD,100);
+        new ShopMenu().start(primaryStage);
     }
 }

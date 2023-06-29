@@ -1,9 +1,7 @@
 package view;
 
 import controller.GameMenuController;
-import controller.ShopMenuController;
 import controller.TradeMenuController;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -48,7 +46,7 @@ public class TradeMenu {
     public void start(Stage stage) throws Exception {
         root = new Pane();
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(LoginMenu.class.getResource("/css/shopMenu.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(LoginMenu.class.getResource("/css/tradeMenu.css")).toExternalForm());
         stage.setScene(scene);
         stage.show();
         App.setupStage(stage);
@@ -102,38 +100,27 @@ public class TradeMenu {
             ImageView imageView = new ImageView(good.getImage());
             imageView.setFitHeight(ImageSize);
             imageView.setFitWidth(ImageSize);
-            if (imageHBox1.getChildren().size() == 4) imageHBox2.getChildren().add(imageView);
-            else imageHBox1.getChildren().add(imageView);
-            imageView.setOnMouseClicked(event -> {
-                goodVBox.getChildren().clear();
-                labelVBox.getChildren().clear();
-                buttonVBox.getChildren().clear();
-                labelVBox.getChildren().add(new Label(good.name().toLowerCase()));
-                Label balanceLabel = new Label(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(good)));
-                labelVBox.getChildren().add(balanceLabel);
-                sellButton.setText("Sell " + good.getSellPrice());
-                buyButton.setText("Buy " + good.getBuyPrice());
-                buttonVBox.getChildren().addAll(sellButton, buyButton);
-                sellButton.setOnMouseClicked(event1 -> {
-                    Node[] nodes = MapMenu.makePopup(ShopMenuController.sell(good.name(), 1), "sell successful");
-                    root.getChildren().add(nodes[0]);
-                    nodes[1].setOnMouseClicked(mouseEvent -> {
-                        root.getChildren().remove(nodes[0]);
-                    });
-                    balanceLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(good)));
-                    treasuryLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD)));
-                });
-                buyButton.setOnMouseClicked(event1 -> {
-                    Node[] nodes = MapMenu.makePopup(ShopMenuController.buy(good.name(), 1), "buy successful");
-                    nodes[1].setOnMouseClicked(mouseEvent -> {
-                        root.getChildren().remove(nodes[0]);
-                    });
-                    root.getChildren().add(nodes[0]);
-                    balanceLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(good)));
-                    treasuryLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD)));
-                });
-                goodVBox.getChildren().addAll(labelVBox, buttonVBox, coinHBox);
+            ImageView miunusIcon = new ImageView(new Image(TradeMenu.class.getResource("/images/minusIcon.png").toString(),40,40,false,false));
+            ImageView plusIcon = new ImageView(new Image(TradeMenu.class.getResource("/images/plusIcon.png").toString(),40,40,false,false));
+            Label label = new Label("0");
+            HBox hBox = new HBox(miunusIcon,label,plusIcon);
+            hBox.setSpacing(0);
+            plusIcon.setOnMouseClicked(event -> {
+                int number = Integer.parseInt(label.getText());
+                String[] url = imageView.getImage().getUrl().split("/");
+                Good product = Good.getGoodByName(url[url.length - 1].split("\\.")[0]);
+                if (GameMenuController.getCurrentGovernment().getAmountOfGood(product) == number)
+                    return;
+                label.setText(String.valueOf(number + 1));
             });
+            miunusIcon.setOnMouseClicked(event -> {
+                int number = Integer.parseInt(label.getText());
+                if (number == 0) return;
+                label.setText(String.valueOf(number - 1));
+            });
+            VBox vBox = new VBox(imageView,hBox);
+            if (imageHBox1.getChildren().size() == 4) imageHBox2.getChildren().add(vBox);
+            else imageHBox1.getChildren().add(vBox);
         }
         VBox vBox = new VBox(imageHBox1, imageHBox2, goodVBox);
         return vBox;

@@ -24,7 +24,7 @@ public class ConnectToServer {
     static {
         try {
             MainController.setupCalender();
-            Socket socket = new Socket("2.191.225.7", 80);
+            Socket socket = new Socket("192.168.1.10", 80);
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
             dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
