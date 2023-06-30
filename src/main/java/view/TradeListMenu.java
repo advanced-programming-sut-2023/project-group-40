@@ -21,6 +21,7 @@ public class TradeListMenu {
     private final Button enterButton = new Button("enter map menu");
     Pane root;
     VBox incomingRequests;
+
     public void start(Stage stage) throws Exception {
         root = new Pane();
         Scene scene = new Scene(root);
@@ -60,7 +61,7 @@ public class TradeListMenu {
 
     private VBox makeIncomingRequestsVBox() {
         VBox vBox = new VBox(new Label("incoming Trade Requests"));
-        HBox firstLine = new HBox(new Label("sender username"),new Label("seen/unseen"));
+        HBox firstLine = new HBox(new Label("sender username"), new Label("seen/unseen"));
         firstLine.setSpacing(10);
         vBox.getChildren().add(firstLine);
         for (TradeRequest incomingRequest : TradeMenuController.getCurrentGovernment().getIncomingRequests()) {
@@ -79,7 +80,7 @@ public class TradeListMenu {
                 if (incomingRequest.getHasSeen()) {
                     seeButton.setStyle("-fx-background-color: #372e2e");
                     return;
-                };
+                }
                 showDetail(incomingRequest);
                 incomingRequest.setHasSeen(true);
                 seenStatus.setText("seen");
@@ -122,7 +123,7 @@ public class TradeListMenu {
         label.setAlignment(Pos.CENTER);
         int totalPrice = 0;
         messageVbox.getChildren().add(label);
-        for(Map.Entry<Good, Integer> entry : incomingRequest.getProductList().entrySet()) {
+        for (Map.Entry<Good, Integer> entry : incomingRequest.getProductList().entrySet()) {
             Good key = entry.getKey();
             int value = entry.getValue();
             HBox line = new HBox();
@@ -137,17 +138,17 @@ public class TradeListMenu {
         Button rejectButton = new Button("reject");
         acceptButton.setStyle("-fx-background-color: green");
         rejectButton.setStyle("-fx-background-color: red");
-        HBox hBox = new HBox(acceptButton,rejectButton);
+        HBox hBox = new HBox(acceptButton, rejectButton);
         hBox.setStyle("-fx-alignment: center");
         hBox.setSpacing(10);
-        messageVbox.getChildren().addAll(new Label("total price : "  + totalPrice));
+        messageVbox.getChildren().addAll(new Label("total price : " + totalPrice));
         messageVbox.getChildren().addAll(hBox);
 
         int finalTotalPrice = totalPrice;
         acceptButton.setOnMouseClicked(event -> {
-            incomingRequests = makeIncomingRequestsVBox();;
+            incomingRequests = makeIncomingRequestsVBox();
             Node[] nodes = MapMenu.makePopup(TradeMenuController.acceptTrade(incomingRequest.getId(), finalTotalPrice)
-                    ,"Accept Trade Request Successful");
+                    , "Accept Trade Request Successful");
             root.getChildren().add(nodes[0]);
             nodes[1].setOnMouseClicked(event1 -> {
                 root.getChildren().remove(nodes[0]);

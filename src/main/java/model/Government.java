@@ -1,7 +1,5 @@
 package model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import controller.ConnectToServer;
+
 import model.buildings.Building;
 import model.buildings.GateHouse;
 import model.buildings.Hovel;
@@ -18,7 +16,7 @@ public class Government {
     private transient ArrayList<Building> buildings = new ArrayList<>();
     private int countofhorses = 0;
     private int numberOfKnight = 0;
-    private String username;
+    private final String username;
     private int foodRate = -2;
     private int taxRate = 0;
     private int popularity = 0;
@@ -54,10 +52,13 @@ public class Government {
         return governments;
     }
 
+    public static void setGovernments(ArrayList<Government> governments) {
+        Government.governments = governments;
+    }
+
     public static void removeGovernment(String username) {
         governments.removeIf(government -> government.getUsername().equals(username));
     }
-
 
     public int getFoodRate() {
         return foodRate;
@@ -173,7 +174,6 @@ public class Government {
         return incomingRequests;
     }
 
-
     public int getMaxPopulation() {
         return castle.getMaxPopulation();
     }
@@ -181,7 +181,6 @@ public class Government {
     public int getPopulation() {
         return castle.getPopulation();
     }
-
 
     public void decreaseAmountOfFood(int amount) {
         int remainFromFood1 = decreaseAmountOfOneFood(amount, Good.APPLE);
@@ -268,6 +267,10 @@ public class Government {
         return buildings;
     }
 
+    public void setBuildings(ArrayList<Building> buildings) {
+        this.buildings = buildings;
+    }
+
     public int getCountOfBuilding(String buildingName) {
         int count = 0;
         for (Building building : buildings)
@@ -303,15 +306,7 @@ public class Government {
         return outgoingRequests;
     }
 
-    public static void setGovernments(ArrayList<Government> governments) {
-        Government.governments = governments;
-    }
-
     public String getUsername() {
         return username;
-    }
-
-    public void setBuildings(ArrayList<Building> buildings) {
-        this.buildings = buildings;
     }
 }

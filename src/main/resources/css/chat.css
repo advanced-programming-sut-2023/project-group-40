@@ -1,0 +1,12 @@
+Button {
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-min-width: 50;
+    -fx-max-width: 50;
+    -fx-min-height: 50;
+    -fx-max-height: 50;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}

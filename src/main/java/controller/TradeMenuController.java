@@ -25,8 +25,8 @@ public class TradeMenuController {
         return "you have " + count + " new Requests";
     }
 
-    public static String sendRequest(String type,HashMap<Good,Integer> products, String message) {
-        TradeRequest tradeRequest = new TradeRequest(currentGovernment.getUsername(), targetGovernment.getUsername(),type,products, message);
+    public static String sendRequest(String type, HashMap<Good, Integer> products, String message) {
+        TradeRequest tradeRequest = new TradeRequest(currentGovernment.getUsername(), targetGovernment.getUsername(), type, products, message);
         targetGovernment.getOutgoingRequests().add(tradeRequest);
         String token = JWT.create().withSubject("send trade request")
                 .withExpiresAt(MainController.getExpirationDate())
@@ -63,7 +63,7 @@ public class TradeMenuController {
         for (TradeRequest incomingRequest : currentGovernment.getIncomingRequests())
             if (incomingRequest.getId() == id) tradeRequest = incomingRequest;
         targetGovernment = Government.getGovernmentByUser(tradeRequest.getSenderUsername());
-        for(Map.Entry<Good, Integer> entry : tradeRequest.getProductList().entrySet()) {
+        for (Map.Entry<Good, Integer> entry : tradeRequest.getProductList().entrySet()) {
             Good product = entry.getKey();
             int count = entry.getValue();
 
@@ -78,13 +78,13 @@ public class TradeMenuController {
         if (totalPrice > targetGovernment.getAmountOfGood(Good.GOLD))
             return targetGovernment.getUsername() + " haven't enough gold";
 
-        for(Map.Entry<Good, Integer> entry : tradeRequest.getProductList().entrySet()) {
+        for (Map.Entry<Good, Integer> entry : tradeRequest.getProductList().entrySet()) {
             Good product = entry.getKey();
             int count = entry.getValue();
             currentGovernment.decreaseAmountOfGood(product, count);
             targetGovernment.increaseAmountOfGood(product, count);
         }
-        targetGovernment.decreaseAmountOfGood(Good.GOLD,totalPrice);
+        targetGovernment.decreaseAmountOfGood(Good.GOLD, totalPrice);
         acceptRequest(tradeRequest);
         return "Accept Trade Request Successful";
     }
@@ -102,11 +102,6 @@ public class TradeMenuController {
 //        return output.toString();
 //    }
 
-    public static void setCurrentGovernment(Government currentGovernment) {
-        TradeMenuController.currentGovernment = currentGovernment;
-    }
-
-
     public static String showGovernment() {
         StringBuilder output = new StringBuilder("Governments : \n");
         for (Government government : Government.getGovernments()) {
@@ -123,6 +118,10 @@ public class TradeMenuController {
 
     public static Government getCurrentGovernment() {
         return currentGovernment;
+    }
+
+    public static void setCurrentGovernment(Government currentGovernment) {
+        TradeMenuController.currentGovernment = currentGovernment;
     }
 
     public static void setSeen(TradeRequest outgoingRequest) {

@@ -136,7 +136,7 @@ public class LoginMenu extends Application {
 //                            Government.getGovernments().get(1).getBuildings().add(Buildings.getBuildingObjectByType("stockpile"));
 //                            Government.getGovernments().get(1).getBuildings().add(Buildings.getBuildingObjectByType("granary"));
 //                            Government.getGovernments().get(1).increaseAmountOfGood(Good.GOLD,100);
-                            new TradeListMenu().start(primaryStage);
+                            new MainMenu().start(primaryStage);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }

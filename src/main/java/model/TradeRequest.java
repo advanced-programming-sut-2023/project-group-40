@@ -6,20 +6,21 @@ import java.util.Random;
 import java.util.random.RandomGenerator;
 
 public class TradeRequest {
-    private int id ;
     private final String senderUsername, receiverUsername;
-    private final HashMap <Good,Integer> productList;
+    private final HashMap<Good, Integer> productList;
     private final String senderMessage;
-    private String type;
+    private final int id;
+    private final String type;
     private boolean isAccepted = false, hasSeen = false;
 
-    public TradeRequest(String sender, String receiver,String type, HashMap<Good,Integer> productList, String message) {
+    public TradeRequest(String sender, String receiver, String type, HashMap<Good, Integer> productList,
+                        String message) {
         this.senderUsername = sender;
         this.receiverUsername = receiver;
         this.productList = productList;
         this.type = type;
         this.senderMessage = message;
-        this.id = new Random().nextInt(1000000,10000000);
+        this.id = new Random().nextInt(1000000, 10000000);
     }
 
     public boolean getAccepted() {

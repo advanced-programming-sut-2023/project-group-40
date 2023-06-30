@@ -11,15 +11,15 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
-public class MainMenu extends Application {
+public class ChatMenu extends Application {
     private static Stage primaryStage;
     VBox vbox;
     private Pane root;
-    private Button startNewGame, continueGame, enterProfileMenu, enterChatMenu, logout;
+    private Button enterPublicChat, enterRoom, enterPrivateChat, back;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        MainMenu.primaryStage = primaryStage;
+        ChatMenu.primaryStage = primaryStage;
         root = new Pane();
         Image image = new Image(MainMenu.class.getResource("/images/backgrounds/loginMenuBackground.jpg").toString());
         root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(App.getWidth(), App.getHeight(), false, false
@@ -28,12 +28,11 @@ public class MainMenu extends Application {
         scene.getStylesheets().add(Objects
                 .requireNonNull(MainMenu.class.getResource("/css/mainMenu.css")).toExternalForm());
         vbox = new VBox();
-        startNewGame = new Button("start new game");
-        continueGame = new Button("continue game");
-        enterProfileMenu = new Button("profile menu");
-        enterChatMenu = new Button("chat menu");
-        logout = new Button("logout");
-        vbox.getChildren().addAll(startNewGame, continueGame, enterProfileMenu, enterChatMenu, logout);
+        enterPublicChat = new Button("public chat");
+        enterRoom = new Button("rooms");
+        enterPrivateChat = new Button("private chat");
+        back = new Button("back");
+        vbox.getChildren().addAll(enterPublicChat, enterRoom, enterPrivateChat, back);
         root.getChildren().add(vbox);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -50,46 +49,34 @@ public class MainMenu extends Application {
     }
 
     private void setActions() {
-        startNewGame.setOnMouseClicked(event -> {
+        enterPublicChat.setOnMouseClicked(event -> {
             try {
-                new SetupGameMenu().start(primaryStage);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-        continueGame.setOnMouseClicked(event -> {
-            MainMenuController.continueGame();
-            // TODO: 6/7/2023
-            try {
-                new MapMenu().start(primaryStage);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-        enterProfileMenu.setOnMouseClicked(event -> {
-            ProfileMenuController.setCurrentUser(MainMenuController.getCurrentUser());
-            try {
-                new ProfileMenu().start(primaryStage);
+                new PublicChat().start(primaryStage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-        enterChatMenu.setOnMouseClicked(event -> {
+        enterRoom.setOnMouseClicked(event -> {
             try {
-                new ChatMenu().start(primaryStage);
+                new Room().start(primaryStage);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         });
-        logout.setOnMouseClicked(event -> {
+        enterPrivateChat.setOnMouseClicked(event -> {
+            try {
+                new PrivateChat().start(primaryStage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        back.setOnMouseClicked(event -> {
             MainMenuController.setCurrentUser(null);
             try {
-                new LoginMenu().start(primaryStage);
+                new MainMenu().start(primaryStage);
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         });
     }
-
-
 }

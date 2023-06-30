@@ -46,7 +46,7 @@ public class ProfileMenu extends Application {
     private final Button leaderBoardButton = new Button("leader board");
     private final Button showMyFriends = new Button("show my friends");
     private final Button showMyRequests = new Button("show my requests");
-    private final ImageView avatar = new ImageView(ByteArrayToImage(ProfileMenuController.getCurrentUser().getAvatarByteArray()));
+    private final ImageView avatar = new ImageView(byteArrayToImage(ProfileMenuController.getCurrentUser().getAvatarByteArray()));
     private final AnchorPane leaderBoardPane = new AnchorPane();
     private final TextField searchBar = new TextField();
     private Pane root;
@@ -70,7 +70,7 @@ public class ProfileMenu extends Application {
         }
     }
 
-    private Image ByteArrayToImage(byte[] avatarByteArray) {
+    public static Image byteArrayToImage(byte[] avatarByteArray) {
         return new Image(new ByteArrayInputStream(avatarByteArray), 100, 100, false, false);
     }
 

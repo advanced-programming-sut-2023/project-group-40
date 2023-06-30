@@ -6,7 +6,7 @@ import model.User;
 
 
 public class ShopMenuController {
-    private static Government currentGovernment = GameMenuController.getCurrentGovernment();
+    private static final Government currentGovernment = GameMenuController.getCurrentGovernment();
 
     public static String buy(String name, int count) {
         Good good = Good.valueOf(name.toUpperCase());

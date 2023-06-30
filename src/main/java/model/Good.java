@@ -42,6 +42,13 @@ public enum Good {
         this.image = new Image(Good.class.getResource("/images/goods/" + names[random] + ".png").toString());
     }
 
+    public static Good getGoodByName(String name) {
+        for (Good value : values()) {
+            if (value.name().toLowerCase().equals(name)) return value;
+        }
+        return null;
+    }
+
     public int getBuyPrice() {
         return buyPrice;
     }
@@ -56,12 +63,5 @@ public enum Good {
 
     public Image getImage() {
         return image;
-    }
-
-    public static Good getGoodByName(String name){
-        for (Good value : values()) {
-            if (value.name().toLowerCase().equals(name)) return value;
-        }
-        return null;
     }
 }
