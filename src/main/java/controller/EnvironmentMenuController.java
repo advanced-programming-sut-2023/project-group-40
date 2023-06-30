@@ -19,7 +19,7 @@ public class EnvironmentMenuController {
     }
 
     public static boolean isCurrentGovernmentChoseColor(User user) {
-        return Government.getGovernmentByUser(user).getColor() != null;
+        return Government.getGovernmentByUser(user.getUsername()).getColor() != null;
     }
 
     public static void checkGameStarted() {
@@ -31,7 +31,7 @@ public class EnvironmentMenuController {
     }
 
     public static boolean isPlayerAdded(String username) {
-        return Government.getGovernmentByUser(ConnectToServer.getUserByUsername(username)) != null;
+        return Government.getGovernmentByUser(username) != null;
     }
 
 

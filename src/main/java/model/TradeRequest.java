@@ -1,22 +1,21 @@
 package model;
 
 
+import java.util.HashMap;
+
 public class TradeRequest {
     private static int lastId = 1000;
     private final Government sender, receiver;
-    private final Good commodity;
-    private final int price, count;
+    private final HashMap <Good,Integer> productList;
     private final String senderMessage;
     private final Integer id = lastId++;
     private String receiverMessage;
     private boolean isAccepted = false, hasSeen = false;
 
-    public TradeRequest(Government sender, Government receiver, Good commodity, int price, int count, String message) {
+    public TradeRequest(Government sender, Government receiver, HashMap<Good,Integer> productList, String message) {
         this.sender = sender;
         this.receiver = receiver;
-        this.commodity = commodity;
-        this.price = price;
-        this.count = count;
+        this.productList = productList;
         this.senderMessage = message;
     }
 
@@ -28,16 +27,8 @@ public class TradeRequest {
         return isAccepted;
     }
 
-    public Good getCommodity() {
-        return commodity;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public int getCount() {
-        return count;
+    public HashMap<Good, Integer> getProductList() {
+        return productList;
     }
 
     public String getSenderMessage() {

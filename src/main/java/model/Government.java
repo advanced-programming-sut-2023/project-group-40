@@ -29,8 +29,8 @@ public class Government {
         this.owner = owner;
     }
 
-    public static Government getGovernmentByUser(User user) {
-        Stream<Government> stream = governments.stream().filter(government -> government.owner == user);
+    public static Government getGovernmentByUser(String username) {
+        Stream<Government> stream = governments.stream().filter(government -> government.owner.getUsername().equals(username));
         Optional<Government> government = stream.findAny();
         return government.orElse(null);
     }

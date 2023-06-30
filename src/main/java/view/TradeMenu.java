@@ -10,8 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import model.Good;
-import model.PrivateUser;
+import model.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +20,10 @@ public class TradeMenu {
     private static String targetUsername;
     private static String message;
     private static String requestType;
-    private static final HashMap<String,Integer> productList = new HashMap<>();
+    private static HashMap<Good,Integer> productList = new HashMap<>();
     private final Button backButton = new Button("back");
     private final Button enterButton = new Button("enter map menu");
+    BarPane bar;
     Pane root;
     public void start(Stage stage) throws Exception {
         root = new Pane();
@@ -36,8 +36,7 @@ public class TradeMenu {
         Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
         root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
                 , true, false))));
-        makeRootVBox();
-        BarPane bar = new BarPane();
+        bar = new BarPane();
         bar.addPage("food", makeVBox("food"));
         bar.addPage("material", makeVBox("material"));
         bar.addPage("weapon", makeVBox("weapon"));
@@ -62,20 +61,15 @@ public class TradeMenu {
         root.getChildren().add(vbox);
     }
 
-    private void makeRootVBox() {
-
-    }
-
     private VBox makeVBox(String type) {
         List<PrivateUser> users = ConnectToServer.getUsers();
         ComboBox <String> userComboBox = new ComboBox<>();
-
         for (PrivateUser user : users) {
             userComboBox.getItems().add(user.getUsername());
         }
         userComboBox.setValue(userComboBox.getItems().get(0));
         userComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            targetUsername = newValue;
+            TradeMenuController.setTargetGovernment(Government.getGovernmentByUser(newValue));
         });
         Button donateButton = new Button("donate");
         Button requestButton = new Button("request");
@@ -119,11 +113,15 @@ public class TradeMenu {
                 if (GameMenuController.getCurrentGovernment().getAmountOfGood(product) == number)
                     return;
                 label.setText(String.valueOf(number + 1));
+                productList.merge(product,1,Integer::sum);
             });
             miunusIcon.setOnMouseClicked(event -> {
                 int number = Integer.parseInt(label.getText());
+                String[] url = imageView.getImage().getUrl().split("/");
+                Good product = Good.getGoodByName(url[url.length - 1].split("\\.")[0]);
                 if (number == 0) return;
                 label.setText(String.valueOf(number - 1));
+                productList.merge(product,-1,Integer::sum);
             });
             VBox vBox = new VBox(imageView,hBox);
             if (imageHBox1.getChildren().size() == 4) imageHBox2.getChildren().add(vBox);
@@ -132,8 +130,21 @@ public class TradeMenu {
         VBox imageVBox = new VBox(imageHBox1, imageHBox2);
         Button submitButton = new Button("submit");
         submitButton.setOnMouseClicked(event -> {
-            
+            TradeMenuController.sendRequest(productList,textArea.getText());
         });
-        return new VBox(new HBox(userComboBox,imageVBox),buttonHbox,messageHBox);
+        ToolBar toolBar = (ToolBar) bar.getTop();
+        for (int i = 0 ; i < 3 ; i++) {
+            toolBar.getItems().get(i).setOnMouseClicked(event -> {
+                requestButton.setStyle("-fx-border-color: black");
+                donateButton.setStyle("-fx-border-color: black");
+                textArea.setText("");
+                productList = new HashMap<>();
+                requestType = null;
+                message = "";
+                userComboBox.setValue(userComboBox.getItems().get(0));
+            });
+        }
+
+        return new VBox(new HBox(userComboBox,imageVBox),buttonHbox,messageHBox,submitButton);
     }
 }

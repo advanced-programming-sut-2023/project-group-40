@@ -117,7 +117,7 @@ public class SetupGameMenu extends Application {
                 return;
             }
             Map.initMap(size);
-            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(MainMenuController.getCurrentUser()));
+            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(MainMenuController.getCurrentUser().getUsername()));
             GameMenuController.setNumberOfPlayers(countOfPlayers);
             // TODO: 6/7/2023
             try {

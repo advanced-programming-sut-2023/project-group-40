@@ -19,10 +19,10 @@ public class MainMenuController {
     }
 
     public static String enterGameMenu() {
-        Government governmentByUser = Government.getGovernmentByUser(currentUser);
+        Government governmentByUser = Government.getGovernmentByUser(currentUser.getUsername());
         if (Government.getGovernments().size() == 0) {
             Government.addGovernment(currentUser.getUsername());
-            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(currentUser));
+            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(currentUser.getUsername()));
             return "you entered a new game!";
         }
         if (governmentByUser == null)
@@ -33,6 +33,6 @@ public class MainMenuController {
 
     public static void continueGame() {
         User user = MainMenuController.getCurrentUser();
-        GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(user));
+        GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(user.getUsername()));
     }
 }
