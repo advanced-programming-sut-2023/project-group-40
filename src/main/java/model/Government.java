@@ -11,12 +11,13 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class Government {
-    private static final ArrayList<Government> governments = new ArrayList<>();
-    private final ArrayList<TradeRequest> requests = new ArrayList<>();
-    private final ArrayList<Building> buildings = new ArrayList<>();
+    private static ArrayList<Government> governments = new ArrayList<>();
+    private final ArrayList<TradeRequest> incomingRequests = new ArrayList<>();
+    private final ArrayList<TradeRequest> outgoingRequests = new ArrayList<>();
+    private transient final ArrayList<Building> buildings = new ArrayList<>();
     private int countofhorses = 0;
     private int numberOfKnight = 0;
-    private User owner;
+    private String username;
     private int foodRate = -2;
     private int taxRate = 0;
     private int popularity = 0;
@@ -25,12 +26,12 @@ public class Government {
     private Castle castle = new Castle(0, 0, 0, 0);
     private int emptySpace = 0;
 
-    public Government(User owner) {
-        this.owner = owner;
+    public Government(String username) {
+        this.username = username;
     }
 
     public static Government getGovernmentByUser(String username) {
-        Stream<Government> stream = governments.stream().filter(government -> government.owner.getUsername().equals(username));
+        Stream<Government> stream = governments.stream().filter(government -> government.getUsername().equals(username));
         Optional<Government> government = stream.findAny();
         return government.orElse(null);
     }
@@ -40,7 +41,7 @@ public class Government {
     }
 
     public static void addGovernment(String username) {
-        Government government = new Government(ConnectToServer.getUserByUsername(username));
+        Government government = new Government(username);
         governments.add(government);
     }
 
@@ -53,16 +54,9 @@ public class Government {
     }
 
     public static void removeGovernment(String username) {
-        governments.removeIf(government -> government.getOwner() == ConnectToServer.getUserByUsername(username));
+        governments.removeIf(government -> government.getUsername().equals(username));
     }
 
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
 
     public int getFoodRate() {
         return foodRate;
@@ -171,15 +165,15 @@ public class Government {
     }
 
     public void addRequest(TradeRequest tradeRequest) {
-        requests.add(tradeRequest);
+        outgoingRequests.add(tradeRequest);
     }
 
-    public ArrayList<TradeRequest> getRequests() {
-        return requests;
+    public ArrayList<TradeRequest> getIncomingRequests() {
+        return incomingRequests;
     }
 
     public TradeRequest getRequestById(Integer id) {
-        for (TradeRequest request : requests) {
+        for (TradeRequest request : incomingRequests) {
             if (request.getId().equals(id)) return request;
         }
         return null;
@@ -310,5 +304,15 @@ public class Government {
         return count;
     }
 
+    public ArrayList<TradeRequest> getOutgoingRequests() {
+        return outgoingRequests;
+    }
 
+    public static void setGovernments(ArrayList<Government> governments) {
+        Government.governments = governments;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 }

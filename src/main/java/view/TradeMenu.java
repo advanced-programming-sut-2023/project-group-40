@@ -2,8 +2,10 @@ package view;
 
 import controller.ConnectToServer;
 import controller.GameMenuController;
+import controller.ShopMenuController;
 import controller.TradeMenuController;
 import javafx.beans.binding.Bindings;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -49,7 +51,7 @@ public class TradeMenu {
         enterButton.setTranslateY(App.getHeight() - 100);
         backButton.setOnMouseClicked(event -> {
             try {
-                new ShopMenu().start(stage);
+                 new TradeListMenu().start(stage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -69,6 +71,7 @@ public class TradeMenu {
             userComboBox.getItems().add(user.getUsername());
         }
         userComboBox.setValue(userComboBox.getItems().get(0));
+        TradeMenuController.setTargetGovernment(Government.getGovernmentByUser(userComboBox.getItems().get(0)));
         userComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             TradeMenuController.setTargetGovernment(Government.getGovernmentByUser(newValue));
         });
@@ -130,8 +133,13 @@ public class TradeMenu {
         }
         VBox imageVBox = new VBox(imageHBox1, imageHBox2);
         Button submitButton = new Button("submit");
+        submitButton.setTranslateY(40);
         submitButton.setOnMouseClicked(event -> {
-            TradeMenuController.sendRequest(productList,textArea.getText());
+            Node[] nodes = MapMenu.makePopup(TradeMenuController.sendRequest(productList,textArea.getText()), "request sent");
+            root.getChildren().add(nodes[0]);
+            nodes[1].setOnMouseClicked(mouseEvent -> {
+                root.getChildren().remove(nodes[0]);
+            });
         });
         Executors.newSingleThreadExecutor().submit(() -> {
             try {
@@ -148,6 +156,7 @@ public class TradeMenu {
                     requestType = null;
                     message = "";
                     userComboBox.setValue(userComboBox.getItems().get(0));
+                    TradeMenuController.setTargetGovernment(Government.getGovernmentByUser(userComboBox.getItems().get(0)));
                 });
         });
 

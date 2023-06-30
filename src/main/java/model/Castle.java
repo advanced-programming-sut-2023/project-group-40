@@ -67,11 +67,11 @@ public class Castle {
     public void checkCastle() {
         if (hp <= 0) {
             Government.getGovernments().remove(government);
-            System.out.println(government.getOwner().getUsername() + "lose!");
+//            System.out.println(government.getOwner().getUsername() + "lose!");
             if (Government.getGovernments().size() == 1) {
-                User winner = Government.getGovernments().get(0).getOwner();
-                System.out.println(winner.getUsername() + " wins!");
-                winner.setHighScore(1000 * GameMenuController.getNumberOfPlayers());
+//                User winner = Government.getGovernments().get(0).getOwner();
+//                System.out.println(winner.getUsername() + " wins!");
+//                winner.setHighScore(1000 * GameMenuController.getNumberOfPlayers());
                 ConnectToServer.updateRank();
                 System.exit(0);
             }

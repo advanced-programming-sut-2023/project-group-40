@@ -39,7 +39,6 @@ public enum Good {
         names[0] = "apple";
         names[1] = "cheese";
         int random = RandomGenerator.getDefault().nextInt(2);
-        System.out.println(random);
         this.image = new Image(Good.class.getResource("/images/goods/" + names[random] + ".png").toString());
     }
 

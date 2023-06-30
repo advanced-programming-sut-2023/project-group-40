@@ -3,9 +3,7 @@ package controller;
 import com.auth0.jwt.JWT;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import model.FriendStatus;
-import model.PrivateUser;
-import model.User;
+import model.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -159,6 +157,22 @@ public class ConnectToServer {
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(0);
+        }
+    }
+
+    public static ArrayList<Government> getGovernments() {
+        try {
+            String token = JWT.create().withSubject("get governments")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            dataOutputStream.writeUTF(token);
+            return new Gson().fromJson(dataInputStream.readUTF(), new TypeToken<List<Government>>() {
+            }.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+            return new ArrayList<>();
         }
     }
 }

@@ -1,10 +1,13 @@
 package view;
 
+import controller.ConnectToServer;
 import controller.GameMenuController;
 import controller.ShopMenuController;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import model.Color;
 import model.Good;
+import model.Government;
 import model.buildings.Buildings;
 import model.buildings.Storage;
 

@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Government;
 import model.SecurityQuestions;
 
 import java.util.Objects;
@@ -117,13 +118,15 @@ public class LoginMenu extends Application {
             CaptchaController.checkCaptcha();
             if (TextFieldController.isSuccessful()) {
                 String message = ConnectToServer.login(username.getText(), password.getText());
+                Government.setGovernments(ConnectToServer.getGovernments());
+                System.out.println(Government.getGovernments().size());
                 if (message.startsWith("your login verified")) {
                     SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login successful!");
                     successfulDialog.make();
                     new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
                         successfulDialog.removeDialog();
                         try {
-                            new TradeMenu().start(primaryStage);
+                            new TradeListMenu().start(primaryStage);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
