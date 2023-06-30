@@ -1,7 +1,6 @@
 package view;
 
-import controller.ConnectToServer;
-import controller.UserController;
+import controller.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -13,9 +12,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Good;
 import model.Government;
 import model.SecurityQuestions;
+import model.buildings.Buildings;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class LoginMenu extends Application {
@@ -118,14 +120,22 @@ public class LoginMenu extends Application {
             CaptchaController.checkCaptcha();
             if (TextFieldController.isSuccessful()) {
                 String message = ConnectToServer.login(username.getText(), password.getText());
-                Government.setGovernments(ConnectToServer.getGovernments());
-                System.out.println(Government.getGovernments().size());
                 if (message.startsWith("your login verified")) {
                     SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login successful!");
                     successfulDialog.make();
                     new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
                         successfulDialog.removeDialog();
                         try {
+                            Government.setGovernments(ConnectToServer.getGovernments());
+                            TradeMenuController.setCurrentGovernment(Government.getGovernmentByUser(MainMenuController.getCurrentUser().getUsername()));
+//                            for (Government government : Government.getGovernments())
+//                                government.setBuildings(new ArrayList<>());
+//                            Government.getGovernments().get(0).getBuildings().add(Buildings.getBuildingObjectByType("stockpile"));
+//                            Government.getGovernments().get(0).getBuildings().add(Buildings.getBuildingObjectByType("granary"));
+//                            Government.getGovernments().get(0).increaseAmountOfGood(Good.GOLD,100);
+//                            Government.getGovernments().get(1).getBuildings().add(Buildings.getBuildingObjectByType("stockpile"));
+//                            Government.getGovernments().get(1).getBuildings().add(Buildings.getBuildingObjectByType("granary"));
+//                            Government.getGovernments().get(1).increaseAmountOfGood(Good.GOLD,100);
                             new TradeListMenu().start(primaryStage);
                         } catch (Exception e) {
                             throw new RuntimeException(e);

@@ -149,7 +149,6 @@ public class GameMenuController {
                 rateField.set(building, rateField.getInt(building) + 50 * rate);
 
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                continue;
             }
         }
 
@@ -758,20 +757,20 @@ public class GameMenuController {
         return "ditch deleted successfully";
     }
 
-    public static String captureTheGate(int x, int y) {
-        Cell cell = Map.getMap()[x][y];
-        Building targetBuilding = cell.getBuilding();
-        if (!(targetBuilding instanceof GateHouse))
-            return "invalid target";
-        if (!selectedUnit.isCanClimb())
-            return "your unit can't capture the gate";
-        if (!targetBuilding.isNearGate(selectedUnit))
-            return "your unit can't capture the gate";
-        targetBuilding.getOwner().getBuildings().remove(targetBuilding);
-        currentGovernment.addBuilding(targetBuilding);
-        targetBuilding.setOwner(currentGovernment);
-        return "gate successfully captured";
-    }
+//    public static String captureTheGate(int x, int y) {
+//        Cell cell = Map.getMap()[x][y];
+//        Building targetBuilding = cell.getBuilding();
+//        if (!(targetBuilding instanceof GateHouse))
+//            return "invalid target";
+//        if (!selectedUnit.isCanClimb())
+//            return "your unit can't capture the gate";
+//        if (!targetBuilding.isNearGate(selectedUnit))
+//            return "your unit can't capture the gate";
+//        targetBuilding.getOwner().getBuildings().remove(targetBuilding);
+//        currentGovernment.addBuilding(targetBuilding);
+//        targetBuilding.setOwner(currentGovernment);
+//        return "gate successfully captured";
+//    }
 
     public static boolean isLastGovernment() {
         return Government.getGovernments().size() - 1 == Government.getGovernments().indexOf(currentGovernment);

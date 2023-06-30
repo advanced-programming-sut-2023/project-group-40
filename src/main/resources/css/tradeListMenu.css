@@ -1,0 +1,27 @@
+Label {
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-min-width: 250;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+    -fx-min-height: 70;
+}
+
+VBox {
+    -fx-padding: 20;
+    -fx-alignment: center;
+}
+
+
+Button {
+    -fx-background-color: #090633;
+    -fx-text-fill: white;
+    -fx-font-size: 30;
+    -fx-font-family: "Times New Roman";
+    -fx-font-weight: bold;
+    -fx-border-color: black;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 3;
+    -fx-min-height: 50;
+}

@@ -20,8 +20,6 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 
 public class TradeMenu {
-    private static String targetUsername;
-    private static String message;
     private static String requestType;
     private static HashMap<Good,Integer> productList = new HashMap<>();
     private final Button backButton = new Button("back");
@@ -135,7 +133,7 @@ public class TradeMenu {
         Button submitButton = new Button("submit");
         submitButton.setTranslateY(40);
         submitButton.setOnMouseClicked(event -> {
-            Node[] nodes = MapMenu.makePopup(TradeMenuController.sendRequest(productList,textArea.getText()), "request sent");
+            Node[] nodes = MapMenu.makePopup(TradeMenuController.sendRequest(requestType,productList,textArea.getText()), "request sent");
             root.getChildren().add(nodes[0]);
             nodes[1].setOnMouseClicked(mouseEvent -> {
                 root.getChildren().remove(nodes[0]);
@@ -154,7 +152,6 @@ public class TradeMenu {
                     textArea.setText("");
                     productList = new HashMap<>();
                     requestType = null;
-                    message = "";
                     userComboBox.setValue(userComboBox.getItems().get(0));
                     TradeMenuController.setTargetGovernment(Government.getGovernmentByUser(userComboBox.getItems().get(0)));
                 });

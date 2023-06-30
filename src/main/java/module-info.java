@@ -8,6 +8,7 @@ module project.group {
     requires org.apache.commons.lang3;
     requires com.auth0.jwt;
     requires java.desktop;
+    requires com.fasterxml.jackson.annotation;
 
     exports view;
     opens view to javafx.fxml;

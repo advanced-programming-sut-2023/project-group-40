@@ -1,5 +1,6 @@
 package model;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import controller.ConnectToServer;
 import model.buildings.Building;
 import model.buildings.GateHouse;
@@ -14,7 +15,7 @@ public class Government {
     private static ArrayList<Government> governments = new ArrayList<>();
     private final ArrayList<TradeRequest> incomingRequests = new ArrayList<>();
     private final ArrayList<TradeRequest> outgoingRequests = new ArrayList<>();
-    private transient final ArrayList<Building> buildings = new ArrayList<>();
+    private transient ArrayList<Building> buildings = new ArrayList<>();
     private int countofhorses = 0;
     private int numberOfKnight = 0;
     private String username;
@@ -172,12 +173,6 @@ public class Government {
         return incomingRequests;
     }
 
-    public TradeRequest getRequestById(Integer id) {
-        for (TradeRequest request : incomingRequests) {
-            if (request.getId().equals(id)) return request;
-        }
-        return null;
-    }
 
     public int getMaxPopulation() {
         return castle.getMaxPopulation();
@@ -314,5 +309,9 @@ public class Government {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setBuildings(ArrayList<Building> buildings) {
+        this.buildings = buildings;
     }
 }
