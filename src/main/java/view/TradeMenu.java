@@ -15,6 +15,7 @@ import model.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executors;
 
 public class TradeMenu {
     private static String targetUsername;
@@ -37,9 +38,9 @@ public class TradeMenu {
         root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
                 , true, false))));
         bar = new BarPane();
-        bar.addPage("food", makeVBox("food"));
-        bar.addPage("material", makeVBox("material"));
-        bar.addPage("weapon", makeVBox("weapon"));
+        bar.addPage("food", makeVBox("food",0));
+        bar.addPage("material", makeVBox("material",1));
+        bar.addPage("weapon", makeVBox("weapon",2));
         bar.setMaxWidth(App.getWidth());
         bar.translateXProperty().bind(bar.widthProperty().divide(-2).add(App.getWidth() / 2));
         backButton.setTranslateX(20);
@@ -61,7 +62,7 @@ public class TradeMenu {
         root.getChildren().add(vbox);
     }
 
-    private VBox makeVBox(String type) {
+    private VBox makeVBox(String type,int index) {
         List<PrivateUser> users = ConnectToServer.getUsers();
         ComboBox <String> userComboBox = new ComboBox<>();
         for (PrivateUser user : users) {
@@ -132,18 +133,23 @@ public class TradeMenu {
         submitButton.setOnMouseClicked(event -> {
             TradeMenuController.sendRequest(productList,textArea.getText());
         });
-        ToolBar toolBar = (ToolBar) bar.getTop();
-        for (int i = 0 ; i < 3 ; i++) {
-            toolBar.getItems().get(i).setOnMouseClicked(event -> {
-                requestButton.setStyle("-fx-border-color: black");
-                donateButton.setStyle("-fx-border-color: black");
-                textArea.setText("");
-                productList = new HashMap<>();
-                requestType = null;
-                message = "";
-                userComboBox.setValue(userComboBox.getItems().get(0));
-            });
-        }
+        Executors.newSingleThreadExecutor().submit(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            ToolBar toolBar = (ToolBar) bar.getTop();
+                toolBar.getItems().get(index).setOnMouseClicked(event -> {
+                    requestButton.setStyle("-fx-border-color: black");
+                    donateButton.setStyle("-fx-border-color: black");
+                    textArea.setText("");
+                    productList = new HashMap<>();
+                    requestType = null;
+                    message = "";
+                    userComboBox.setValue(userComboBox.getItems().get(0));
+                });
+        });
 
         return new VBox(new HBox(userComboBox,imageVBox),buttonHbox,messageHBox,submitButton);
     }
