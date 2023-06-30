@@ -1,52 +1,34 @@
 package view;
 
+import controller.ConnectToServer;
 import controller.GameMenuController;
 import controller.TradeMenuController;
+import javafx.beans.binding.Bindings;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.Good;
-import view.enums.Commands;
+import model.PrivateUser;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
 
 public class TradeMenu {
     private static String targetUsername;
+    private static String message;
+    private static String requestType;
+    private static final HashMap<String,Integer> productList = new HashMap<>();
     private final Button backButton = new Button("back");
     private final Button enterButton = new Button("enter map menu");
     Pane root;
-
-    public static String sendRequest(Matcher matcher) {
-        String resourceType = Commands.eraseQuot(matcher.group("resourceType"));
-        int resourceAmount = Integer.parseInt(matcher.group("resourceAmount"));
-        int price = Integer.parseInt(matcher.group("price"));
-        String message = Commands.eraseQuot(matcher.group("message"));
-        return TradeMenuController.sendRequest(resourceType, resourceAmount, price, message, targetUsername);
-    }
-
-    public static String showTradeList(Matcher matcher) {
-        return TradeMenuController.showTradeList();
-    }
-
-    public static String acceptTrade(Matcher matcher) {
-        int id = Integer.parseInt(matcher.group("id"));
-        String message = Commands.eraseQuot(matcher.group("message"));
-        return TradeMenuController.acceptTrade(id, message);
-    }
-
-    public static String showTradeHistory(Matcher matcher) {
-        return TradeMenuController.showTradeHistory();
-    }
-
     public void start(Stage stage) throws Exception {
         root = new Pane();
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(LoginMenu.class.getResource("/css/tradeMenu.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(TradeMenu.class.getResource("/css/tradeMenu.css")).toExternalForm());
         stage.setScene(scene);
         stage.show();
         App.setupStage(stage);
@@ -54,6 +36,7 @@ public class TradeMenu {
         Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
         root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
                 , true, false))));
+        makeRootVBox();
         BarPane bar = new BarPane();
         bar.addPage("food", makeVBox("food"));
         bar.addPage("material", makeVBox("material"));
@@ -76,25 +59,49 @@ public class TradeMenu {
         });
         root.getChildren().addAll(backButton, enterButton);
         VBox vbox = new VBox(bar);
-
         root.getChildren().add(vbox);
     }
 
+    private void makeRootVBox() {
+
+    }
+
     private VBox makeVBox(String type) {
+        List<PrivateUser> users = ConnectToServer.getUsers();
+        ComboBox <String> userComboBox = new ComboBox<>();
+
+        for (PrivateUser user : users) {
+            userComboBox.getItems().add(user.getUsername());
+        }
+        userComboBox.setValue(userComboBox.getItems().get(0));
+        userComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            targetUsername = newValue;
+        });
+        Button donateButton = new Button("donate");
+        Button requestButton = new Button("request");
+
+        HBox buttonHbox = new HBox(new Label("trade request type: "),donateButton,requestButton);
+        buttonHbox.setSpacing(10);
+        donateButton.setOnMouseClicked(event -> {
+            donateButton.setStyle("-fx-border-color: green");
+            requestButton.setStyle("-fx-border-color: black");
+            requestType = "donate";
+        });
+        requestButton.setOnMouseClicked(event -> {
+            donateButton.setStyle("-fx-border-color: black");
+            requestButton.setStyle("-fx-border-color: green");
+            requestType = "request";
+        });
+        TextArea textArea = new TextArea();
+        textArea.setTranslateY(20);
+        textArea.setMaxHeight(80);
+        textArea.setMaxWidth(400);
+        Label messageLabel = new Label("message: ");
+        HBox messageHBox = new HBox(messageLabel,textArea);
+        messageLabel.translateYProperty().bind(Bindings.add(textArea.translateYProperty(),textArea.heightProperty().divide(4).add(-20)));
         HBox imageHBox1 = new HBox();
         HBox imageHBox2 = new HBox();
-        HBox goodVBox = new HBox();
-        VBox labelVBox = new VBox();
-        VBox buttonVBox = new VBox();
-        Button buyButton = new Button();
-        Button sellButton = new Button();
-        int gold = GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD);
-        Label treasuryLabel = new Label(String.valueOf(gold));
-        ImageView coinIcon = new ImageView(new Image(MapMenu.class.getResource("/images/coin.png").toString()));
-        coinIcon.setPreserveRatio(true);
-        coinIcon.fitHeightProperty().bind(treasuryLabel.heightProperty().divide(2));
-        HBox coinHBox = new HBox(treasuryLabel, coinIcon);
-        int ImageSize = 130;
+        int ImageSize = 100;
         for (Good good : Good.values()) {
             if (!good.getType().equals(type)) continue;
             ImageView imageView = new ImageView(good.getImage());
@@ -122,7 +129,11 @@ public class TradeMenu {
             if (imageHBox1.getChildren().size() == 4) imageHBox2.getChildren().add(vBox);
             else imageHBox1.getChildren().add(vBox);
         }
-        VBox vBox = new VBox(imageHBox1, imageHBox2, goodVBox);
-        return vBox;
+        VBox imageVBox = new VBox(imageHBox1, imageHBox2);
+        Button submitButton = new Button("submit");
+        submitButton.setOnMouseClicked(event -> {
+            
+        });
+        return new VBox(new HBox(userComboBox,imageVBox),buttonHbox,messageHBox);
     }
 }

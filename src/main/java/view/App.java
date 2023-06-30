@@ -40,6 +40,6 @@ public class App extends Application {
         GameMenuController.getCurrentGovernment().getBuildings().add(Buildings.getBuildingObjectByType("stockpile"));
         GameMenuController.getCurrentGovernment().getBuildings().add(Buildings.getBuildingObjectByType("granary"));
         GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.GOLD,100);
-        new ShopMenu().start(primaryStage);
+        new LoginMenu().start(primaryStage);
     }
 }

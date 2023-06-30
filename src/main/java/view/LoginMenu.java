@@ -123,7 +123,7 @@ public class LoginMenu extends Application {
                     new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
                         successfulDialog.removeDialog();
                         try {
-                            new MainMenu().start(primaryStage);
+                            new TradeMenu().start(primaryStage);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
