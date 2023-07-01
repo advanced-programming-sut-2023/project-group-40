@@ -11,6 +11,5 @@ module project.group {
 
     exports view;
     opens view to javafx.fxml;
-    exports model;
     opens model to com.google.gson, javafx.fxml;
 }
