@@ -39,13 +39,14 @@ public class MapMenu extends Application {
     private boolean isSelectTarget = false;
     private static Stage stage;
     private final ArrayList<ImageView> buildings = new ArrayList<>();
+    private final ArrayList<ImageView> troops = new ArrayList<>();
     private final ArrayList<Line> borderLines = new ArrayList<>();
-    private final SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
+    public static final SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
     private final SimpleDoubleProperty deltaX = new SimpleDoubleProperty();
     private final SimpleDoubleProperty deltaY = new SimpleDoubleProperty();
     private final ArrayList<Cell> selectedCells = new ArrayList<>();
-    private final int MAP_SIZE = 200;
-    private final ImageView[][] map = new ImageView[MAP_SIZE][MAP_SIZE];
+    private static final int MAP_SIZE = 200;
+    public static final ImageView[][] map = new ImageView[MAP_SIZE][MAP_SIZE];
     private final Image redFace = new Image(MapMenu.class.getResource("/images/baseimages/redMask.png").toString(), 30, 30, false, false);
     private final Image yellowFace = new Image(MapMenu.class.getResource("/images/baseimages/yellowMask.png").toString(), 30, 30, false, false);
     private final Image greenFace = new Image(MapMenu.class.getResource("/images/baseimages/greenMask.png").toString(), 30, 30, false, false);
@@ -163,6 +164,7 @@ public class MapMenu extends Application {
                 }
         imageView.fitWidthProperty().bind(textureSize);
         imageView.fitHeightProperty().bind(textureSize);
+        troops.add(imageView);
         root.getChildren().add(imageView);
         Map.getMap()[16][15].addUnit(unit);
     }
@@ -664,19 +666,35 @@ public class MapMenu extends Application {
         patrolButton.setStyle(buttonStyle);
         HBox hBox = new HBox(moveButton, attackButton, patrolButton);
         hBox.setSpacing(10);
-        if (GameMenuController.getSelectedUnit() == null)
-            GameMenuController.setSelectedUnit(selectedCell.getUnit());
+        if (GameMenuController.getSelectedUnit() == null) {
+            for (ImageView imageView : troops) {
+                for (int i = 0; i < Map.getSize(); i++) {
+                    for (int j = 0; j < Map.getSize(); j++) {
+                        if (Map.getMap()[i][j] == selectedCell) {
+                            if (imageView.getTranslateX() == map[i][j].getTranslateX() &&
+                                    imageView.getTranslateY() == map[i][j].getTranslateY()){
+                                GameMenuController.setUnitImageView(imageView);
+                            }
+                        }
+                    }
+                }
+            }
+        GameMenuController.setSelectedUnit(selectedCell.getUnit());
+        }
         moveButton.setOnMouseClicked(event -> {
             if (selectedCell != null && !isSelectTarget) {
                 mapPane.getChildren().removeAll(borderLines);
                 selectedCell = null;
                 isSelectTarget = true;
+                messageVbox.setVisible(false);
             }
             if (selectedCell == null) return;
+//            messageVbox.setVisible(true);
             for (int i = 0; i < Map.getSize(); i++) {
                 for (int j = 0; j < Map.getSize(); j++) {
-                    if (Map.getMap()[i][j] == selectedCell)
-                        showError(messageVbox, closeIcon, GameMenuController.moveUnit(i, j));
+                    if (Map.getMap()[i][j] == selectedCell) {
+                        showError(messageVbox, closeIcon, GameMenuController.moveUnit(i, j,GameMenuController.getUnitImageView()));
+                    }
                 }
             }
         });
@@ -809,8 +827,8 @@ public class MapMenu extends Application {
                 map[i][j] = new ImageView(Texture.LAND.getImage());
                 Map.getMap()[i][j].setTexture(Texture.LAND);
                 if (i == j) {
-                    map[i][j] = new ImageView(Texture.SEA.getImage());
-                    Map.getMap()[i][j].setTexture(Texture.SEA);
+                    map[i][j] = new ImageView(Texture.LAND.getImage());
+                    Map.getMap()[i][j].setTexture(Texture.LAND);
                 }
                 int finalI = i;
                 int finalJ = j;
@@ -1132,6 +1150,7 @@ public class MapMenu extends Application {
     }
 
     public void showError(VBox messageVbox, ImageView closeIcon, String text) {
+        messageVbox.setVisible(true);
         messageVbox.getChildren().clear();
         messageVbox.setStyle("-fx-min-height : 150;-fx-max-height: 150 ;-fx-min-width: 500; -fx-max-width: 500");
         Label error = new Label(text);

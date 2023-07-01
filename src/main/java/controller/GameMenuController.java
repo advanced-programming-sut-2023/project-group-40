@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.scene.image.ImageView;
 import model.*;
 import model.buildings.*;
 import model.troops.Troop;
@@ -9,7 +10,6 @@ import view.MapMenu;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -18,6 +18,8 @@ public class GameMenuController {
     private static Government onGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;
+    private static ImageView unitImageView;
+
     private static int numberOfPlayers = 2;
     private static List<Integer> path = new ArrayList<>();
 
@@ -266,17 +268,17 @@ public class GameMenuController {
         return "repair successful";
     }
 
-    public static String selectUnit(int x, int y) {
-        if (Map.getMap()[x][y].getUnit() == null) return "there is no unit in this cell!";
-        selectedUnit = Map.getMap()[x][y].getUnit();
-        if (selectedUnit.isPatrolling()) {
-            selectedUnit.setPatrolTargetXY(x, y);
-            moveUnit(selectedUnit.getPatrolTargetX(), selectedUnit.getPatrolTargetY());
-        }
-        return "unit successfully selected";
-    }
+//    public static String selectUnit(int x, int y) {
+//        if (Map.getMap()[x][y].getUnit() == null) return "there is no unit in this cell!";
+//        selectedUnit = Map.getMap()[x][y].getUnit();
+//        if (selectedUnit.isPatrolling()) {
+//            selectedUnit.setPatrolTargetXY(x, y);
+//            moveUnit(selectedUnit.getPatrolTargetX(), selectedUnit.getPatrolTargetY(),);
+//        }
+//        return "unit successfully selected";
+//    }
 
-    public static String moveUnit(int x, int y) {
+    public static String moveUnit(int x, int y,ImageView imageView) {
         Cell cell = Map.getMap()[x][y];
         if (!checkRange(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit.getVelocity()))
             return "out of range!";
@@ -287,7 +289,7 @@ public class GameMenuController {
             return "you can't pass this cell;";
         if (cell.getTexture().getType().equals("water")) return "you can't go to water regions!";
         if (cell.getTexture() == Texture.SHALLOW_WATER) selectedUnit.decreaseVelocity(1);
-        if (!checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity()))
+        if (!checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity(),imageView))
             return "no path found!";
         selectedUnit.changeXY(x, y);
         System.out.println(path);
@@ -304,8 +306,7 @@ public class GameMenuController {
     }
 //15 15 --> 20 15
     //0 up 1 right 2 down 3 left
-    private static boolean isPathExists(boolean[][] passableCells, int x1, int y1, int x2, int y2) {
-
+    private static boolean isPathExists(boolean[][] passableCells, int x1, int y1, int x2, int y2,ImageView imageView) {
         int maxX = passableCells.length;
         int maxY = passableCells[0].length;
         if (x1 == x2 && y1 == y2) return true;
@@ -313,7 +314,8 @@ public class GameMenuController {
             passableCells[x1][y1] = false;
             path.add(3);
             int size = path.size();
-            if (isPathExists(passableCells, x1 - 1, y1, x2, y2)) return true;
+            imageView.translateXProperty().unbind();
+            if (isPathExists(passableCells, x1 - 1, y1, x2, y2,imageView)) return true;
             path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
@@ -321,7 +323,7 @@ public class GameMenuController {
             passableCells[x1][y1] = false;
             path.add(0);
             int size = path.size();
-            if (isPathExists(passableCells, x1, y1 - 1, x2, y2)) return true;
+            if (isPathExists(passableCells, x1, y1 - 1, x2, y2,imageView)) return true;
             path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
@@ -329,7 +331,7 @@ public class GameMenuController {
             passableCells[x1][y1] = false;
             path.add(1);
             int size = path.size();
-            if (isPathExists(passableCells, x1 + 1, y1, x2, y2)) return true;
+            if (isPathExists(passableCells, x1 + 1, y1, x2, y2,imageView)) return true;
             path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
@@ -337,14 +339,14 @@ public class GameMenuController {
             passableCells[x1][y1] = false;
             path.add(2);
             int size = path.size();
-            if (isPathExists(passableCells, x1, y1 + 1, x2, y2)) return true;
+            if (isPathExists(passableCells, x1, y1 + 1, x2, y2,imageView)) return true;
             path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
         return false;
     }
 
-    private static boolean checkMove(int x1, int y1, int x2, int y2, Object object, int velocity) {
+    private static boolean checkMove(int x1, int y1, int x2, int y2, Object object, int velocity,ImageView imageView) {
         boolean[][] passableCells = new boolean[Math.min(Map.getSize() - 1, x1 + velocity) - Math.max(0, x1 - velocity)]
                 [Math.min(Map.getSize() - 1, y1 + velocity) - Math.max(0, y1 - velocity)];
         for (int i = Math.max(0, x1 - velocity); i < Math.min(Map.getSize() - 1, x1 + velocity); i++) {
@@ -352,7 +354,38 @@ public class GameMenuController {
                 passableCells[i - Math.max(0, x1 - velocity)][j - Math.max(0, y1 - velocity)] = canPass(i, j);
             }
         }
-        return isPathExists(passableCells, x1 - Math.max(0, x1 - velocity), y1 - Math.max(0, y1 - velocity), x2 - Math.max(0, x1 - velocity), y2 - Math.max(0, y1 - velocity));
+        boolean pathExists =  isPathExists(passableCells, x1 - Math.max(0, x1 - velocity), y1 - Math.max(0, y1 - velocity), x2 - Math.max(0, x1 - velocity), y2 - Math.max(0, y1 - velocity),imageView);
+        if (pathExists) {
+            moveImageView();
+        }
+        return pathExists;
+    }
+
+    private static void moveImageView() {
+        try {
+            for (Integer integer : path) {
+                if (integer == 0) {
+                    unitImageView.translateYProperty().unbind();
+                    Thread.sleep(200);
+                    unitImageView.translateYProperty().bind(MapMenu.map[(int) (((int) unitImageView.getTranslateX()) / MapMenu.textureSize.get())][(int) (((int) unitImageView.getTranslateY() - 1) / MapMenu.textureSize.get())].translateYProperty());
+                } else if (integer == 1) {
+                    unitImageView.translateXProperty().unbind();
+                    Thread.sleep(200);
+                    unitImageView.translateXProperty().bind(MapMenu.map[(int) (((int) unitImageView.getTranslateX() + 1) / MapMenu.textureSize.get())][(int) (((int) unitImageView.getTranslateY()) / MapMenu.textureSize.get())].translateXProperty());
+                } else if (integer == 2) {
+                    unitImageView.translateYProperty().unbind();
+                    Thread.sleep(200);
+                    unitImageView.translateYProperty().bind(MapMenu.map[(int) (((int) unitImageView.getTranslateX()) / MapMenu.textureSize.get())][(int) (((int) unitImageView.getTranslateY() + 1) / MapMenu.textureSize.get())].translateYProperty());
+                } else {
+                    unitImageView.translateXProperty().unbind();
+                    Thread.sleep(200);
+                    unitImageView.translateXProperty().bind(MapMenu.map[(int) (((int) unitImageView.getTranslateX() - 1) / MapMenu.textureSize.get())][(int) (((int) unitImageView.getTranslateY()) / MapMenu.textureSize.get())].translateXProperty());
+                }
+            }
+        }catch (Exception exception) {
+
+        }
+
     }
 
     public static String setUnitState(String state) {
@@ -361,26 +394,26 @@ public class GameMenuController {
         return null;
     }
 
-    public static String patrolUnit(int x1, int y1, int x2, int y2) {
-        if (selectedUnit == null) return "no selected unit found!";
-        if (!canPass(x1, y1) || !canPass(x2, y2)) {
-            return "you can't patrol between two points!";
-        }
-        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x1, y1, selectedUnit, selectedUnit.getVelocity()))
-            return "you cant go to your first coordinate";
-        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x2, y2, selectedUnit, selectedUnit.getVelocity()))
-            return "you cant go to your second coordinate";
-        selectedUnit.setPatrolling(true);
-
-        if (selectedUnit.getX() == x2 && selectedUnit.getY() == y2) {
-            moveUnit(x1, y1);
-            selectedUnit.setPatrolTargetXY(x2, y2);
-        } else {
-            moveUnit(x2, y2);
-            selectedUnit.setPatrolTargetXY(x1, y1);
-        }
-        return "patrol succesful";
-    }
+//    public static String patrolUnit(int x1, int y1, int x2, int y2) {
+//        if (selectedUnit == null) return "no selected unit found!";
+//        if (!canPass(x1, y1) || !canPass(x2, y2)) {
+//            return "you can't patrol between two points!";
+//        }
+//        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x1, y1, selectedUnit, selectedUnit.getVelocity()))
+//            return "you cant go to your first coordinate";
+//        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x2, y2, selectedUnit, selectedUnit.getVelocity()))
+//            return "you cant go to your second coordinate";
+//        selectedUnit.setPatrolling(true);
+//
+//        if (selectedUnit.getX() == x2 && selectedUnit.getY() == y2) {
+//            moveUnit(x1, y1);
+//            selectedUnit.setPatrolTargetXY(x2, y2);
+//        } else {
+//            moveUnit(x2, y2);
+//            selectedUnit.setPatrolTargetXY(x1, y1);
+//        }
+//        return "patrol succesful";
+//    }
 
     public static boolean checkRange(int x1, int y1, int x2, int y2, int range) {
         return x1 <= x2 + range && x1 >= x2 - range && y1 <= y2 + range && y1 >= y2 - range;
@@ -395,7 +428,7 @@ public class GameMenuController {
         return null;
     }
 
-    public static String attackEnemy(int x, int y) {
+    public static String attackEnemy(int x, int y,ImageView imageView) {
         int sightRange = selectedUnit.getSightRange();
         int selectedUnitX = selectedUnit.getX();
         int selectedUnitY = selectedUnit.getY();
@@ -403,7 +436,7 @@ public class GameMenuController {
         if (!checkRange(x, y, selectedUnitX, selectedUnitY, sightRange) || x - selectedUnitX > selectedUnit.getVelocity() || y - selectedUnitY > selectedUnit.getVelocity())
             return "you can't attack this enemy!";
         if (selectedUnit.getShootingRange() != 0) return "your unit not appropriate for this attack";
-        checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity());
+        checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity(),imageView);
         Unit enemy = Map.getMap()[x][y].getUnit();
         while (enemy.getHp() <= 0 || selectedUnit.getHp() <= 0) {
             enemy.decreaseHpOfUnit(selectedUnit.getPower());
@@ -412,11 +445,11 @@ public class GameMenuController {
         if (selectedUnit.getState().equals("offensive")) {
             if (enemy.getHp() == 0) {
                 Map.getMap()[x][y].removeUnit(enemy);
-                for (int k = 1; k <= sightRange; k++)
-                    for (int i = selectedUnitX - k; i <= selectedUnitX + k; i++)
-                        for (int j = selectedUnitY - k; j <= selectedUnitY + k; j++)
-                            if (Map.getMap()[i][j].getUnit() != null && Map.getMap()[i][j].getUnit().getGovernment() != currentGovernment)
-                                attackEnemy(i, j);
+//                for (int k = 1; k <= sightRange; k++)
+//                    for (int i = selectedUnitX - k; i <= selectedUnitX + k; i++)
+//                        for (int j = selectedUnitY - k; j <= selectedUnitY + k; j++)
+//                            if (Map.getMap()[i][j].getUnit() != null && Map.getMap()[i][j].getUnit().getGovernment() != currentGovernment)
+//                                attackEnemy(i, j);
             } else {
                 Map.getMap()[selectedUnit.getX()][selectedUnit.getY()].removeUnit(selectedUnit);
                 return "attack finished!";
@@ -739,23 +772,23 @@ public class GameMenuController {
                 Unit unit = Map.getMap()[x][y].getUnit();
                 if (unit == null || unit.getState().equals("standing") || unit.getGovernment() != currentGovernment)
                     continue;
-                handleAttackUnit(unit);
+//                handleAttackUnit(unit);
             }
     }
 
-    private static void handleAttackUnit(Unit unit) {
-        int unitX = unit.getX();
-        int unitY = unit.getY();
-        int shootingRange = unit.getShootingRange();
-        int sightRange = unit.getSightRange();
-        if (shootingRange == 0) {
-            Unit enemy = findNearestUnit(sightRange, unitX, unitY);
-            if (enemy != null) attackEnemy(enemy.getX(), enemy.getY());
-        } else {
-            Unit enemy = findNearestUnit(shootingRange, unitX, unitY);
-            if (enemy != null) airAttack(enemy.getX(), enemy.getY());
-        }
-    }
+//    private static void handleAttackUnit(Unit unit) {
+//        int unitX = unit.getX();
+//        int unitY = unit.getY();
+//        int shootingRange = unit.getShootingRange();
+//        int sightRange = unit.getSightRange();
+//        if (shootingRange == 0) {
+//            Unit enemy = findNearestUnit(sightRange, unitX, unitY);
+//            if (enemy != null) attackEnemy(enemy.getX(), enemy.getY());
+//        } else {
+//            Unit enemy = findNearestUnit(shootingRange, unitX, unitY);
+//            if (enemy != null) airAttack(enemy.getX(), enemy.getY());
+//        }
+//    }
 
     public static void setDefaults() {
         selectedBuilding = null;
@@ -859,5 +892,13 @@ public class GameMenuController {
 
     public static Unit getSelectedUnit() {
         return selectedUnit;
+    }
+
+    public static void setUnitImageView(ImageView unitImageView) {
+        GameMenuController.unitImageView = unitImageView;
+    }
+
+    public static ImageView getUnitImageView() {
+        return unitImageView;
     }
 }
