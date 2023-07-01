@@ -1,6 +1,5 @@
 package controller;
 
-import javafx.scene.control.Label;
 import model.*;
 import model.buildings.*;
 import model.troops.Troop;
@@ -18,27 +17,8 @@ public class GameMenuController {
     private static Unit selectedUnit;
     private static int numberOfPlayers = 2;
 
-
-    public static void setMapSize(int size) {
-        Map.initMap(size);
-    }
-
-
-    public static String showPopularity() {
-        return "rate of your government popularity is " + currentGovernment.getPopularity();
-    }
-
-    public static String showFoodList() {
-        String result = "";
-        result += "meat: " + currentGovernment.getAmountOfGood(Good.MEAT) + "\n";
-        result += "apple: " + currentGovernment.getAmountOfGood(Good.APPLE) + "\n";
-        result += "cheese: " + currentGovernment.getAmountOfGood(Good.CHEESE) + "\n";
-        result += "bread: " + currentGovernment.getAmountOfGood(Good.BREAD);
-        return result;
-    }
-
-    public static String setFoodRate(int rate) {
-        if (rate > 2 || rate < -2) return "rate-number is out of bound";
+    public static void setFoodRate(int rate) {
+        if (rate > 2 || rate < -2) return;
         currentGovernment.setFoodRate(rate);
         int numberOfFoods = currentGovernment.getAmountOfGood(Good.MEAT);
         numberOfFoods += currentGovernment.getAmountOfGood(Good.APPLE);
@@ -47,50 +27,49 @@ public class GameMenuController {
         switch (rate) {
             case -2 -> currentGovernment.changePopularity(-8);
             case -1 -> {
-                if (currentGovernment.getPopulation() > 2 * numberOfFoods) return "you haven't enough food!";
+                if (currentGovernment.getPopulation() > 2 * numberOfFoods) return;
                 currentGovernment.decreaseAmountOfFood(currentGovernment.getPopulation() / 2);
                 currentGovernment.changePopularity(-4);
             }
             case 0 -> {
-                if (currentGovernment.getPopulation() > numberOfFoods) return "you haven't enough food!";
+                if (currentGovernment.getPopulation() > numberOfFoods) return;
                 currentGovernment.decreaseAmountOfFood(currentGovernment.getPopulation());
                 currentGovernment.changePopularity(0);
             }
             case 1 -> {
-                if (1.5 * currentGovernment.getPopulation() > numberOfFoods) return "you haven't enough food!";
+                if (1.5 * currentGovernment.getPopulation() > numberOfFoods) return;
                 currentGovernment.decreaseAmountOfFood((int) (1.5 * currentGovernment.getPopulation()));
                 currentGovernment.changePopularity(4);
             }
             case 2 -> {
-                if (2 * currentGovernment.getPopulation() > numberOfFoods) return "you haven't enough food!";
+                if (2 * currentGovernment.getPopulation() > numberOfFoods) return;
                 currentGovernment.decreaseAmountOfFood(2 * currentGovernment.getPopulation());
                 currentGovernment.changePopularity(8);
             }
         }
-        return "set rate-number is successful";
     }
 
 
-    public static String setTaxRate(int rate) {
+    public static void setTaxRate(int rate) {
 //        if (!selectedBuilding.getName().equals("Small stone gatehouse"))
 //            return "you don't select Small stone gatehouse";
-        if (currentGovernment.getAmountOfGood(Good.GOLD) == 0) return "you haven't any gold in your treasury";
+        if (currentGovernment.getAmountOfGood(Good.GOLD) == 0) return;
         currentGovernment.setTaxRate(rate);
         int gold = currentGovernment.getAmountOfGood(Good.GOLD);
         int population = currentGovernment.getPopulation();
         switch (rate) {
             case -3 -> {
-                if (population > gold) return "you haven't enough gold in your treasury";
+                if (population > gold) return;
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, population);
                 currentGovernment.changePopularity(7);
             }
             case -2 -> {
-                if (0.8 * population > gold) return "you haven't enough gold in your treasury";
+                if (0.8 * population > gold) return;
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, (int) (0.8 * population));
                 currentGovernment.changePopularity(5);
             }
             case -1 -> {
-                if (0.6 * population > gold) return "you haven't enough gold in your treasury";
+                if (0.6 * population > gold) return;
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, (int) (0.6 * population));
                 currentGovernment.changePopularity(3);
             }
@@ -131,11 +110,10 @@ public class GameMenuController {
                 currentGovernment.changePopularity(-24);
             }
         }
-        return "set rate-number is successful";
     }
 
 
-    public static String setFearRate(int rate) {
+    public static void setFearRate(int rate) {
         for (Building building : currentGovernment.getBuildings()) {
             try {
                 Field rateField = building.getClass().getField("rate");
@@ -145,8 +123,6 @@ public class GameMenuController {
             } catch (NoSuchFieldException | IllegalAccessException e) {
             }
         }
-
-        if (rate > 5 || rate < -5) return "rate-number is out of bound";
         currentGovernment.setFearRate(rate);
         for (int i = 0; i < Map.getSize(); i++)
             for (int j = 0; j < Map.getSize(); j++) {
@@ -154,7 +130,6 @@ public class GameMenuController {
                 if (unit != null && unit.getGovernment() == currentGovernment)
                     unit.changePower(rate);
             }
-        return "set rate-number is successful";
     }
 
     public static boolean checkDropBuilding(int x, int y, String type) {

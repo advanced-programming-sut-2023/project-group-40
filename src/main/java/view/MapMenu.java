@@ -250,7 +250,6 @@ public class MapMenu extends Application {
             updateLabel(t1.intValue(), fearRateLabel, 1);
             GameMenuController.setFearRate(t1.intValue());
         });
-
         Slider taxRateSlider = new Slider();
         taxRateSlider.setMin(-3);
         taxRateSlider.setMax(8);
@@ -334,12 +333,12 @@ public class MapMenu extends Application {
         Image image = new Image(EnvironmentMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
         hBox.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
                 , true, false))));
-        ImageView castleCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(), 50, 50, false, false));
-        ImageView industryCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(), 50, 50, false, false));
-        ImageView weaponCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(), 50, 50, false, false));
-        ImageView townCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(), 50, 50, false, false));
-        ImageView farmCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(), 50, 50, false, false));
-        ImageView foodProcessingCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castleCategory.png").toString(), 50, 50, false, false));
+        ImageView castleCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/castle.jpg").toString(), 50, 50, false, false));
+        ImageView industryCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/industry.jpg").toString(), 50, 50, false, false));
+        ImageView weaponCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/weapon.jpg").toString(), 50, 50, false, false));
+        ImageView townCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/town_building.jpg").toString(), 50, 50, false, false));
+        ImageView farmCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/farm.jpg").toString(), 50, 50, false, false));
+        ImageView foodProcessingCategory = new ImageView(new Image(MapMenu.class.getResource("/images/buildingCategories/food_processing.jpg").toString(), 50, 50, false, false));
         hBox.getChildren().addAll(castleCategory, industryCategory, weaponCategory, townCategory, farmCategory, foodProcessingCategory);
         castleCategory.setOnMouseClicked(event -> {
             try {
@@ -1005,7 +1004,20 @@ public class MapMenu extends Application {
                     }
                 }
                 selectedCell.addUnit(unit);
-                //add image
+                Image troopImage = null;
+                for (Troops value : Troops.values())
+                    if (value.getName().equals(troop.get().getName()))
+                        troopImage = value.getImage();
+                ImageView imageView = new ImageView(troopImage);
+                for (int i = 0; i < Map.getSize(); i++)
+                    for (int j = 0; j < Map.getSize(); j++)
+                        if (Map.getMap()[i][j] == selectedCell){
+                            imageView.setTranslateX(i * textureSize.get());
+                            imageView.setTranslateY(j * textureSize.get());
+                        }
+                imageView.fitWidthProperty().bind(textureSize);
+                imageView.fitHeightProperty().bind(textureSize);
+                mapPane.getChildren().add(imageView);
                 root.getChildren().remove(messageVbox);
             }
             else {

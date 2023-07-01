@@ -17,7 +17,7 @@ public enum Troops {
     ENGINEER("engineer", new Troop("engineer", "european", 5, 0, 3, 20, false, 0, null)),
     BLACK_MONK("black monk", new Troop("black monk", "european", 3, 7, 5, 10, false, 0, Good.SWORD)),
     ARCHER_BOW("archer bow", new Troop("archer bow", "arabian", 9, 4, 5, 8, false, 5, Good.BOW)),
-    SLAVE("slaves", new Troop("slaves", "arabian", 9, 1, 2, 5, false, 0, null)),
+    SLAVE("slave", new Troop("slaves", "arabian", 9, 1, 2, 5, false, 0, null)),
     SLINGER("slinger", new Troop("slinger", "arabian", 9, 4, 2, 12, false, 2, Good.STONE)),
     ASSASSIN("assassin", new Troop("assassin", "arabian", 7, 7, 7, 60, false, 0, Good.MACE)),
     HORSE_ARCHER("horse archer", new Troop("horse archer", "arabian", 10, 4, 6, 80, false, 5, Good.BOW)),
@@ -25,10 +25,12 @@ public enum Troops {
     FIRE_THROWERS("fire throwers", new Troop("fire throwers", "arabian", 9, 8, 4, 100, false, 5, null));
     String fullName;
     Troop troopObject;
+    Image image;
 
     Troops(String fullName, Troop troopObject) {
         this.fullName = fullName;
         this.troopObject = troopObject;
+        this.image = new Image(Troops.class.getResource("/images/troops/" + fullName + ".png").toString());
     }
 
     public static Troop getTroopObjectByType(String type) {
@@ -39,8 +41,9 @@ public enum Troops {
     }
 
     public Image getImage() {
-        return new Image(Troops.class.getResource("/images/troops/archer.png").toString());
+        return image;
     }
+
 
     public String getName() {
         return fullName;
