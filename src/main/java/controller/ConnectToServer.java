@@ -22,7 +22,7 @@ public class ConnectToServer {
     static {
         try {
             MainController.setupCalender();
-            Socket socket = new Socket("localhost", 8080);
+            Socket socket = new Socket("2.191.230.17", 80);
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
             dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
@@ -105,6 +105,25 @@ public class ConnectToServer {
         }
     }
 
+    public static String[] getSecurity(String username){
+        String[] result = new String[2];
+        try {
+            User user = MainMenuController.getCurrentUser();
+            String token = JWT.create().withSubject("get security")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withIssuer(username)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            dataOutputStream.writeUTF(token);
+            result[0] = dataInputStream.readUTF();
+            result[1] = dataInputStream.readUTF();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+        return result;
+    }
+
     public static List<PrivateUser> getUsers() {
         try {
             String token = JWT.create().withSubject("get private users")
@@ -173,6 +192,21 @@ public class ConnectToServer {
             e.printStackTrace();
             System.exit(0);
             return new ArrayList<>();
+        }
+    }
+
+    public static void changePassword(String username,String newPassword) {
+        try {
+            String token = JWT.create().withSubject("change password by username")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withIssuer(username)
+                    .withClaim("new password", UserController.generatePasswordHash(newPassword))
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
         }
     }
 }

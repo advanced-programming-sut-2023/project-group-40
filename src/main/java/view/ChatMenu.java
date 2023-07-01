@@ -72,7 +72,6 @@ public class ChatMenu extends Application {
             }
         });
         back.setOnMouseClicked(event -> {
-            MainMenuController.setCurrentUser(null);
             try {
                 new MainMenu().start(primaryStage);
             } catch (Exception e) {

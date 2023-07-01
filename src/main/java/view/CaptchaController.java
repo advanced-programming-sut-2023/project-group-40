@@ -36,10 +36,14 @@ public class CaptchaController {
         captchaHBox = new HBox(imageHBox, captchaAnswerTextField);
         captchaHBox.setSpacing(20);
         captchaRefreshImageView.setOnMouseClicked(event -> {
-            captchaImage = new Image("file:/" + Objects.
-                    requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
-            captchaImageView.setImage(captchaImage);
+            refreshCaptcha();
         });
+    }
+
+    public static void refreshCaptcha() {
+        captchaImage = new Image("file:/" + Objects.
+                requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
+        captchaImageView.setImage(captchaImage);
     }
 
     public static HBox getCaptchaHBox() {
@@ -69,9 +73,7 @@ public class CaptchaController {
         } else {
             if (captchaHBox.getChildren().size() == 2)
                 captchaHBox.getChildren().add(Errors.CAPTCHA_ERROR.getErrorLabel());
-            captchaImage = new Image("file:/" + Objects.
-                    requireNonNull(captchaDirectory.listFiles())[new Random().nextInt(0, Objects.requireNonNull(captchaDirectory.listFiles()).length)].getPath());
-            captchaImageView.setImage(captchaImage);
+            refreshCaptcha();
             TextFieldController.setSuccessful(false);
         }
     }

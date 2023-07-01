@@ -154,7 +154,8 @@ public class ProfileMenu extends Application {
                     avatar.setImage(new Image(imageView.getImage().getUrl(), 100, 100, true, true));
                     String url = imageView.getImage().getUrl();
                     int index = Integer.parseInt(url.substring(url.length() - 5, url.length() - 4));
-                    ProfileMenuController.changeAvatar(User.avatarsByteArray[index]);
+                    if (index == 0) index = 10;
+                    ProfileMenuController.changeAvatar(User.avatarsByteArray[index - 1]);
                 });
             }
             avatarBox[0].getChildren().addAll(firstRowHbox, secondRowHbox);
@@ -170,13 +171,13 @@ public class ProfileMenu extends Application {
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file == null) return;
             avatar.setImage(new Image(file.getAbsolutePath(), 100, 100, true, true));
-            ProfileMenuController.changeAvatar(convertPathToByteArray(file.getAbsolutePath()));
+            ProfileMenuController.changeAvatar(convertPathToByteArray("file:/" + file.getAbsolutePath()));
         });
         avatar.setOnDragDropped(dragEvent -> {
             List<File> files = dragEvent.getDragboard().getFiles();
             try {
                 avatar.setImage(new Image(new FileInputStream(files.get(0)), 100, 100, true, true));
-                ProfileMenuController.changeAvatar(convertPathToByteArray(files.get(0).getAbsolutePath()));
+                ProfileMenuController.changeAvatar(convertPathToByteArray("file:/" + files.get(0).getAbsolutePath()));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 System.exit(0);
@@ -203,7 +204,15 @@ public class ProfileMenu extends Application {
         CaptchaController.setUpCaptcha();
         buttonHBox = new HBox(save, changePasswordButton, leaderBoardButton, showMyFriends, showMyRequests);
         save.setVisible(false);
-        profileMenuVbox.getChildren().addAll(usernameHBox, emailHBox, nicknameHBox, sloganHBox, buttonHBox);
+        Button back = new Button("back");
+        back.setOnMouseClicked(event -> {
+            try {
+                new MainMenu().start(primaryStage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        profileMenuVbox.getChildren().addAll(usernameHBox, emailHBox, nicknameHBox, sloganHBox, buttonHBox,back);
     }
 
     private void setupTextFields() {
@@ -213,7 +222,7 @@ public class ProfileMenu extends Application {
         email = new TextField(ProfileMenuController.getCurrentUser().getEmail());
         nickname = new TextField(ProfileMenuController.getCurrentUser().getNickname());
         slogan = new TextField();
-        if (ProfileMenuController.getCurrentUser().getSlogan() == null)
+        if (ProfileMenuController.getCurrentUser().getSlogan() == null || ProfileMenuController.getCurrentUser().getSlogan().equals(""))
             slogan.setPromptText(EMPTY_SLOGAN);
         else slogan.setText(ProfileMenuController.getCurrentUser().getSlogan());
     }
@@ -251,8 +260,11 @@ public class ProfileMenu extends Application {
         nickname.textProperty().addListener((observableValue, s, t1) -> {
             save.setVisible(true);
         });
+        slogan.textProperty().addListener((observableValue, s, t1) -> {
+            save.setVisible(true);
+        });
         slogan.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.ENTER) slogan.setEditable(false);
+            save.setVisible(true);
         });
         sloganCheckBox.setOnMouseClicked(mouseEvent -> {
             if (sloganCheckBox.isSelected()) {
@@ -310,7 +322,10 @@ public class ProfileMenu extends Application {
         });
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), actionEvent -> {
+            allUsers = getUsers();
             if (state == 0) refreshState0();
+            if (state == 1) refreshState1();
+            if (state == 2) refreshState2();
         }));
         timeline.setCycleCount(-1);
         timeline.play();

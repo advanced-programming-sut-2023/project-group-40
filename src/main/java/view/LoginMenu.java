@@ -114,9 +114,9 @@ public class LoginMenu extends Application {
         login.setOnMouseClicked(mouseEvent -> {
             TextFieldController.setSuccessful(true);
             TextFieldController.checkEmptyUsername(usernameHBox, username);
-            TextFieldController.checkPassword(passwordHBox, passwordLabel, username, password);
-//            if (forgetMyPassword.isSelected())
-//                TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
+            TextFieldController.checkPassword(forgetMyPassword,passwordHBox, password);
+            if (forgetMyPassword.isSelected())
+                TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer,password);
             CaptchaController.checkCaptcha();
             if (TextFieldController.isSuccessful()) {
                 String message = ConnectToServer.login(username.getText(), password.getText());
@@ -141,8 +141,9 @@ public class LoginMenu extends Application {
             if (loginVbox.getChildren().size() == 4) {
                 loginVbox.getChildren().add(2, securityQuestionsHBox);
                 loginVbox.getChildren().add(3, securityAnswerHBox);
-                passwordLabel.setText("new password : ");
+                passwordLabel.setText("new password: ");
             } else {
+                passwordLabel.setText("password: ");
                 loginVbox.getChildren().remove(securityQuestionsHBox);
                 loginVbox.getChildren().remove(securityAnswerHBox);
             }

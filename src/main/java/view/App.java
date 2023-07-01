@@ -55,7 +55,7 @@ public class App extends Application {
         GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.WOOD, 200);
         GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.PITCH, 200);
         GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.BOW, 10);
-        new MapMenu().start(primaryStage);
-//        new LoginMenu().start(primaryStage);
+//        new MapMenu().start(primaryStage);
+        new LoginMenu().start(primaryStage);
     }
 }

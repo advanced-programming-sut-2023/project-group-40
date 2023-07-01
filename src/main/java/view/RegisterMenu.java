@@ -101,11 +101,12 @@ public class RegisterMenu extends Application {
             }
         });
         password.textProperty().addListener((observableValue, s, t1) -> {
-            if (!UserController.checkPasswordFormat(password.getText())) {
+            if (passwordHBox.getChildren().size() == 3)
+                passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
+
+            if (!UserController.checkPasswordFormat(t1)) {
                 Errors.PASSWORD_ERROR.getErrorLabel().setText("password is weak!");
-                if (passwordHBox.getChildren().size() == 3)
-                    passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
-            } else passwordHBox.getChildren().remove(Errors.PASSWORD_ERROR.getErrorLabel());
+            } else Errors.PASSWORD_ERROR.getErrorLabel().setText("");
         });
         eyeIcon.setOnMouseClicked(mouseEvent -> {
             String currentText = password.getText();
@@ -164,6 +165,7 @@ public class RegisterMenu extends Application {
                 } else {
                     ErrorDialog dialog = new ErrorDialog(root, message);
                     dialog.make();
+                    CaptchaController.refreshCaptcha();
                 }
             }
         });

@@ -1,9 +1,14 @@
 package controller;
 
 import com.auth0.jwt.JWT;
+import com.google.gson.Gson;
 import model.User;
 
 import java.io.IOException;
+
+import static controller.ConnectToServer.getUsers;
+import static controller.LeaderBoardController.allUsers;
+import static controller.LeaderBoardController.state;
 
 public class ProfileMenuController {
     private static User currentUser;
@@ -103,8 +108,7 @@ public class ProfileMenuController {
                     .sign(MainController.tokenAlgorithm);
             MainController.dataOutputStream.writeUTF(token);
             currentUser.setAvatarByteArray(avatarByteArray);
-            MainController.dataOutputStream.write(avatarByteArray);
-//            LeaderBoardController.refresh();
+            MainController.dataOutputStream.writeUTF(new Gson().toJson(currentUser));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(0);
