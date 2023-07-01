@@ -8,6 +8,9 @@ import view.GameMenu;
 import view.MapMenu;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class GameMenuController {
@@ -16,6 +19,7 @@ public class GameMenuController {
     private static Building selectedBuilding;
     private static Unit selectedUnit;
     private static int numberOfPlayers = 2;
+    private static List<Integer> path = new ArrayList<>();
 
     public static void setFoodRate(int rate) {
         if (rate > 2 || rate < -2) return;
@@ -286,6 +290,7 @@ public class GameMenuController {
         if (!checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity()))
             return "no path found!";
         selectedUnit.changeXY(x, y);
+        System.out.println(path);
         return "unit move to x: " + selectedUnit.getX() + "and y: " + selectedUnit.getY() + "successfully";
     }
 
@@ -298,29 +303,42 @@ public class GameMenuController {
         return !cell.getTexture().getType().equals("water");
     }
 //15 15 --> 20 15
+    //0 up 1 right 2 down 3 left
     private static boolean isPathExists(boolean[][] passableCells, int x1, int y1, int x2, int y2) {
-        System.out.println(x1 + "    " + y1);
+
         int maxX = passableCells.length;
         int maxY = passableCells[0].length;
         if (x1 == x2 && y1 == y2) return true;
         if (x1 > 0 && passableCells[x1 - 1][y1]) {
             passableCells[x1][y1] = false;
+            path.add(3);
+            int size = path.size();
             if (isPathExists(passableCells, x1 - 1, y1, x2, y2)) return true;
+            path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
         if (y1 > 0 && passableCells[x1][y1 - 1]) {
             passableCells[x1][y1] = false;
+            path.add(0);
+            int size = path.size();
             if (isPathExists(passableCells, x1, y1 - 1, x2, y2)) return true;
+            path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
         if (x1 < maxX - 1 && passableCells[x1 + 1][y1]) {
             passableCells[x1][y1] = false;
+            path.add(1);
+            int size = path.size();
             if (isPathExists(passableCells, x1 + 1, y1, x2, y2)) return true;
+            path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
         if (y1 < maxY - 1 && passableCells[x1][y1 + 1]) {
             passableCells[x1][y1] = false;
+            path.add(2);
+            int size = path.size();
             if (isPathExists(passableCells, x1, y1 + 1, x2, y2)) return true;
+            path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
         return false;

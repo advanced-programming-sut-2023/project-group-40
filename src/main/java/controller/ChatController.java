@@ -14,10 +14,11 @@ import static controller.MainController.dataInputStream;
 import static controller.MainController.dataOutputStream;
 
 public class ChatController {
-    public static void fetchChat(ChatType type) {
+    public static void fetchChat(ChatType type, String roomName) {
         String token = JWT.create().withSubject("update chat")
                 .withExpiresAt(MainController.getExpirationDate())
-                .withClaim("type",type.name())
+                .withClaim("type", type.name())
+                .withClaim("roomName", roomName)
                 .withHeader(MainController.headerClaims)
                 .sign(MainController.tokenAlgorithm);
         try {

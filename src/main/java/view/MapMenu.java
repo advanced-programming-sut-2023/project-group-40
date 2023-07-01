@@ -152,19 +152,19 @@ public class MapMenu extends Application {
     }
 
     private void setupDefaults() {
-        Unit unit = new Unit(20, 20, GameMenuController.getCurrentGovernment());
+        Unit unit = new Unit(16, 15, GameMenuController.getCurrentGovernment());
         unit.addTroop(Troops.getTroopObjectByType("archer"), 3);
         ImageView imageView = new ImageView(Troops.ARCHER.getImage());
         for (int i = 0; i < Map.getSize(); i++)
             for (int j = 0; j < Map.getSize(); j++)
-                if (Map.getMap()[i][j] == Map.getMap()[15][15]) {
-                    imageView.setTranslateX(i * textureSize.get());
-                    imageView.setTranslateY(j * textureSize.get());
+                if (Map.getMap()[i][j] == Map.getMap()[16][15]) {
+                    imageView.translateXProperty().bind(map[i][j].translateXProperty());
+                    imageView.translateYProperty().bind(map[i][j].translateYProperty());
                 }
         imageView.fitWidthProperty().bind(textureSize);
         imageView.fitHeightProperty().bind(textureSize);
         root.getChildren().add(imageView);
-        Map.getMap()[15][15].addUnit(unit);
+        Map.getMap()[16][15].addUnit(unit);
     }
 
     private void handleNextTurn() {

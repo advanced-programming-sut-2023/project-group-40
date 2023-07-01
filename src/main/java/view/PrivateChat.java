@@ -58,7 +58,7 @@ public class PrivateChat extends Application {
             hashSet.add(MainMenuController.getCurrentUser().getUsername());
             hashSet.add(userComboBox.getValue());
             try {
-                new Chat(ChatType.PRIVATE, hashSet).start(primaryStage);
+                new Chat(ChatType.PRIVATE,"", hashSet).start(primaryStage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

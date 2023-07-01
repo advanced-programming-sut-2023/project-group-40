@@ -52,7 +52,7 @@ public class ChatMenu extends Application {
     private void setActions() {
         enterPublicChat.setOnMouseClicked(event -> {
             try {
-                new Chat(ChatType.PUBLIC,new HashSet<>()).start(primaryStage);
+                new Chat(ChatType.PUBLIC,"",new HashSet<>()).start(primaryStage);
             } catch (Exception e) {
                 e.printStackTrace();
             }

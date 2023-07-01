@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Message {
-    private final ChatType type;
     private static ArrayList<Message> messages = new ArrayList<>();
+    private final ChatType type;
+    private final String roomName;
     private String text;
     private boolean isDeleteOnlyForSender = false;
     private HashSet<String> availableTo = new HashSet<>();
@@ -13,8 +14,10 @@ public class Message {
     private String timeSent;
     private boolean isSeen = false;
 
-    public Message(ChatType type,String text, String senderUsername, String timeSent,HashSet<String> availableTo) {
+    public Message(ChatType type, String roomName, String text, String senderUsername, String timeSent,
+                   HashSet<String> availableTo) {
         this.type = type;
+        this.roomName = roomName;
         this.text = text;
         this.senderUsername = senderUsername;
         this.timeSent = timeSent;
@@ -71,5 +74,9 @@ public class Message {
 
     public HashSet<String> getAvailableTo() {
         return availableTo;
+    }
+
+    public String getRoomName() {
+        return roomName;
     }
 }

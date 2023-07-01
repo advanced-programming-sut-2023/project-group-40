@@ -1,7 +1,7 @@
 package view;
 
-import controller.MainMenuController;
 import controller.ChatController;
+import controller.MainMenuController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -23,8 +23,9 @@ import java.util.HashSet;
 import java.util.Objects;
 
 public class Chat extends Application {
-    private final ChatType type;
     private static Stage primaryStage;
+    private final ChatType type;
+    private final String roomName;
     private final TextField newMessageTextBox = new TextField();
     private final Button sendMessage = new Button("send");
     private final VBox messagesVBox = new VBox();
@@ -37,13 +38,15 @@ public class Chat extends Application {
     private final Button refresh = new Button("refresh");
     private final Button back = new Button("back");
     private final HBox messageActionHBox = new HBox(deleteForMe, deleteForAll, edit, refresh, back);
-    private HashSet<String> availableTo = new HashSet<>();
+    private final HashSet<String> availableTo;
     private Message selectedMessage;
     private HBox selectedHBox;
     private Pane root;
+    private Timeline timeline;
 
-    public Chat(ChatType type,HashSet<String> availableTo) {
+    public Chat(ChatType type, String roomName, HashSet<String> availableTo) {
         this.type = type;
+        this.roomName = roomName;
         this.availableTo = availableTo;
     }
 
@@ -77,10 +80,10 @@ public class Chat extends Application {
         App.setupStage(primaryStage);
         App.setWindowSize(primaryStage.getWidth(), primaryStage.getHeight());
 
-        ChatController.fetchChat(type);
+        ChatController.fetchChat(type, roomName);
         updateMessages();
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
-            ChatController.fetchChat(type);
+        timeline = new Timeline(new KeyFrame(Duration.seconds(10), actionEvent -> {
+            ChatController.fetchChat(type, roomName);
             updateMessages();
         }));
         timeline.setCycleCount(-1);
@@ -91,7 +94,7 @@ public class Chat extends Application {
 
     private void handleSendMessage() {
         sendMessage.setOnMouseClicked(event -> {
-            Message message = new Message(type,newMessageTextBox.getText(), MainMenuController.getCurrentUser().getUsername(), formatter.format(new Date()), availableTo);
+            Message message = new Message(type, roomName, newMessageTextBox.getText(), MainMenuController.getCurrentUser().getUsername(), formatter.format(new Date()), availableTo);
             Message.getMessages().add(message);
             ChatController.sendMessages();
             updateMessages();
@@ -102,8 +105,8 @@ public class Chat extends Application {
     private void updateMessages() {
         messagesVBox.getChildren().clear();
         Message.getMessages().forEach(message -> {
-            if (!message.getAvailableTo().equals(availableTo))
-                return;
+            if (type.equals(ChatType.ROOM) && !message.getRoomName().equals(roomName)) return;
+            if (!message.getAvailableTo().equals(availableTo)) return;
             if (message.getSenderUsername().equals(MainMenuController.getCurrentUser().getUsername()) && message.isDeleteOnlyForSender())
                 return;
             HBox box = MessageBox.createBox(message);
@@ -150,12 +153,13 @@ public class Chat extends Application {
         });
 
         refresh.setOnMouseClicked(event -> {
-            ChatController.fetchChat(type);
+            ChatController.fetchChat(type, roomName);
             updateMessages();
         });
 
         back.setOnMouseClicked(event -> {
             try {
+                timeline.stop();
                 new ChatMenu().start(primaryStage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
