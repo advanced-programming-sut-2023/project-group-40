@@ -126,16 +126,6 @@ public class LoginMenu extends Application {
                     new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
                         successfulDialog.removeDialog();
                         try {
-                            Government.setGovernments(ConnectToServer.getGovernments());
-                            TradeMenuController.setCurrentGovernment(Government.getGovernmentByUser(MainMenuController.getCurrentUser().getUsername()));
-//                            for (Government government : Government.getGovernments())
-//                                government.setBuildings(new ArrayList<>());
-//                            Government.getGovernments().get(0).getBuildings().add(Buildings.getBuildingObjectByType("stockpile"));
-//                            Government.getGovernments().get(0).getBuildings().add(Buildings.getBuildingObjectByType("granary"));
-//                            Government.getGovernments().get(0).increaseAmountOfGood(Good.GOLD,100);
-//                            Government.getGovernments().get(1).getBuildings().add(Buildings.getBuildingObjectByType("stockpile"));
-//                            Government.getGovernments().get(1).getBuildings().add(Buildings.getBuildingObjectByType("granary"));
-//                            Government.getGovernments().get(1).increaseAmountOfGood(Good.GOLD,100);
                             new MainMenu().start(primaryStage);
                         } catch (Exception e) {
                             throw new RuntimeException(e);

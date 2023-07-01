@@ -39,7 +39,7 @@ public class Tower extends Building {
             for (int i = x1 - amount; i < x2 + amount; i++)
                 for (int j = y1 - amount; j < y2 + amount; j++) {
                     Unit unit = Map.getMap()[i][j].getUnit();
-                    if (unit != null && unit.getTroops().get(0).getName().startsWith("archer"))
+                    if (unit != null && unit.getTroops().containsKey("archer"))
                         unit.setCanDamage(true);
                 }
         }

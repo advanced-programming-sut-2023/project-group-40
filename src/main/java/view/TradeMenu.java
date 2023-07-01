@@ -113,8 +113,6 @@ public class TradeMenu {
                 int number = Integer.parseInt(label.getText());
                 String[] url = imageView.getImage().getUrl().split("/");
                 Good product = Good.getGoodByName(url[url.length - 1].split("\\.")[0]);
-                if (GameMenuController.getCurrentGovernment().getAmountOfGood(product) == number)
-                    return;
                 label.setText(String.valueOf(number + 1));
                 productList.merge(product, 1, Integer::sum);
             });

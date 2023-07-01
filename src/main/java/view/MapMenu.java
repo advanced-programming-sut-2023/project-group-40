@@ -1,7 +1,6 @@
 package view;
 
 import controller.GameMenuController;
-import controller.ShopMenuController;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -13,10 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -24,21 +20,19 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.*;
 import model.Cell;
-import model.Good;
 import model.Map;
-import model.Texture;
+import model.buildings.Barrack;
 import model.buildings.Building;
 import model.buildings.BuildingGroups;
 import model.buildings.Buildings;
+import model.troops.Troop;
 import model.troops.Troops;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MapMenu extends Application {
@@ -67,7 +61,7 @@ public class MapMenu extends Application {
     private VBox showManyCellsDetailsBox = new VBox();
     private Cell selectedCell;
     private int startIndexI, startIndexJ, endIndexI, endIndexJ;
-    private Label popularityLabel, populationLabel, treasuryLabel;
+    public static Label popularityLabel, populationLabel, treasuryLabel;
     private Label fearRateLabel, taxRateLabel, foodRateLabel, sumRateLabel;
     private VBox clipBoardVbox;
     private Pane blackPane;
@@ -534,7 +528,6 @@ public class MapMenu extends Application {
                 double y = map[0][0].getTranslateY();
                 int indexI = (int) Math.ceil((mouseX - x) / textureSize.get()) - 1;
                 int indexJ = (int) Math.ceil((mouseY - y) / textureSize.get()) - 1;
-
                 NumberBinding cornerLeftX, cornerRightX, cornerTopY, cornerBottomY;
                 Building targetBuilding = Map.getMap()[indexI][indexJ].getBuilding();
                 int buildingX, buildingY;
@@ -605,6 +598,7 @@ public class MapMenu extends Application {
                     cornerBottomY = Bindings.add(map[indexI][indexJ].translateYProperty()
                             , map[indexI][indexJ].fitHeightProperty());
                     selectedCell = Map.getMap()[indexI][indexJ];
+                    showTroopDetail();
                 }
                 Line line1 = getLine(cornerLeftX, cornerTopY, cornerLeftX, cornerBottomY);
                 Line line2 = getLine(cornerLeftX, cornerTopY, cornerRightX, cornerTopY);
@@ -725,8 +719,8 @@ public class MapMenu extends Application {
     private void setupCells() {
         for (int i = 0; i < MAP_SIZE; i++) {
             for (int j = 0; j < MAP_SIZE; j++) {
-                map[i][j] = new ImageView(Texture.DENSE_GRASS_LAND.getImage());
-                Map.getMap()[i][j].setTexture(Texture.DENSE_GRASS_LAND);
+                map[i][j] = new ImageView(Texture.LAND.getImage());
+                Map.getMap()[i][j].setTexture(Texture.LAND);
                 if (i == j) {
                     map[i][j] = new ImageView(Texture.SEA.getImage());
                     Map.getMap()[i][j].setTexture(Texture.SEA);
@@ -894,7 +888,7 @@ public class MapMenu extends Application {
                                 label.setStyle("-fx-text-fill: green");
                             new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
                                 root.getChildren().remove(troopVBox);
-                            }));
+                            })).play();
                         }
                     });
                     troopHBox.getChildren().add(new Label("count"));
@@ -918,6 +912,124 @@ public class MapMenu extends Application {
             vBox.getChildren().addAll(imageView, label);
             hBox.getChildren().add(vBox);
         }
+    }
+    public void showTroopDetail() {
+        String buttonStyle = " -fx-background-color: #090633;\n" +
+                "    -fx-text-fill: white;\n" +
+                "    -fx-font-size: 30;\n" +
+                "    -fx-font-family: \"Times New Roman\";\n" +
+                "    -fx-font-weight: bold;\n" +
+                "    -fx-border-color: black;\n" +
+                "    -fx-border-style: solid solid solid solid;\n" +
+                "    -fx-border-width: 3;\n" +
+                "    -fx-min-height: 50;";
+        Unit unit = new Unit();
+        AtomicReference<Troop> troop = new AtomicReference<>();
+        AtomicReference<Integer> count = new AtomicReference<>();
+        VBox messageVbox = new VBox();
+        Label label2 = new Label();
+        ImageView closeIcon = new ImageView(new Image(MapMenu.class.getResource("/images/errorIcon.png").toString(), 45, 45, false, false));
+        closeIcon.translateXProperty().bind(Bindings.add(0, messageVbox.widthProperty().divide(1).add(-50)));
+        closeIcon.setTranslateY(5);
+        messageVbox.getChildren().add(closeIcon);
+        messageVbox.setMinWidth(600);
+        messageVbox.setMaxWidth(600);
+        messageVbox.setMaxHeight(350);
+        messageVbox.setMinHeight(350);
+        messageVbox.setTranslateY(30);
+        messageVbox.setSpacing(15);
+        Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString(), 500, 150, false, false);
+        messageVbox.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(500, 150, true, true
+                , true, false))));
+        messageVbox.translateXProperty().bind(messageVbox.widthProperty().divide(-2).add(App.getWidth() / 2));
+
+        label2.setText("choose type of troop");
+        label2.setMinWidth(messageVbox.getMaxWidth());
+        label2.setAlignment(Pos.CENTER);
+
+        ComboBox<String> comboBox = new ComboBox<>();
+        for (Troops value : Troops.values()) {
+            comboBox.getItems().add(value.getName());
+        }
+        comboBox.setValue(comboBox.getItems().get(0));
+        troop.set(Troops.getTroopObjectByType(comboBox.getValue()));
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            troop.set(Troops.getTroopObjectByType(newValue));
+        });
+        comboBox.translateXProperty().bind(Bindings.add(comboBox.widthProperty().divide(-2), messageVbox.widthProperty().divide(2)));
+
+        ImageView miunusIcon = new ImageView(new Image(TradeMenu.class.getResource("/images/minusIcon.png").toString(), 40, 40, false, false));
+        ImageView plusIcon = new ImageView(new Image(TradeMenu.class.getResource("/images/plusIcon.png").toString(), 40, 40, false, false));
+        Label counterLabel = new Label("0");
+        HBox counterHBox = new HBox(new Label("count of troop :    "),miunusIcon, counterLabel, plusIcon);
+        counterHBox.setSpacing(10);
+        counterHBox.setMinWidth(messageVbox.getMaxWidth());
+        counterHBox.setAlignment(Pos.CENTER);
+        count.set(0);
+        plusIcon.setOnMouseClicked(event -> {
+            int number = Integer.parseInt(counterLabel.getText());
+            counterLabel.setText(String.valueOf(number + 1));
+            count.set(count.get() + 1);
+        });
+        miunusIcon.setOnMouseClicked(event -> {
+            int number = Integer.parseInt(counterLabel.getText());
+            counterLabel.setText(String.valueOf(number - 1));
+            count.set(count.get() - 1);
+        });
+        Button submit = new Button("submit");
+
+        submit.setStyle(buttonStyle);
+        submit.setOnMouseClicked(event -> {
+            int balance = 0;
+            for (Building building : GameMenuController.getCurrentGovernment().getBuildings()) {
+                if (building instanceof Barrack barrack)  {
+                    HashMap<String, Integer> troopsList = barrack.getTroopsList();
+                    if (troopsList.containsKey(troop.get().getName()))
+                        balance += troopsList.get(troop.get().getName());
+                }
+            }
+            if (balance >= count.get()) {
+                unit.addTroop(troop.get(),count.get());
+                for (Building building : GameMenuController.getCurrentGovernment().getBuildings()) {
+                    if (building instanceof Barrack barrack)  {
+                        if (count.get() == 0) break;
+                        if (!barrack.getTroopsList().containsKey(troop.get().getName())) continue;
+                        if (balance > count.get()) {
+                            barrack.getTroopsList().merge(troop.get().getName(),-1 * count.get(),Integer :: sum);
+                            count.set(0);
+                        }
+                        else {
+                            barrack.getTroopsList().merge(troop.get().getName(),-1 * balance,Integer :: sum);
+                            count.set(count.get() - balance);
+                        }
+                    }
+                }
+                selectedCell.addUnit(unit);
+                //add image
+                root.getChildren().remove(messageVbox);
+            }
+            else {
+                messageVbox.getChildren().clear();
+                messageVbox.setStyle("-fx-min-height : 150;-fx-max-height: 150 ;-fx-min-width: 500; -fx-max-width: 500");
+                Label error = new Label("you don't have this troop enough");
+                error.setStyle("-fx-text-fill: red ; -fx-min-width: 500; -fx-alignment: center");
+                messageVbox.getChildren().add(error);
+                error.setTranslateY(50);
+                closeIcon.setTranslateY(-55);
+                messageVbox.getChildren().add(closeIcon);
+            }
+        });
+        submit.translateXProperty().bind(Bindings.add(submit.widthProperty().divide(-2), messageVbox.widthProperty().divide(2)));
+
+        messageVbox.getChildren().addAll(label2,comboBox,counterHBox,submit);
+        root.getChildren().add(messageVbox);
+        closeIcon.setOnMouseClicked(mouseEvent -> {
+            root.getChildren().remove(messageVbox);
+        });
+        for (int i = 0; i < Map.getSize(); i++)
+            for (int j = 0; j < Map.getSize(); j++)
+                if (Map.getMap()[i][j] == selectedCell) unit.setXY(i,j);
+        unit.setGovernment(GameMenuController.getCurrentGovernment());
     }
 
 

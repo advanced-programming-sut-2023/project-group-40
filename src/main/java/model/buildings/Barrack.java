@@ -5,10 +5,11 @@ import model.troops.Troop;
 import model.troops.Troops;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Barrack extends Building {
-    private final ArrayList<Troop> troopsList = new ArrayList<>();
+    private final HashMap<String,Integer> troopsList = new HashMap<>();
 
     public Barrack(String name, int height, int width, int hp, int[] cost, HashSet<Texture> textures, boolean isIllegal,
                    BuildingGroups group) {
@@ -16,13 +17,14 @@ public class Barrack extends Building {
     }
 
     public void addTroop(String type, int count) {
-        for (int i = 0; i < count; i++)
-            troopsList.add(Troops.getTroopObjectByType(type));
+        troopsList.merge(type,count,Integer :: sum);
     }
 
     public void removeTroop(Troop troop) {
         troopsList.remove(troop);
     }
 
-
+    public HashMap<String, Integer> getTroopsList() {
+        return troopsList;
+    }
 }
