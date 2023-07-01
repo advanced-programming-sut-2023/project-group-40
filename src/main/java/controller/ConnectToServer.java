@@ -22,7 +22,7 @@ public class ConnectToServer {
     static {
         try {
             MainController.setupCalender();
-            Socket socket = new Socket("localhost", 80);
+            Socket socket = new Socket("localhost", 8080);
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
             dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
