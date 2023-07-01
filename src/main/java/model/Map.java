@@ -20,4 +20,5 @@ public class Map {
                 map[i][j] = new Cell(Texture.LAND);
     }
 
+
 }

@@ -2,15 +2,15 @@ package view;
 
 import controller.*;
 import javafx.application.Application;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import model.Castle;
-import model.Color;
-import model.Good;
-import model.Government;
+import model.*;
 import model.buildings.Buildings;
 import model.buildings.Storage;
+import model.troops.Troops;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class App extends Application {
@@ -55,8 +55,6 @@ public class App extends Application {
         GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.WOOD, 200);
         GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.PITCH, 200);
         GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.BOW, 10);
-
-
         new MapMenu().start(primaryStage);
 //        new LoginMenu().start(primaryStage);
     }

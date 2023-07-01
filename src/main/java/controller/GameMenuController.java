@@ -297,7 +297,7 @@ public class GameMenuController {
         if (!cell.isAvailable() && cell.getWall() != null && !selectedUnit.isCanClimb()) return false;
         return !cell.getTexture().getType().equals("water");
     }
-
+//15 15 --> 20 15
     private static boolean isPathExists(boolean[][] passableCells, int x1, int y1, int x2, int y2) {
         System.out.println(x1 + "    " + y1);
         int maxX = passableCells.length;
@@ -833,5 +833,13 @@ public class GameMenuController {
         handleAttacks();
         setOnGovernment();
         setDefaults();
+    }
+
+    public static void setSelectedUnit(Unit selectedUnit) {
+        GameMenuController.selectedUnit = selectedUnit;
+    }
+
+    public static Unit getSelectedUnit() {
+        return selectedUnit;
     }
 }
