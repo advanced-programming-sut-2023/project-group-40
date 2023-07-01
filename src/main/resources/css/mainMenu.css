@@ -6,3 +6,8 @@ Button {
     -fx-min-height: 80;
     -fx-max-height: 80;
 }
+
+ComboBox{
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}

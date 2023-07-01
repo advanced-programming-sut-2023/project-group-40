@@ -1,6 +1,7 @@
 package view;
 
 import controller.ConnectToServer;
+import controller.MainMenuController;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -37,7 +38,9 @@ public class MessageBox {
         tik.setTranslateY(5);
         tik.setTranslateX(-10);
         messageDetailHBox.setSpacing(25);
-        messageDetailHBox.getChildren().addAll(senderName, time, tik);
+        messageDetailHBox.getChildren().addAll(senderName, time);
+        if(MainMenuController.getCurrentUser().getUsername().equals(message.getSenderUsername()))
+            messageDetailHBox.getChildren().add(tik);
         Label text = new Label(message.getText());
         text.setStyle("-fx-font-weight: bold;-fx-font-size: 25px");
         text.setMaxWidth(500);

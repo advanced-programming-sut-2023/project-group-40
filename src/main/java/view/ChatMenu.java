@@ -1,14 +1,15 @@
 package view;
 
 import controller.MainMenuController;
-import controller.ProfileMenuController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import model.ChatType;
 
+import java.util.HashSet;
 import java.util.Objects;
 
 public class ChatMenu extends Application {
@@ -51,7 +52,7 @@ public class ChatMenu extends Application {
     private void setActions() {
         enterPublicChat.setOnMouseClicked(event -> {
             try {
-                new PublicChat().start(primaryStage);
+                new Chat(ChatType.PUBLIC,new HashSet<>()).start(primaryStage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
