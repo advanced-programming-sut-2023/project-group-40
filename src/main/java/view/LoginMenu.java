@@ -1,7 +1,6 @@
 package view;
 
-import controller.MainMenuController;
-import controller.UserController;
+import controller.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -13,11 +12,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.Good;
+import model.Government;
 import model.SecurityQuestions;
+import model.buildings.Buildings;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Random;
 
 public class LoginMenu extends Application {
     private final Button login = new Button("login");
@@ -96,16 +97,6 @@ public class LoginMenu extends Application {
                     usernameHBox.getChildren().add(Errors.USERNAME_ERROR.getErrorLabel());
             } else usernameHBox.getChildren().remove(Errors.USERNAME_ERROR.getErrorLabel());
         });
-        password.textProperty().addListener((observableValue, s, t1) -> {
-            if (!UserController.checkPasswordFormat(t1)) {
-                Errors.PASSWORD_ERROR.getErrorLabel().setText("password is weak!");
-                if (passwordHBox.getChildren().size() == 3)
-                    passwordHBox.getChildren().add(Errors.PASSWORD_ERROR.getErrorLabel());
-            }
-            else {
-                passwordHBox.getChildren().remove(Errors.PASSWORD_ERROR.getErrorLabel());
-            }
-        });
         eyeIcon.setOnMouseClicked(mouseEvent -> {
             String currentText = password.getText();
             passwordHBox.getChildren().remove(password);
@@ -122,33 +113,37 @@ public class LoginMenu extends Application {
         });
         login.setOnMouseClicked(mouseEvent -> {
             TextFieldController.setSuccessful(true);
-            TextFieldController.checkNotExistUsername(usernameHBox, username);
-            TextFieldController.checkPassword(passwordHBox, passwordLabel, username, password);
+            TextFieldController.checkEmptyUsername(usernameHBox, username);
+            TextFieldController.checkPassword(forgetMyPassword,passwordHBox, password);
             if (forgetMyPassword.isSelected())
-                TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer);
+                TextFieldController.checkSecurity(username, securityQuestions, securityQuestionsHBox, securityAnswerHBox, securityAnswer,password);
             CaptchaController.checkCaptcha();
             if (TextFieldController.isSuccessful()) {
-                MainMenuController.setCurrentUser(UserController.getUserByUsername(username.getText()));
-                SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login succesful!");
-                successfulDialog.make();
-                new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
-                    successfulDialog.removeDialog();
-                    try {
-                        new MainMenu().start(primaryStage);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                })).play();
-
+                String message = ConnectToServer.login(username.getText(), password.getText());
+                if (message.startsWith("your login verified")) {
+                    SuccessfulDialog successfulDialog = new SuccessfulDialog(root, "login successful!");
+                    successfulDialog.make();
+                    new Timeline(new KeyFrame(Duration.seconds(1), actionEvent -> {
+                        successfulDialog.removeDialog();
+                        try {
+                            new MainMenu().start(primaryStage);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    })).play();
+                } else {
+                    ErrorDialog dialog = new ErrorDialog(root, message);
+                    dialog.make();
+                }
             }
         });
         forgetMyPassword.setOnMouseClicked(mouseEvent -> {
             if (loginVbox.getChildren().size() == 4) {
                 loginVbox.getChildren().add(2, securityQuestionsHBox);
                 loginVbox.getChildren().add(3, securityAnswerHBox);
-                passwordLabel.setText("new password : ");
-            }
-            else {
+                passwordLabel.setText("new password: ");
+            } else {
+                passwordLabel.setText("password: ");
                 loginVbox.getChildren().remove(securityQuestionsHBox);
                 loginVbox.getChildren().remove(securityAnswerHBox);
             }

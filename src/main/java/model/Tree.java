@@ -1,14 +1,14 @@
 package model;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public enum Tree {
     DESERT_SHRUB("desert shrub"),
     CHERRY_PALM("cheery palm"),
     OLIVE_TREE("olive tree"),
     COCONUT_PALM("coconut palm"),
-    DATE_PALM("date palm");
+    DATE_PALM("date palm"),
+    PINE_TREE("pine tree");
     private final String name;
     private Image image;
 
@@ -23,7 +23,7 @@ public enum Tree {
     }
 
     public Image getImage() {
-        return new Image(Tree.class.getResource("/images/trees/"+name + ".png").toString());
+        return new Image(Tree.class.getResource("/images/trees/" + name + ".png").toString());
     }
 
     public String getName() {

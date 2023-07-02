@@ -1,18 +1,20 @@
 package model;
 
 import model.troops.Troop;
+import model.troops.Troops;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Unit {
-    private final Government government;
-    private final ArrayList<Troop> troops = new ArrayList<>();
+    private Government government;
+    private final HashMap<Troop,Integer> troops = new HashMap<>();
     private final int sightRange = 3;
     int x;
     int y;
     boolean canDamage = true;
-    private String state;
+    private String state = "standby";
     private int hp;
     private int velocity;
     private String type;
@@ -23,22 +25,24 @@ public class Unit {
     private boolean isPatrolling;
     private int patrolTargetX, patrolTargetY;
 
-    public Unit(int x, int y, Government government, String state, int hp) {
+    public Unit(int x, int y, Government government) {
         this.x = x;
         this.y = y;
         this.government = government;
-        this.state = state;
-        this.hp = hp;
+    }
+
+    public Unit (){
+
     }
 
     public void addTroop(Troop troop, int count) {
         power += troop.getPowerOfAttack() * count;
-        for (int i = 0; i < count; i++)
-            troops.add(troop);
+        troops.merge(troop,count,Integer::sum);
         if (troop.getName().equals("Macemen") || troop.getName().equals("Spearmen") ||
                 troop.getName().equals("Assassins") || troop.getName().equals("Laddermen"))
             canClimb = true;
         velocity = troop.getVelocity();
+        hp = troop.getHp() * count;
         type = troop.getName();
         shootingRange = troop.getShootingRange();
     }
@@ -51,7 +55,7 @@ public class Unit {
         this.state = state;
     }
 
-    public ArrayList<Troop> getTroops() {
+    public HashMap<Troop, Integer> getTroops() {
         return troops;
     }
 
@@ -158,5 +162,18 @@ public class Unit {
     public void setPatrolTargetXY(int patrolTargetX, int patrolTargetY) {
         this.patrolTargetX = patrolTargetX;
         this.patrolTargetY = patrolTargetY;
+    }
+
+    public void setXY(int x,int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void setGovernment(Government government) {
+        this.government = government;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

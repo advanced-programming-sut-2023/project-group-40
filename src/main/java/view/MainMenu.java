@@ -1,28 +1,26 @@
 package view;
 
-import controller.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import controller.GameMenuController;
+import controller.MainMenuController;
+import controller.ProfileMenuController;
 import javafx.application.Application;
-import javafx.geometry.Bounds;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import model.SecurityQuestions;
+import model.Government;
+import model.User;
 
-import java.io.File;
 import java.util.Objects;
-import java.util.Random;
 
 public class MainMenu extends Application {
     private static Stage primaryStage;
+    private static boolean gameStarted = false;
+
     VBox vbox;
     private Pane root;
-    private Button startNewGame, continueGame, enterProfileMenu, logout;
+    private Button startNewGame, continueGame, enterProfileMenu, enterChatMenu, logout;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -38,8 +36,9 @@ public class MainMenu extends Application {
         startNewGame = new Button("start new game");
         continueGame = new Button("continue game");
         enterProfileMenu = new Button("profile menu");
+        enterChatMenu = new Button("chat menu");
         logout = new Button("logout");
-        vbox.getChildren().addAll(startNewGame, continueGame, enterProfileMenu, logout);
+        vbox.getChildren().addAll(startNewGame, continueGame, enterProfileMenu, enterChatMenu, logout);
         root.getChildren().add(vbox);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -64,10 +63,15 @@ public class MainMenu extends Application {
             }
         });
         continueGame.setOnMouseClicked(event -> {
-            MainMenuController.continueGame();
-            // TODO: 6/7/2023
+            User user = MainMenuController.getCurrentUser();
+            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(user.getUsername()));
             try {
-                new MapMenu().start(primaryStage);
+                if (Government.getPlayedGovernments().contains(GameMenuController.getCurrentGovernment())) {
+                    GameMenuController.setCurrentGovernment(null);
+                    return;
+                }
+                if (gameStarted) new MapMenu().start(primaryStage);
+                else new EnvironmentMenu().start(primaryStage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -76,6 +80,13 @@ public class MainMenu extends Application {
             ProfileMenuController.setCurrentUser(MainMenuController.getCurrentUser());
             try {
                 new ProfileMenu().start(primaryStage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        enterChatMenu.setOnMouseClicked(event -> {
+            try {
+                new ChatMenu().start(primaryStage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -89,6 +100,7 @@ public class MainMenu extends Application {
             }
         });
     }
-
-
+    public static void setGameStarted(boolean b) {
+        MainMenu.gameStarted = b;
+    }
 }

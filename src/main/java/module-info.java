@@ -6,8 +6,10 @@ module project.group {
     requires org.apache.commons.text;
     requires com.google.gson;
     requires org.apache.commons.lang3;
+    requires com.auth0.jwt;
+    requires java.desktop;
 
     exports view;
     opens view to javafx.fxml;
-    opens model to com.google.gson;
+    opens model to com.google.gson, javafx.fxml;
 }

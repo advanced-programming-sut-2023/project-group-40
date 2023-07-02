@@ -13,7 +13,7 @@ public enum Buildings {
     SMALL_STONE_GATEHOUSE("small stone gatehouse", new GateHouse("small stone gatehouse", 3, 3, 1000, new int[]{0, 0, 0, 0, 0}, 8, new HashSet<>(), true, BuildingGroups.CASTLE)),
     BIG_STONE_GATEHOUSE("big stone gatehouse", new GateHouse("big stone gatehouse", 4, 4, 2000, new int[]{0, 0, 20, 0, 0}, 10, new HashSet<>(), true, BuildingGroups.CASTLE)),
     DRAW_BRIDGE("drawbridge", new Bridge("drawbridge", 3, 3, 3000, new int[]{0, 10, 0, 0, 0}, new HashSet<>(), true, BuildingGroups.CASTLE)),
-    LOOKOUT_TOWER("lookout tower", new Tower("lookout tower", 2, 2, 1300, new int[]{0, 0, 10, 0, 0}, false, 10, 5, new HashSet<>(), true, BuildingGroups.CASTLE)),
+    LOOKOUT_TOWER("lookout tower", new Tower("lookout tower", 4, 1, 1300, new int[]{0, 0, 10, 0, 0}, false, 10, 5, new HashSet<>(), true, BuildingGroups.CASTLE)),
     PERIMETER_TOWER("perimeter tower", new Tower("perimeter tower", 3, 3, 1000, new int[]{0, 0, 10, 0, 0}, false, 10, 5, new HashSet<>(), true, BuildingGroups.CASTLE)),
     DEFENCE_TURRET("defence turret", new Tower("defence turret", 3, 3, 1200, new int[]{0, 0, 15, 0, 0}, false, 10, 5, new HashSet<>(), true, BuildingGroups.CASTLE)),
     SQUARE_TOWER("square tower", new Tower("square tower", 3, 3, 1600, new int[]{0, 0, 35, 0, 0}, true, 10, 5, new HashSet<>(), true, BuildingGroups.CASTLE)),
@@ -22,7 +22,7 @@ public enum Buildings {
     BARRACK("barrack", new Barrack("barrack", 5, 5, 500, new int[]{0, 0, 15, 0, 0}, new HashSet<>(), true, BuildingGroups.CASTLE)),
     MERCENARY_POST("mercenary post", new Barrack("mercenary post", 4, 4, 500, new int[]{0, 10, 0, 0, 0}, new HashSet<>(), true, BuildingGroups.CASTLE)),
     ENGINEER_GUILD("engineer guild", new Building("engineer guild", 3, 4, 500, new int[]{100, 10, 0, 0, 0}, new HashSet<>(), true, BuildingGroups.CASTLE)),
-    KILLING_PIT("killing pit", new KillingPit("killing pit", 2, 3, 0, new int[]{0, 6, 0, 0, 0}, 10, new HashSet<>(), true, BuildingGroups.CASTLE)),
+    KILLING_PIT("killing pit", new KillingPit("killing pit", 1, 1, 0, new int[]{0, 6, 0, 0, 0}, 10, new HashSet<>(), true, BuildingGroups.CASTLE)),
     INN("inn", new Inn("inn", 5, 3, 300, new int[]{100, 20, 0, 0, 0}, 1, new HashSet<>(), true, BuildingGroups.FOOD_PROCESSING)),
     MILL("mill", new FoodProcessing("mill", 2, 2, 300, new int[]{0, 20, 0, 0, 0}, 3, Good.FLOUR, Good.WHEAT, 15, new HashSet<>(), true, BuildingGroups.FOOD_PROCESSING)),
     IRON_MINE("iron mine", new Mine("iron mine", 4, 4, 100, new int[]{0, 20, 0, 0, 0}, 2, Good.IRON, 20, new HashSet<>(List.of(Texture.IRON)), false, BuildingGroups.INDUSTRY)),
@@ -40,10 +40,10 @@ public enum Buildings {
     FLETCHER("fletcher", new WeaponFactory("fletcher", 3, 3, 300, new int[]{100, 20, 0, 0, 0}, 1, Good.WOOD, Good.BOW, 40, new HashSet<>(), true, BuildingGroups.WEAPON)),
     POLE_TURNER("pole turner", new WeaponFactory("pole turner", 3, 3, 300, new int[]{100, 10, 0, 0, 0}, 1, Good.WOOD, Good.SPEAR, 20, new HashSet<>(), true, BuildingGroups.WEAPON)),
     OIL_SMELTER("oil smelter", new OilSmelter("oil smelter", 3, 3, 300, new int[]{100, 0, 0, 10, 0}, 1, 20, new HashSet<>(), true, BuildingGroups.CASTLE)),
-    PITCH_DITCH("pitch ditch", new Mine("pitch ditch", 1, 2, 300, new int[]{100, 0, 0, 0, 2}, 0, Good.PITCH, 10, new HashSet<>(), true, BuildingGroups.CASTLE)),
+    PITCH_DITCH("pitch ditch", new Mine("pitch ditch", 1, 1, 300, new int[]{100, 0, 0, 0, 2}, 0, Good.PITCH, 10, new HashSet<>(), true, BuildingGroups.CASTLE)),
     CAGED_WAR_DOGS("caged war dogs", new CagedWarDogs("caged war dogs", 3, 2, 100, new int[]{100, 10, 0, 0, 0}, new HashSet<>(), true, BuildingGroups.CASTLE)),
-    //SIEGE_TENT("siege tent", new Building("siege tent", 2,2,100, new int[]{0,0,0,0,0}, new HashSet<>(), false, BuildingGroups.CASTLE)),
-    // چادر محاصره
+    SIEGE_TENT("siege tent", new Building("siege tent", 2, 2, 100, new int[]{0, 0, 0, 0, 0}, new HashSet<>(), false, BuildingGroups.CASTLE)),
+    // چادر محاصره بالاییه
     STABLE("stable", new Building("stable", 4, 2, 300, new int[]{400, 20, 0, 0, 0}, new HashSet<>(), true, BuildingGroups.CASTLE)),
     APPLE_ORCHARD("apple orchard", new FoodProcessing("apple orchard", 3, 3, 100, new int[]{0, 5, 0, 0, 0}, 1, null, Good.APPLE, 20, new HashSet<>(List.of(Texture.GRASS, Texture.DENSE_GRASS_LAND)), false, BuildingGroups.FARM)),
     DIARY_FARMER("diary farmer", new FoodProcessing("diary farmer", 3, 3, 100, new int[]{0, 10, 0, 0, 0}, 1, null, Good.CHEESE, 25, new HashSet<>(List.of(Texture.GRASS, Texture.DENSE_GRASS_LAND)), false, BuildingGroups.FARM)),
@@ -60,8 +60,7 @@ public enum Buildings {
     Buildings(String fullName, Building buildingObject) {
         this.fullName = fullName;
         this.buildingObject = buildingObject;
-        String[] buildingNames = new String[]{"mercenary post", "stockpile", "shop"};
-        this.buildingImage = new Image(Buildings.class.getResource("/images/buildings/" + buildingNames[new Random().nextInt(0, 3)] + ".png").toString());
+        this.buildingImage = new Image(Buildings.class.getResource("/images/buildings/" + fullName + ".png").toString());
     }
 
     public static Building getBuildingObjectByType(String type) {

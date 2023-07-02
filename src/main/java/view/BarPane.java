@@ -46,9 +46,8 @@ public class BarPane extends BorderPane {
     }
 
     private void showPage(Node pagePane) {
-        if (currentPagePane != null) {
-            setCenter(null);
-        }
+        if (currentPagePane != null) setCenter(null);
+
         this.currentPagePane = pagePane;
         setCenter(pagePane);
     }

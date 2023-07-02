@@ -146,4 +146,5 @@ public class Cell {
     public void setStair(boolean stair) {
         isStair = stair;
     }
+
 }

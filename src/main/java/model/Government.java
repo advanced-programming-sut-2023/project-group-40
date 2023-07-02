@@ -1,36 +1,38 @@
 package model;
 
-import controller.UserController;
 import model.buildings.Building;
 import model.buildings.GateHouse;
 import model.buildings.Hovel;
 import model.buildings.Storage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class Government {
-    private static final ArrayList<Government> governments = new ArrayList<>();
-    private final ArrayList<TradeRequest> requests = new ArrayList<>();
-    private final ArrayList<Building> buildings = new ArrayList<>();
+    private static ArrayList<Government> governments = new ArrayList<>();
+    private static final HashSet<Government> playedGovernments = new HashSet<>();
+    private final ArrayList<TradeRequest> incomingRequests = new ArrayList<>();
+    private final ArrayList<TradeRequest> outgoingRequests = new ArrayList<>();
+    private transient ArrayList<Building> buildings = new ArrayList<>();
     private int countofhorses = 0;
     private int numberOfKnight = 0;
-    private User owner;
+    private final String username;
     private int foodRate = -2;
     private int taxRate = 0;
     private int popularity = 0;
     private int fearRate;
     private Color color = null;
-    private Castle castle = new Castle(0,0,0,0);
+    private Castle castle = new Castle(0, 0, 0, 0);
     private int emptySpace = 0;
 
-    public Government(User owner) {
-        this.owner = owner;
+    public Government(String username) {
+        this.username = username;
     }
 
-    public static Government getGovernmentByUser(User user) {
-        Stream<Government> stream = governments.stream().filter(government -> government.owner == user);
+    public static Government getGovernmentByUser(String username) {
+        Stream<Government> stream = governments.stream().filter(government -> government.getUsername().equals(username));
         Optional<Government> government = stream.findAny();
         return government.orElse(null);
     }
@@ -40,7 +42,7 @@ public class Government {
     }
 
     public static void addGovernment(String username) {
-        Government government = new Government(UserController.getUserByUsername(username));
+        Government government = new Government(username);
         governments.add(government);
     }
 
@@ -52,16 +54,12 @@ public class Government {
         return governments;
     }
 
+    public static void setGovernments(ArrayList<Government> governments) {
+        Government.governments = governments;
+    }
+
     public static void removeGovernment(String username) {
-        governments.removeIf(government -> government.getOwner() == UserController.getUserByUsername(username));
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
+        governments.removeIf(government -> government.getUsername().equals(username));
     }
 
     public int getFoodRate() {
@@ -171,18 +169,11 @@ public class Government {
     }
 
     public void addRequest(TradeRequest tradeRequest) {
-        requests.add(tradeRequest);
+        outgoingRequests.add(tradeRequest);
     }
 
-    public ArrayList<TradeRequest> getRequests() {
-        return requests;
-    }
-
-    public TradeRequest getRequestById(Integer id) {
-        for (TradeRequest request : requests) {
-            if (request.getId().equals(id)) return request;
-        }
-        return null;
+    public ArrayList<TradeRequest> getIncomingRequests() {
+        return incomingRequests;
     }
 
     public int getMaxPopulation() {
@@ -192,7 +183,6 @@ public class Government {
     public int getPopulation() {
         return castle.getPopulation();
     }
-
 
     public void decreaseAmountOfFood(int amount) {
         int remainFromFood1 = decreaseAmountOfOneFood(amount, Good.APPLE);
@@ -279,6 +269,10 @@ public class Government {
         return buildings;
     }
 
+    public void setBuildings(ArrayList<Building> buildings) {
+        this.buildings = buildings;
+    }
+
     public int getCountOfBuilding(String buildingName) {
         int count = 0;
         for (Building building : buildings)
@@ -310,5 +304,15 @@ public class Government {
         return count;
     }
 
+    public ArrayList<TradeRequest> getOutgoingRequests() {
+        return outgoingRequests;
+    }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public static HashSet<Government> getPlayedGovernments() {
+        return playedGovernments;
+    }
 }

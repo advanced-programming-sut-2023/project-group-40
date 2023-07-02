@@ -1,34 +1,91 @@
 package controller;
 
+import com.auth0.jwt.JWT;
+import com.google.gson.Gson;
 import model.User;
 
-public class ProfileMenuController {
-    private static User currentUser = new User("username", "password", "nickname", "email", null);
+import java.io.IOException;
 
-    public static void changeUsername(String username) {
-        currentUser.setUsername(username);
+import static controller.ConnectToServer.getUsers;
+import static controller.LeaderBoardController.allUsers;
+import static controller.LeaderBoardController.state;
+
+public class ProfileMenuController {
+    private static User currentUser;
+
+    public static void changeUsername(String newUsername) {
+        currentUser.setUsername(newUsername);
+        try {
+            String token = JWT.create().withSubject("change username")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new username", newUsername)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 
     public static void changePassword(String newPassword) {
         currentUser.setPassword(newPassword);
+        try {
+            String token = JWT.create().withSubject("change password")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new password", UserController.generatePasswordHash(newPassword))
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 
-    public static String changeNickname(String nickname) {
-        if (nickname == null || nickname.equals("")) return "nickname is empty!";
-        currentUser.setNickname(nickname);
-        return "nickname changed!";
+    public static void changeNickname(String newNickname) {
+        currentUser.setNickname(newNickname);
+        try {
+            String token = JWT.create().withSubject("change nickname")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new nickname", newNickname)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 
-    public static String changeEmail(String email) {
-        if (email == null || email.equals("")) return "email is empty!";
-        if (!UserController.checkEmailFormat(email)) return "email is invalid!";
-        if (UserController.isEmailExists(email)) return "email is exists!";
-        currentUser.setEmail(email);
-        return "email changed!";
+    public static void changeEmail(String newEmail) {
+        currentUser.setEmail(newEmail);
+        try {
+            String token = JWT.create().withSubject("change email")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new email", newEmail)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 
-    public static void changeSlogan(String slogan) {
-        currentUser.setSlogan(slogan);
+    public static void changeSlogan(String newSlogan) {
+        currentUser.setSlogan(newSlogan);
+        try {
+            String token = JWT.create().withSubject("change slogan")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withClaim("new slogan", newSlogan)
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 
     public static boolean isPasswordCorrect(String newPassword) {
@@ -43,7 +100,18 @@ public class ProfileMenuController {
         ProfileMenuController.currentUser = currentUser;
     }
 
-    public static void changeAvatar(String avatarPath) {
-        currentUser.setAvatarPath(avatarPath);
+    public static void changeAvatar(byte[] avatarByteArray) {
+        try {
+            String token = JWT.create().withSubject("change avatar")
+                    .withExpiresAt(MainController.getExpirationDate())
+                    .withHeader(MainController.headerClaims)
+                    .sign(MainController.tokenAlgorithm);
+            MainController.dataOutputStream.writeUTF(token);
+            currentUser.setAvatarByteArray(avatarByteArray);
+            MainController.dataOutputStream.writeUTF(new Gson().toJson(currentUser));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
 }

@@ -1,43 +1,41 @@
 package controller;
 
+import javafx.scene.image.ImageView;
 import model.*;
 import model.buildings.*;
 import model.troops.Troop;
 import model.troops.Troops;
 import view.GameMenu;
+import view.MapMenu;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 
 public class GameMenuController {
-    private static Government currentGovernment = new Government(new User("user1","pass1","nickname1","email1",null));
+    private static Government currentGovernment;
     private static Government onGovernment;
     private static Building selectedBuilding;
     private static Unit selectedUnit;
+    private static ImageView unitImageView;
+
     private static int numberOfPlayers = 2;
-
-
-    public static void setMapSize(int size) {
-        Map.initMap(size);
+    private static List<Integer> path = new ArrayList<>();
+    private static Government sickGovernment;
+    public static void setSickness() {
+        if(sickGovernment != null) sickGovernment.changePopularity(5);
+        int random = new Random().nextInt(1, numberOfPlayers+ 1);
+        sickGovernment = Government.getGovernments().get(random - 1);
+        sickGovernment.changePopularity(-5);
     }
-    
-
-    public static String showPopularity() {
-        return "rate of your government popularity is " + currentGovernment.getPopularity();
-    }
-
-    public static String showFoodList() {
-        String result = "";
-        result += "meat: " + currentGovernment.getAmountOfGood(Good.MEAT) + "\n";
-        result += "apple: " + currentGovernment.getAmountOfGood(Good.APPLE) + "\n";
-        result += "cheese: " + currentGovernment.getAmountOfGood(Good.CHEESE) + "\n";
-        result += "bread: " + currentGovernment.getAmountOfGood(Good.BREAD);
-        return result;
+    public static Government getSickGovernment() {
+        return sickGovernment;
     }
 
-    public static String setFoodRate(int rate) {
-        if (rate > 2 || rate < -2) return "rate-number is out of bound";
+    public static void setFoodRate(int rate) {
+        if (rate > 2 || rate < -2) return;
         currentGovernment.setFoodRate(rate);
         int numberOfFoods = currentGovernment.getAmountOfGood(Good.MEAT);
         numberOfFoods += currentGovernment.getAmountOfGood(Good.APPLE);
@@ -46,58 +44,49 @@ public class GameMenuController {
         switch (rate) {
             case -2 -> currentGovernment.changePopularity(-8);
             case -1 -> {
-                if (currentGovernment.getPopulation() > 2 * numberOfFoods)
-                    return "you haven't enough food!";
+                if (currentGovernment.getPopulation() > 2 * numberOfFoods) return;
                 currentGovernment.decreaseAmountOfFood(currentGovernment.getPopulation() / 2);
                 currentGovernment.changePopularity(-4);
             }
             case 0 -> {
-                if (currentGovernment.getPopulation() > numberOfFoods)
-                    return "you haven't enough food!";
+                if (currentGovernment.getPopulation() > numberOfFoods) return;
                 currentGovernment.decreaseAmountOfFood(currentGovernment.getPopulation());
                 currentGovernment.changePopularity(0);
             }
             case 1 -> {
-                if (1.5 * currentGovernment.getPopulation() > numberOfFoods)
-                    return "you haven't enough food!";
+                if (1.5 * currentGovernment.getPopulation() > numberOfFoods) return;
                 currentGovernment.decreaseAmountOfFood((int) (1.5 * currentGovernment.getPopulation()));
                 currentGovernment.changePopularity(4);
             }
             case 2 -> {
-                if (2 * currentGovernment.getPopulation() > numberOfFoods)
-                    return "you haven't enough food!";
+                if (2 * currentGovernment.getPopulation() > numberOfFoods) return;
                 currentGovernment.decreaseAmountOfFood(2 * currentGovernment.getPopulation());
                 currentGovernment.changePopularity(8);
             }
         }
-        return "set rate-number is successful";
     }
 
 
-    public static String setTaxRate(int rate) {
+    public static void setTaxRate(int rate) {
 //        if (!selectedBuilding.getName().equals("Small stone gatehouse"))
 //            return "you don't select Small stone gatehouse";
-        if (currentGovernment.getAmountOfGood(Good.GOLD) == 0)
-            return "you haven't any gold in your treasury";
+        if (currentGovernment.getAmountOfGood(Good.GOLD) == 0) return;
         currentGovernment.setTaxRate(rate);
         int gold = currentGovernment.getAmountOfGood(Good.GOLD);
         int population = currentGovernment.getPopulation();
         switch (rate) {
             case -3 -> {
-                if (population > gold)
-                    return "you haven't enough gold in your treasury";
+                if (population > gold) return;
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, population);
                 currentGovernment.changePopularity(7);
             }
             case -2 -> {
-                if (0.8 * population > gold)
-                    return "you haven't enough gold in your treasury";
+                if (0.8 * population > gold) return;
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, (int) (0.8 * population));
                 currentGovernment.changePopularity(5);
             }
             case -1 -> {
-                if (0.6 * population > gold)
-                    return "you haven't enough gold in your treasury";
+                if (0.6 * population > gold) return;
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, (int) (0.6 * population));
                 currentGovernment.changePopularity(3);
             }
@@ -138,11 +127,10 @@ public class GameMenuController {
                 currentGovernment.changePopularity(-24);
             }
         }
-        return "set rate-number is successful";
     }
 
 
-    public static String setFearRate(int rate) {
+    public static void setFearRate(int rate) {
         for (Building building : currentGovernment.getBuildings()) {
             try {
                 Field rateField = building.getClass().getField("rate");
@@ -150,20 +138,15 @@ public class GameMenuController {
                 rateField.set(building, rateField.getInt(building) + 50 * rate);
 
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                continue;
             }
         }
-
-        if (rate > 5 || rate < -5) return "rate-number is out of bound";
         currentGovernment.setFearRate(rate);
         for (int i = 0; i < Map.getSize(); i++)
             for (int j = 0; j < Map.getSize(); j++) {
                 Unit unit = Map.getMap()[i][j].getUnit();
                 if (unit != null && unit.getGovernment() == currentGovernment)
-                    for (Troop troop : unit.getTroops())
-                        unit.changePower(rate);
+                    unit.changePower(rate);
             }
-        return "set rate-number is successful";
     }
 
     public static boolean checkDropBuilding(int x, int y, String type) {
@@ -182,24 +165,18 @@ public class GameMenuController {
             }
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
             for (int j = y; j < y + targetBuilding.getWidth(); j++) {
-                if (!targetBuilding.checkTexture(Map.getMap()[i][j].getTexture()))
-                    return false;
+                if (!targetBuilding.checkTexture(Map.getMap()[i][j].getTexture())) return false;
             }
-
-        return true;
+        if (currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired()) return false;
+        if (currentGovernment.getAmountOfGood(Good.GOLD) < targetBuilding.getCost()[0]) return false;
+        if (currentGovernment.getAmountOfGood(Good.WOOD) < targetBuilding.getCost()[1]) return false;
+        if (currentGovernment.getAmountOfGood(Good.STONE) < targetBuilding.getCost()[2]) return false;
+        if (currentGovernment.getAmountOfGood(Good.IRON) < targetBuilding.getCost()[3]) return false;
+        return currentGovernment.getAmountOfGood(Good.PITCH) >= targetBuilding.getCost()[4];
     }
 
     public static void dropBuilding(int x, int y, String type) {
         Building targetBuilding = Buildings.getBuildingObjectByType(type);
-        //        if (currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired())
-//            return false;
-//        currentGovernment.getCastle().changeNumberOfActiveWorkers(-targetBuilding.getWorkersRequired());
-        //        if (currentGovernment.getCastle().getNumberOfActiveWorker() < targetBuilding.getWorkersRequired())
-//            return false;
-//        currentGovernment.getCastle().changeNumberOfActiveWorkers(-targetBuilding.getWorkersRequired());
-        //        currentGovernment.decreaseAmountOfGood(Good.GOLD, targetBuilding.getCost()[0]);
-//        currentGovernment.decreaseAmountOfGood(Good.WOOD, targetBuilding.getCost()[1]);
-//        currentGovernment.decreaseAmountOfGood(Good.STONE, targetBuilding.getCost()[2]);
         targetBuilding.setXCoordinates(x);
         targetBuilding.setYCoordinates(y);
         for (int i = x; i < x + targetBuilding.getHeight(); i++)
@@ -209,19 +186,21 @@ public class GameMenuController {
                 Map.getMap()[i][j].setPassable(false);
             }
         currentGovernment.addBuilding(targetBuilding);
-//        if (targetBuilding.getName().equals("Woodcutter")) {
-//            Mine mine = (Mine) targetBuilding;
-//            mine.setProductRate(2 ^ currentGovernment.getCountOfBuilding("Woodcutter"));
-//        }
+        currentGovernment.getCastle().changeNumberOfActiveWorkers(-targetBuilding.getWorkersRequired());
+        currentGovernment.decreaseAmountOfGood(Good.GOLD, targetBuilding.getCost()[0]);
+        currentGovernment.decreaseAmountOfGood(Good.WOOD, targetBuilding.getCost()[1]);
+        currentGovernment.decreaseAmountOfGood(Good.STONE, targetBuilding.getCost()[2]);
+        currentGovernment.decreaseAmountOfGood(Good.IRON, targetBuilding.getCost()[3]);
+        currentGovernment.decreaseAmountOfGood(Good.PITCH, targetBuilding.getCost()[4]);
+        MapMenu.treasuryLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD)));
+        if (targetBuilding.getName().equals("Woodcutter")) {
+            Mine mine = (Mine) targetBuilding;
+            mine.setProductRate(2 ^ currentGovernment.getCountOfBuilding("Woodcutter"));
+        }
     }
 
     public static void selectBuilding(int x, int y) {
         selectedBuilding = Map.getMap()[x][y].getBuilding();
-//        if (selectedBuilding.getName().equals("shop")) {
-//            ShopMenuController.setCurrentGovernment(currentGovernment);
-//            ShopMenu.run();
-//
-//        }
 //        if (selectedBuilding.getName().equals("Mercenary Post")) {
 //            System.out.print("enter number of troops you want buy: ");
 //            int count = Commands.scanner.nextInt();
@@ -248,11 +227,10 @@ public class GameMenuController {
 
     public static String createUnit(String type, int count, Building building) {
         if (count <= 0) return "count is invalid!";
-//        if (currentGovernment.getCastle().getPopulation() < count)
-//            return "you don't have enough population!";
+        if (currentGovernment.getCastle().getPopulation() < count)
+            return "population not enough!";
         if (type.equals("worker")) {
-            if (currentGovernment.getAmountOfGood(Good.GOLD) < 10 * count)
-                return "you don't have enough gold!";
+            if (currentGovernment.getAmountOfGood(Good.GOLD) < 10 * count) return "you don't have enough gold!";
             if (!selectedBuilding.getName().equals("engineer guild"))
                 return "you can't create " + type + " in " + selectedBuilding.getName();
             currentGovernment.getCastle().changeNumberOfActiveWorkers(count);
@@ -261,26 +239,24 @@ public class GameMenuController {
         else {
             Troop troop = Troops.getTroopObjectByType(type);
             if (troop == null) return "unit type is invalid!";
-//            if (currentGovernment.getAmountOfGood(Good.GOLD) < troop.getValue() * count)
-//                return "you don't have enough gold!";
-//            if (troop.getWeapon() != null && currentGovernment.getAmountOfGood(troop.getWeapon()) < count)
-//                return "you don't have enough weapon!";
-//            if (troop.isHasArmor() && currentGovernment.getAmountOfGood(Good.ARMOR) < count)
-//                return "you don't have enough armor!";
-//            if (troop.getName().equals("Knight") || troop.getName().equals("Horse Archers")) {
-//                if (count > currentGovernment.getCountOfHorses())
-//                    return "you don't have enough horses!";
-//                else
-//                    currentGovernment.changeCountOfHorses(count);
-//            }
+            if (currentGovernment.getAmountOfGood(Good.GOLD) < troop.getValue() * count)
+                return "you don't have enough gold!";
+            if (troop.getWeapon() != null && currentGovernment.getAmountOfGood(troop.getWeapon()) < count)
+                return "you don't have enough weapon!";
+            if (troop.isHasArmor() && currentGovernment.getAmountOfGood(Good.ARMOR) < count)
+                return "you don't have enough armor!";
+            if (troop.getName().equals("Knight") || troop.getName().equals("Horse Archers")) {
+                if (count > currentGovernment.getCountOfHorses())
+                    return "you don't have enough horses!";
+                else
+                    currentGovernment.changeCountOfHorses(count);
+            }
             currentGovernment.getCastle().changePopulation(-1 * count);
             if (building instanceof Barrack barrack) {
-                barrack.addTroop(type,count);
+                barrack.addTroop(type, count);
                 currentGovernment.decreaseAmountOfGood(Good.GOLD, count * troop.getValue());
                 currentGovernment.decreaseAmountOfGood(troop.getWeapon(), count);
-            }
-            else {
-
+                MapMenu.treasuryLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD)));
             }
 //            if (troop.getName().startsWith("Archer"))
 //                unit.setCanDamage(false);
@@ -303,34 +279,31 @@ public class GameMenuController {
         return "repair successful";
     }
 
-    public static String selectUnit(int x, int y) {
-        if (Map.getMap()[x][y].getUnit() == null)
-            return "there is no unit in this cell!";
-        selectedUnit = Map.getMap()[x][y].getUnit();
-        if (selectedUnit.isPatrolling()) {
-            selectedUnit.setPatrolTargetXY(x, y);
-            moveUnit(selectedUnit.getPatrolTargetX(), selectedUnit.getPatrolTargetY());
-        }
-        return "unit successfully selected";
-    }
+//    public static String selectUnit(int x, int y) {
+//        if (Map.getMap()[x][y].getUnit() == null) return "there is no unit in this cell!";
+//        selectedUnit = Map.getMap()[x][y].getUnit();
+//        if (selectedUnit.isPatrolling()) {
+//            selectedUnit.setPatrolTargetXY(x, y);
+//            moveUnit(selectedUnit.getPatrolTargetX(), selectedUnit.getPatrolTargetY(),);
+//        }
+//        return "unit successfully selected";
+//    }
 
-    public static String moveUnit(int x, int y) {
+    public static String moveUnit(int x, int y,ImageView imageView) {
         Cell cell = Map.getMap()[x][y];
         if (!checkRange(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit.getVelocity()))
             return "out of range!";
         if (!cell.isPassable() && (!(cell.getBuilding() instanceof GateHouse) || selectedUnit.getGovernment() != currentGovernment))
             return "you can't pass this cell;";
-        if (!cell.isAvailable() && cell.getWall() == null)
-            return "you can't pass this cell;";
+        if (!cell.isAvailable() && cell.getWall() == null) return "you can't pass this cell;";
         if (!cell.isAvailable() && cell.getWall() != null && !selectedUnit.isCanClimb())
             return "you can't pass this cell;";
-        if (cell.getTexture().getType().equals("water"))
-            return "you can't go to water regions!";
-        if (cell.getTexture() == Texture.SHALLOW_WATER)
-            selectedUnit.decreaseVelocity(1);
-        if (!checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity()))
+        if (cell.getTexture().getType().equals("water")) return "you can't go to water regions!";
+        if (cell.getTexture() == Texture.SHALLOW_WATER) selectedUnit.decreaseVelocity(1);
+        if (!checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity(),imageView))
             return "no path found!";
         selectedUnit.changeXY(x, y);
+        System.out.println(path);
         return "unit move to x: " + selectedUnit.getX() + "and y: " + selectedUnit.getY() + "successfully";
     }
 
@@ -338,42 +311,53 @@ public class GameMenuController {
         Cell cell = Map.getMap()[x][y];
         if (!cell.isPassable() && (!(cell.getBuilding() instanceof GateHouse) || selectedUnit.getGovernment() != currentGovernment))
             return false;
-        if (!cell.isAvailable() && cell.getWall() == null)
-            return false;
-        if (!cell.isAvailable() && cell.getWall() != null && !selectedUnit.isCanClimb())
-            return false;
+        if (!cell.isAvailable() && cell.getWall() == null) return false;
+        if (!cell.isAvailable() && cell.getWall() != null && !selectedUnit.isCanClimb()) return false;
         return !cell.getTexture().getType().equals("water");
     }
-
-    private static boolean isPathExists(boolean[][] passableCells, int x1, int y1, int x2, int y2) {
-        System.out.println(x1 + "    " + y1);
+//15 15 --> 20 15
+    //0 up 1 right 2 down 3 left
+    private static boolean isPathExists(boolean[][] passableCells, int x1, int y1, int x2, int y2,ImageView imageView) {
         int maxX = passableCells.length;
         int maxY = passableCells[0].length;
         if (x1 == x2 && y1 == y2) return true;
         if (x1 > 0 && passableCells[x1 - 1][y1]) {
             passableCells[x1][y1] = false;
-            if (isPathExists(passableCells, x1 - 1, y1, x2, y2)) return true;
+            path.add(3);
+            int size = path.size();
+            imageView.translateXProperty().unbind();
+            if (isPathExists(passableCells, x1 - 1, y1, x2, y2,imageView)) return true;
+            path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
         if (y1 > 0 && passableCells[x1][y1 - 1]) {
             passableCells[x1][y1] = false;
-            if (isPathExists(passableCells, x1, y1 - 1, x2, y2)) return true;
+            path.add(0);
+            int size = path.size();
+            if (isPathExists(passableCells, x1, y1 - 1, x2, y2,imageView)) return true;
+            path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
         if (x1 < maxX - 1 && passableCells[x1 + 1][y1]) {
             passableCells[x1][y1] = false;
-            if (isPathExists(passableCells, x1 + 1, y1, x2, y2)) return true;
+            path.add(1);
+            int size = path.size();
+            if (isPathExists(passableCells, x1 + 1, y1, x2, y2,imageView)) return true;
+            path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
         if (y1 < maxY - 1 && passableCells[x1][y1 + 1]) {
             passableCells[x1][y1] = false;
-            if (isPathExists(passableCells, x1, y1 + 1, x2, y2)) return true;
+            path.add(2);
+            int size = path.size();
+            if (isPathExists(passableCells, x1, y1 + 1, x2, y2,imageView)) return true;
+            path = path.subList(0,size-1);
             passableCells[x1][y1] = true;
         }
         return false;
     }
 
-    private static boolean checkMove(int x1, int y1, int x2, int y2, Object object, int velocity) {
+    private static boolean checkMove(int x1, int y1, int x2, int y2, Object object, int velocity,ImageView imageView) {
         boolean[][] passableCells = new boolean[Math.min(Map.getSize() - 1, x1 + velocity) - Math.max(0, x1 - velocity)]
                 [Math.min(Map.getSize() - 1, y1 + velocity) - Math.max(0, y1 - velocity)];
         for (int i = Math.max(0, x1 - velocity); i < Math.min(Map.getSize() - 1, x1 + velocity); i++) {
@@ -381,42 +365,69 @@ public class GameMenuController {
                 passableCells[i - Math.max(0, x1 - velocity)][j - Math.max(0, y1 - velocity)] = canPass(i, j);
             }
         }
-        return isPathExists(passableCells, x1 - Math.max(0, x1 - velocity), y1 - Math.max(0, y1 - velocity)
-                , x2 - Math.max(0, x1 - velocity), y2 - Math.max(0, y1 - velocity));
+        boolean pathExists =  isPathExists(passableCells, x1 - Math.max(0, x1 - velocity), y1 - Math.max(0, y1 - velocity), x2 - Math.max(0, x1 - velocity), y2 - Math.max(0, y1 - velocity),imageView);
+        if (pathExists) {
+            moveImageView();
+        }
+        return pathExists;
+    }
+
+    private static void moveImageView() {
+        try {
+            for (Integer integer : path) {
+                if (integer == 0) {
+                    unitImageView.translateYProperty().unbind();
+                    Thread.sleep(200);
+                    unitImageView.translateYProperty().bind(MapMenu.map[(int) (((int) unitImageView.getTranslateX()) / MapMenu.textureSize.get())][(int) (((int) unitImageView.getTranslateY() - 1) / MapMenu.textureSize.get())].translateYProperty());
+                } else if (integer == 1) {
+                    unitImageView.translateXProperty().unbind();
+                    Thread.sleep(200);
+                    unitImageView.translateXProperty().bind(MapMenu.map[(int) (((int) unitImageView.getTranslateX() + 1) / MapMenu.textureSize.get())][(int) (((int) unitImageView.getTranslateY()) / MapMenu.textureSize.get())].translateXProperty());
+                } else if (integer == 2) {
+                    unitImageView.translateYProperty().unbind();
+                    Thread.sleep(200);
+                    unitImageView.translateYProperty().bind(MapMenu.map[(int) (((int) unitImageView.getTranslateX()) / MapMenu.textureSize.get())][(int) (((int) unitImageView.getTranslateY() + 1) / MapMenu.textureSize.get())].translateYProperty());
+                } else {
+                    unitImageView.translateXProperty().unbind();
+                    Thread.sleep(200);
+                    unitImageView.translateXProperty().bind(MapMenu.map[(int) (((int) unitImageView.getTranslateX() - 1) / MapMenu.textureSize.get())][(int) (((int) unitImageView.getTranslateY()) / MapMenu.textureSize.get())].translateXProperty());
+                }
+            }
+        }catch (Exception exception) {
+
+        }
+
     }
 
     public static String setUnitState(String state) {
-        if (selectedUnit == null)
-            return "you don't select any unit!";
+        if (selectedUnit == null) return "you don't select any unit!";
         selectedUnit.setState(state);
         return null;
     }
 
-    public static String patrolUnit(int x1, int y1, int x2, int y2) {
-        if (selectedUnit == null)
-            return "no selected unit found!";
-        if (!canPass(x1, y1) || !canPass(x2, y2)) {
-            return "you can't patrol between two points!";
-        }
-        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x1, y1, selectedUnit, selectedUnit.getVelocity()))
-            return "you cant go to your first coordinate";
-        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x2, y2, selectedUnit, selectedUnit.getVelocity()))
-            return "you cant go to your second coordinate";
-        selectedUnit.setPatrolling(true);
-
-        if (selectedUnit.getX() == x2 && selectedUnit.getY() == y2) {
-            moveUnit(x1, y1);
-            selectedUnit.setPatrolTargetXY(x2, y2);
-        } else {
-            moveUnit(x2, y2);
-            selectedUnit.setPatrolTargetXY(x1, y1);
-        }
-        return "patrol succesful";
-    }
+//    public static String patrolUnit(int x1, int y1, int x2, int y2) {
+//        if (selectedUnit == null) return "no selected unit found!";
+//        if (!canPass(x1, y1) || !canPass(x2, y2)) {
+//            return "you can't patrol between two points!";
+//        }
+//        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x1, y1, selectedUnit, selectedUnit.getVelocity()))
+//            return "you cant go to your first coordinate";
+//        if (checkMove(selectedUnit.getX(), selectedUnit.getY(), x2, y2, selectedUnit, selectedUnit.getVelocity()))
+//            return "you cant go to your second coordinate";
+//        selectedUnit.setPatrolling(true);
+//
+//        if (selectedUnit.getX() == x2 && selectedUnit.getY() == y2) {
+//            moveUnit(x1, y1);
+//            selectedUnit.setPatrolTargetXY(x2, y2);
+//        } else {
+//            moveUnit(x2, y2);
+//            selectedUnit.setPatrolTargetXY(x1, y1);
+//        }
+//        return "patrol succesful";
+//    }
 
     public static boolean checkRange(int x1, int y1, int x2, int y2, int range) {
-        return x1 <= x2 + range && x1 >= x2 - range
-                && y1 <= y2 + range && y1 >= y2 - range;
+        return x1 <= x2 + range && x1 >= x2 - range && y1 <= y2 + range && y1 >= y2 - range;
     }
 
     public static Unit findNearestUnit(int range, int selectedUnitX, int selectedUnitY) {
@@ -428,19 +439,15 @@ public class GameMenuController {
         return null;
     }
 
-    public static String attackEnemy(int x, int y) {
+    public static String attackEnemy(int x, int y,ImageView imageView) {
         int sightRange = selectedUnit.getSightRange();
         int selectedUnitX = selectedUnit.getX();
         int selectedUnitY = selectedUnit.getY();
-        if (Map.getMap()[x][y].getUnit() == null)
-            return "there is no enemy in this cell!";
-        if (!checkRange(x, y, selectedUnitX, selectedUnitY, sightRange)
-                || x - selectedUnitX > selectedUnit.getVelocity()
-                || y - selectedUnitY > selectedUnit.getVelocity())
+        if (Map.getMap()[x][y].getUnit() == null) return "there is no enemy in this cell!";
+        if (!checkRange(x, y, selectedUnitX, selectedUnitY, sightRange) || x - selectedUnitX > selectedUnit.getVelocity() || y - selectedUnitY > selectedUnit.getVelocity())
             return "you can't attack this enemy!";
-        if (selectedUnit.getShootingRange() != 0)
-            return "your unit not appropriate for this attack";
-        checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity());
+        if (selectedUnit.getShootingRange() != 0) return "your unit not appropriate for this attack";
+        checkMove(selectedUnit.getX(), selectedUnit.getY(), x, y, selectedUnit, selectedUnit.getVelocity(),imageView);
         Unit enemy = Map.getMap()[x][y].getUnit();
         while (enemy.getHp() <= 0 || selectedUnit.getHp() <= 0) {
             enemy.decreaseHpOfUnit(selectedUnit.getPower());
@@ -449,11 +456,11 @@ public class GameMenuController {
         if (selectedUnit.getState().equals("offensive")) {
             if (enemy.getHp() == 0) {
                 Map.getMap()[x][y].removeUnit(enemy);
-                for (int k = 1; k <= sightRange; k++)
-                    for (int i = selectedUnitX - k; i <= selectedUnitX + k; i++)
-                        for (int j = selectedUnitY - k; j <= selectedUnitY + k; j++)
-                            if (Map.getMap()[i][j].getUnit() != null && Map.getMap()[i][j].getUnit().getGovernment() != currentGovernment)
-                                attackEnemy(i, j);
+//                for (int k = 1; k <= sightRange; k++)
+//                    for (int i = selectedUnitX - k; i <= selectedUnitX + k; i++)
+//                        for (int j = selectedUnitY - k; j <= selectedUnitY + k; j++)
+//                            if (Map.getMap()[i][j].getUnit() != null && Map.getMap()[i][j].getUnit().getGovernment() != currentGovernment)
+//                                attackEnemy(i, j);
             } else {
                 Map.getMap()[selectedUnit.getX()][selectedUnit.getY()].removeUnit(selectedUnit);
                 return "attack finished!";
@@ -481,22 +488,16 @@ public class GameMenuController {
         int shootingRange = selectedUnit.getShootingRange();
         int selectedUnitX = selectedUnit.getX();
         int selectedUnitY = selectedUnit.getY();
-        if (!checkRange(x, y, selectedUnitX, selectedUnitY, shootingRange))
-            return "you can't attack this enemy!";
-        if (selectedUnit.getShootingRange() == 0)
-            return "your unit not appropriate for this attack";
+        if (!checkRange(x, y, selectedUnitX, selectedUnitY, shootingRange)) return "you can't attack this enemy!";
+        if (selectedUnit.getShootingRange() == 0) return "your unit not appropriate for this attack";
         if (Map.getMap()[x][y].getUnit() == null) {
             Building building = Map.getMap()[x][y].getBuilding();
-            if (building == null)
-                return "there is no enemy in this cell!";
+            if (building == null) return "there is no enemy in this cell!";
             else {
                 while (building.getHp() == 0 || selectedUnit.getHp() == 0) {
                     building.setHp(building.getHp() - selectedUnit.getPower());
                     if (building instanceof Tower tower) {
-                        if (selectedUnitX < tower.getX2() + tower.getDefenceRange() &&
-                                selectedUnitX > tower.getX1() - tower.getDefenceRange() &&
-                                selectedUnitY > tower.getY2() + tower.getDefenceRange() &&
-                                selectedUnitY < tower.getY1() - tower.getDefenceRange())
+                        if (selectedUnitX < tower.getX2() + tower.getDefenceRange() && selectedUnitX > tower.getX1() - tower.getDefenceRange() && selectedUnitY > tower.getY2() + tower.getDefenceRange() && selectedUnitY < tower.getY1() - tower.getDefenceRange())
                             selectedUnit.decreaseHpOfUnit(tower.getAttackRange());
                     }
                     if (building.getName().equals("pitch ditch") && selectedUnit.getType().equals("Slaves"))
@@ -509,8 +510,7 @@ public class GameMenuController {
             }
         }
         Unit enemy = Map.getMap()[x][y].getUnit();
-        if (enemy.isHavePortableShield())
-            return "your enemy has portable shield";
+        if (enemy.isHavePortableShield()) return "your enemy has portable shield";
         while (enemy.getHp() <= 0 || selectedUnit.getHp() <= 0) {
             enemy.decreaseHpOfUnit(selectedUnit.getPower());
             if (!checkRange(selectedUnitX, selectedUnitY, x, y, enemy.getShootingRange()) && enemy.getShootingRange() != 0)
@@ -536,8 +536,7 @@ public class GameMenuController {
     }
 
     public static String pourOil(String direction) {
-        if (!selectedUnit.getType().equals("engineer"))
-            return "you should choose engineer unit!";
+        if (!selectedUnit.getType().equals("engineer")) return "you should choose engineer unit!";
         if (selectedUnit.getTroops().size() > currentGovernment.getAmountOfGood(Good.MELTING_POT))
             return "you don't have enough oil";
 
@@ -546,8 +545,7 @@ public class GameMenuController {
 
     public static String digTunnel(int x, int y) {
         if (selectedUnit != null)
-            if (!selectedUnit.getType().equals("Tunneler"))
-                return "you should select Tunneler unit!";
+            if (!selectedUnit.getType().equals("Tunneler")) return "you should select Tunneler unit!";
             else return "you didn't select any unit!";
         for (int i = x; i <= x + 3; i++) {
             Building targetBuilding = Map.getMap()[i][y].getBuilding();
@@ -573,13 +571,10 @@ public class GameMenuController {
     }
 
     public static String buildEquipments(String equipmentName) {
-        if (!selectedUnit.getType().equals("Engineer"))
-            return "you don't select Engineer Unit";
+        if (!selectedUnit.getType().equals("Engineer")) return "you don't select Engineer Unit";
         Tool tool = Tool.getToolByName(equipmentName);
-        if (tool == null)
-            return "your equipment name is invalid!";
-        if (selectedUnit.getTroops().size() < tool.getNumberOfEngineer())
-            return "you haven't enough engineer";
+        if (tool == null) return "your equipment name is invalid!";
+        if (selectedUnit.getTroops().size() < tool.getNumberOfEngineer()) return "you haven't enough engineer";
         if (tool == Tool.PORTABLE_SHIELD) {
             int[] coordinate = GameMenu.getCoordinate();
             Unit unit = Map.getMap()[coordinate[0]][coordinate[1]].getUnit();
@@ -589,8 +584,7 @@ public class GameMenuController {
             unit.setHavePortableShield(true);
             return "portable shield successfully build";
         }
-        if (currentGovernment.getAmountOfGood(Good.GOLD) < tool.getPrice())
-            return "you haven't enough gold";
+        if (currentGovernment.getAmountOfGood(Good.GOLD) < tool.getPrice()) return "you haven't enough gold";
         if (tool == Tool.FIERY_STONE_THROWER || tool == Tool.CATAPULT_WITH_BALANCE_WEIGHT) {
             if (!selectedBuilding.getName().equals("square tower") && !selectedBuilding.getName().equals("round tower"))
                 return "your building don't appropriate for build this equipment";
@@ -600,15 +594,13 @@ public class GameMenuController {
         }
         int[] coordinates = GameMenu.getCoordinate();
         Cell cell = Map.getMap()[coordinates[0]][coordinates[1]];
-        if (!cell.isAvailable())
-            return "your cell isn't be available";
+        if (!cell.isAvailable()) return "your cell isn't be available";
         cell.setAvailable(false);
         cell.setTool(tool);
         if (tool == Tool.SIEGE_TOWER) {
             for (int i = coordinates[0] - 1; i <= coordinates[0] + 1; i++)
                 for (int j = coordinates[0] - 1; j <= coordinates[1] + 1; j++)
-                    if (Map.getMap()[i][j].getWall() != null)
-                        Map.getMap()[i][j].setPassable(true);
+                    if (Map.getMap()[i][j].getWall() != null) Map.getMap()[i][j].setPassable(true);
         }
 
         return "equipment successfully dropped";
@@ -621,8 +613,7 @@ public class GameMenuController {
         int y2 = currentGovernment.getCastle().getY2();
         for (int i = x1 - 1; i <= x2 + 1; i++)
             for (int j = y1 - 1; j <= y2 + 1; j++)
-                if (Map.getMap()[i][j].getUnit() == null)
-                    Map.getMap()[i][j].addUnit(selectedUnit);
+                if (Map.getMap()[i][j].getUnit() == null) Map.getMap()[i][j].addUnit(selectedUnit);
         selectedUnit = null;
         return null;
     }
@@ -646,25 +637,15 @@ public class GameMenuController {
         return result.toString();
     }
 
-    public static void setOnGovernment() {
-        if (onGovernment == null) {
-            onGovernment = currentGovernment;
-            return;
-        }
+    public static void nextGovernment() {
         int index = Government.getGovernments().indexOf(currentGovernment) + 1;
-        if (index >= Government.getGovernments().size())
-            index %= Government.getGovernments().size();
-        onGovernment = Government.getGovernments().get(index);
-    }
-
-    public static Government getOnGovernment() {
-        return onGovernment;
+        if (index >= Government.getGovernments().size()) index %= Government.getGovernments().size();
+        currentGovernment = Government.getGovernments().get(index);
     }
 
     public static void checkPopulation() {
         for (Government government : Government.getGovernments()) {
-            int amountOfFoods = government.getAmountOfGood(Good.MEAT) + government.getAmountOfGood(Good.APPLE)
-                    + government.getAmountOfGood(Good.CHEESE) + government.getAmountOfGood(Good.BREAD);
+            int amountOfFoods = government.getAmountOfGood(Good.MEAT) + government.getAmountOfGood(Good.APPLE) + government.getAmountOfGood(Good.CHEESE) + government.getAmountOfGood(Good.BREAD);
             int additionalFood = amountOfFoods - government.getPopulation();
             int emptySpaces = government.getEmptySpaces();
             government.increasePopulation(Math.min(additionalFood, emptySpaces));
@@ -715,31 +696,25 @@ public class GameMenuController {
                     return "you can't drop wall on this cell!";
         }
         int count = (height / 2) * thickness;
-        if (currentGovernment.getAmountOfGood(Good.STONE_BLOCK) < count)
-            return "you don't have enough stone block!";
-        if (currentGovernment.getAmountOfGood(Good.GOLD) < count * 5)
-            return "you don't have enough gold!";
+        if (currentGovernment.getAmountOfGood(Good.STONE_BLOCK) < count) return "you don't have enough stone block!";
+        if (currentGovernment.getAmountOfGood(Good.GOLD) < count * 5) return "you don't have enough gold!";
         Wall wall = new Wall(height, 5 * count);
-        if (direction.equals("horizontal"))
-            for (int i = x; i <= x + thickness; i++) {
-                Map.getMap()[i][y].setWall(wall);
-                Map.getMap()[i][y].setAvailable(false);
-                Map.getMap()[i][y].setPassable(false);
-            }
-        if (direction.equals("vertical"))
-            for (int i = y; i <= y + thickness; i++) {
-                Map.getMap()[x][i].setWall(wall);
-                Map.getMap()[x][i].setAvailable(false);
-                Map.getMap()[x][i].setPassable(false);
-            }
+        if (direction.equals("horizontal")) for (int i = x; i <= x + thickness; i++) {
+            Map.getMap()[i][y].setWall(wall);
+            Map.getMap()[i][y].setAvailable(false);
+            Map.getMap()[i][y].setPassable(false);
+        }
+        if (direction.equals("vertical")) for (int i = y; i <= y + thickness; i++) {
+            Map.getMap()[x][i].setWall(wall);
+            Map.getMap()[x][i].setAvailable(false);
+            Map.getMap()[x][i].setPassable(false);
+        }
         return "wall dropped successfully";
     }
 
     public static String startDiggingDitch(int x, int y) {
-        if (!selectedUnit.getType().equals("Spearmen"))
-            return "you don't select appropriate unit for digging ditch!";
-        if (!Map.getMap()[x][y].isAvailable())
-            return "you can't digging ditch on this cell!";
+        if (!selectedUnit.getType().equals("Spearmen")) return "you don't select appropriate unit for digging ditch!";
+        if (!Map.getMap()[x][y].isAvailable()) return "you can't digging ditch on this cell!";
         Map.getMap()[x][y].setStartDigging(true);
         Map.getMap()[x][y].setDitchOwner(currentGovernment);
         return "digging ditch started";
@@ -761,20 +736,20 @@ public class GameMenuController {
         return "ditch deleted successfully";
     }
 
-    public static String captureTheGate(int x, int y) {
-        Cell cell = Map.getMap()[x][y];
-        Building targetBuilding = cell.getBuilding();
-        if (!(targetBuilding instanceof GateHouse))
-            return "invalid target";
-        if (!selectedUnit.isCanClimb())
-            return "your unit can't capture the gate";
-        if (!targetBuilding.isNearGate(selectedUnit))
-            return "your unit can't capture the gate";
-        targetBuilding.getOwner().getBuildings().remove(targetBuilding);
-        currentGovernment.addBuilding(targetBuilding);
-        targetBuilding.setOwner(currentGovernment);
-        return "gate successfully captured";
-    }
+//    public static String captureTheGate(int x, int y) {
+//        Cell cell = Map.getMap()[x][y];
+//        Building targetBuilding = cell.getBuilding();
+//        if (!(targetBuilding instanceof GateHouse))
+//            return "invalid target";
+//        if (!selectedUnit.isCanClimb())
+//            return "your unit can't capture the gate";
+//        if (!targetBuilding.isNearGate(selectedUnit))
+//            return "your unit can't capture the gate";
+//        targetBuilding.getOwner().getBuildings().remove(targetBuilding);
+//        currentGovernment.addBuilding(targetBuilding);
+//        targetBuilding.setOwner(currentGovernment);
+//        return "gate successfully captured";
+//    }
 
     public static boolean isLastGovernment() {
         return Government.getGovernments().size() - 1 == Government.getGovernments().indexOf(currentGovernment);
@@ -800,23 +775,23 @@ public class GameMenuController {
                 Unit unit = Map.getMap()[x][y].getUnit();
                 if (unit == null || unit.getState().equals("standing") || unit.getGovernment() != currentGovernment)
                     continue;
-                handleAttackUnit(unit);
+//                handleAttackUnit(unit);
             }
     }
 
-    private static void handleAttackUnit(Unit unit) {
-        int unitX = unit.getX();
-        int unitY = unit.getY();
-        int shootingRange = unit.getShootingRange();
-        int sightRange = unit.getSightRange();
-        if (shootingRange == 0) {
-            Unit enemy = findNearestUnit(sightRange, unitX, unitY);
-            if (enemy != null) attackEnemy(enemy.getX(), enemy.getY());
-        } else {
-            Unit enemy = findNearestUnit(shootingRange, unitX, unitY);
-            if (enemy != null) airAttack(enemy.getX(), enemy.getY());
-        }
-    }
+//    private static void handleAttackUnit(Unit unit) {
+//        int unitX = unit.getX();
+//        int unitY = unit.getY();
+//        int shootingRange = unit.getShootingRange();
+//        int sightRange = unit.getSightRange();
+//        if (shootingRange == 0) {
+//            Unit enemy = findNearestUnit(sightRange, unitX, unitY);
+//            if (enemy != null) attackEnemy(enemy.getX(), enemy.getY());
+//        } else {
+//            Unit enemy = findNearestUnit(shootingRange, unitX, unitY);
+//            if (enemy != null) airAttack(enemy.getX(), enemy.getY());
+//        }
+//    }
 
     public static void setDefaults() {
         selectedBuilding = null;
@@ -825,8 +800,7 @@ public class GameMenuController {
 
     public static String moveTool(int toolX, int toolY, int x, int y) {
         Tool tool = Map.getMap()[toolX][toolY].getTool();
-        if (tool == null)
-            return "there is no tool in this cell!";
+        if (tool == null) return "there is no tool in this cell!";
         Map.getMap()[toolX][toolY].setTool(null);
         Map.getMap()[toolX][toolY].setAvailable(true);
         Map.getMap()[toolX][toolY].setPassable(true);
@@ -847,23 +821,20 @@ public class GameMenuController {
     }
 
     public static String stopPatrolUnit() {
-        if (selectedUnit == null || selectedUnit.isPatrolling())
-            return "selected unit isn't in patrolling!";
+        if (selectedUnit == null || selectedUnit.isPatrolling()) return "selected unit isn't in patrolling!";
         selectedUnit.setPatrolling(false);
         return "stop patrolling successful!";
     }
 
     public static String dropStair(int x, int y) {
-        if (!Map.getMap()[x][y].isAvailable())
-            return "you can't drop stair!";
+        if (!Map.getMap()[x][y].isAvailable()) return "you can't drop stair!";
         for (int i = x - 1; i <= x + 1; i++)
             for (int j = y - 1; j <= y + 1; j++)
                 if (Map.getMap()[i][j].getWall() != null) {
                     Map.getMap()[i][j].setPassable(true);
                     Map.getMap()[x][y].setStair(true);
                 }
-        if (!Map.getMap()[x][y].isStair())
-            return "you can't drop stair!";
+        if (!Map.getMap()[x][y].isStair()) return "you can't drop stair!";
         return "stair dropped successfully!";
     }
 
@@ -882,8 +853,7 @@ public class GameMenuController {
         if (selectedUnit == null || !selectedUnit.getType().equals("Slaves"))
             return "you didn't select appropriate unit!";
         Castle castle = Map.getMap()[x][y].getCastle();
-        if (castle == null)
-            return "there is no castle!";
+        if (castle == null) return "there is no castle!";
         castle.decreaseHp(Integer.MAX_VALUE);
         castle.checkCastle();
         return "castle destroyed";
@@ -906,6 +876,8 @@ public class GameMenuController {
     }
 
     public static void nextTurn() {
+        GameMenuController.nextGovernment();
+        setSickness();
         if (isLastGovernment()) {
             foodVarietyAction();
             runBuildings();
@@ -915,7 +887,24 @@ public class GameMenuController {
         }
         diggingDitch();
         handleAttacks();
-        setOnGovernment();
+        nextGovernment();
         setDefaults();
     }
+
+    public static void setSelectedUnit(Unit selectedUnit) {
+        GameMenuController.selectedUnit = selectedUnit;
+    }
+
+    public static Unit getSelectedUnit() {
+        return selectedUnit;
+    }
+
+    public static void setUnitImageView(ImageView unitImageView) {
+        GameMenuController.unitImageView = unitImageView;
+    }
+
+    public static ImageView getUnitImageView() {
+        return unitImageView;
+    }
+
 }

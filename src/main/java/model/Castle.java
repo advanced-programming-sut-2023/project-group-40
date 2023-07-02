@@ -1,12 +1,13 @@
 package model;
 
+import controller.ConnectToServer;
 import controller.GameMenuController;
 
 public class Castle {
     private final int x1, y1, x2, y2;
-    private int hp = 10000;
     private final int maxPopulation = 5;
-    private int population = 0;
+    private int hp = 10000;
+    private int population = 5;
     private int numberOfActiveWorker = 5;
     private Government government;
 
@@ -24,7 +25,6 @@ public class Castle {
     public int getPopulation() {
         return population;
     }
-
 
 
     public void changePopulation(int amount) {
@@ -67,12 +67,12 @@ public class Castle {
     public void checkCastle() {
         if (hp <= 0) {
             Government.getGovernments().remove(government);
-            System.out.println(government.getOwner().getUsername() + "lose!");
+//            System.out.println(government.getOwner().getUsername() + "lose!");
             if (Government.getGovernments().size() == 1) {
-                User winner = Government.getGovernments().get(0).getOwner();
-                System.out.println(winner.getUsername() + " wins!");
-                winner.setHighScore(1000 * GameMenuController.getNumberOfPlayers());
-                User.updateRank();
+//                User winner = Government.getGovernments().get(0).getOwner();
+//                System.out.println(winner.getUsername() + " wins!");
+//                winner.setHighScore(1000 * GameMenuController.getNumberOfPlayers());
+                ConnectToServer.updateRank();
                 System.exit(0);
             }
         }

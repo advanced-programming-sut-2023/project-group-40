@@ -19,4 +19,6 @@ public class Map {
             for (int j = 0; j < size; j++)
                 map[i][j] = new Cell(Texture.LAND);
     }
+
+
 }

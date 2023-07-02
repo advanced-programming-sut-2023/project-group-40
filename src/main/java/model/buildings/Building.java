@@ -16,7 +16,7 @@ public class Building implements Serializable, BuildingAction {
     // index 0 -> gold 1 -> wood 2 -> stone 3 -> iron 4 -> pitch
     protected int[] cost;
     protected int height, width;
-    protected Government owner;
+    protected String owner;
     protected int workersRequired = 0, engineersRequired = 0;
     private boolean isIllegal;
     private HashSet<Texture> textures;
@@ -72,11 +72,11 @@ public class Building implements Serializable, BuildingAction {
         this.group = group;
     }
 
-    public Government getOwner() {
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner(Government owner) {
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 

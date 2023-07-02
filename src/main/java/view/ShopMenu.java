@@ -2,6 +2,7 @@ package view;
 
 import controller.GameMenuController;
 import controller.ShopMenuController;
+import controller.TradeMenuController;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,7 +16,10 @@ import model.Good;
 import java.util.Objects;
 
 public class ShopMenu {
+    private final Button backButton = new Button("back");
+    private final Button enterButton = new Button("enter trade menu");
     private Pane root;
+
     public void start(Stage stage) throws Exception {
         root = new Pane();
         Scene scene = new Scene(root);
@@ -32,8 +36,29 @@ public class ShopMenu {
         bar.addPage("material", makeVBox("material"));
         bar.addPage("weapon", makeVBox("weapon"));
         bar.setMaxWidth(App.getWidth());
-        bar.translateXProperty().bind(bar.widthProperty().divide(-2).add(App.getWidth()/2));
+        bar.translateXProperty().bind(bar.widthProperty().divide(-2).add(App.getWidth() / 2));
+        backButton.setTranslateX(20);
+        backButton.setTranslateY(App.getHeight() - 100);
+        enterButton.setTranslateX(App.getWidth() - 290);
+        enterButton.setTranslateY(App.getHeight() - 100);
+        backButton.setOnMouseClicked(event -> {
+            try {
+                new MapMenu().start(stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        enterButton.setOnMouseClicked(event -> {
+            try {
+                TradeMenuController.setCurrentGovernment(GameMenuController.getCurrentGovernment());
+                new TradeMenu().start(stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        root.getChildren().addAll(backButton, enterButton);
         VBox vbox = new VBox(bar);
+
         root.getChildren().add(vbox);
     }
 
@@ -45,7 +70,7 @@ public class ShopMenu {
         VBox buttonVBox = new VBox();
         Button buyButton = new Button();
         Button sellButton = new Button();
-        int gold  = GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD);
+        int gold = GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD);
         Label treasuryLabel = new Label(String.valueOf(gold));
         ImageView coinIcon = new ImageView(new Image(MapMenu.class.getResource("/images/coin.png").toString()));
         coinIcon.setPreserveRatio(true);
@@ -68,9 +93,9 @@ public class ShopMenu {
                 labelVBox.getChildren().add(balanceLabel);
                 sellButton.setText("Sell " + good.getSellPrice());
                 buyButton.setText("Buy " + good.getBuyPrice());
-                buttonVBox.getChildren().addAll(sellButton,buyButton);
+                buttonVBox.getChildren().addAll(sellButton, buyButton);
                 sellButton.setOnMouseClicked(event1 -> {
-                    Node[] nodes = MapMenu.makePopup(ShopMenuController.sell(good.name(),1),"sell successful");
+                    Node[] nodes = MapMenu.makePopup(ShopMenuController.sell(good.name(), 1), "sell successful");
                     root.getChildren().add(nodes[0]);
                     nodes[1].setOnMouseClicked(mouseEvent -> {
                         root.getChildren().remove(nodes[0]);
@@ -79,7 +104,7 @@ public class ShopMenu {
                     treasuryLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD)));
                 });
                 buyButton.setOnMouseClicked(event1 -> {
-                    Node[] nodes = MapMenu.makePopup(ShopMenuController.buy(good.name(),1),"buy successful");
+                    Node[] nodes = MapMenu.makePopup(ShopMenuController.buy(good.name(), 1), "buy successful");
                     nodes[1].setOnMouseClicked(mouseEvent -> {
                         root.getChildren().remove(nodes[0]);
                     });
@@ -87,10 +112,10 @@ public class ShopMenu {
                     balanceLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(good)));
                     treasuryLabel.setText(String.valueOf(GameMenuController.getCurrentGovernment().getAmountOfGood(Good.GOLD)));
                 });
-                goodVBox.getChildren().addAll(labelVBox,buttonVBox,coinHBox);
+                goodVBox.getChildren().addAll(labelVBox, buttonVBox, coinHBox);
             });
         }
-        VBox vBox = new VBox(imageHBox1,imageHBox2,goodVBox);
+        VBox vBox = new VBox(imageHBox1, imageHBox2, goodVBox);
         return vBox;
     }
 

@@ -1,19 +1,21 @@
-TextField, PasswordField, Button ,ComboBox , ToggleButton {
+TextField, PasswordField, Button, ComboBox, ToggleButton {
     -fx-font-size: 30;
     -fx-font-weight: bold;
 }
 
-HBox{
+HBox {
     -fx-spacing: 20;
 }
-Label{
+
+Label {
     -fx-font-size: 30;
     -fx-font-weight: bold;
     -fx-min-width: 160;
     -fx-max-width: 450;
     -fx-text-fill: white;
 }
-CheckBox{
+
+CheckBox {
     -fx-font-size: 30;
     -fx-font-weight: bold;
     -fx-text-fill: white;
@@ -26,13 +28,13 @@ CheckBox{
     -fx-font-size: 20px;
 }
 
-.table-view .column-header .label{
+.table-view .column-header .label {
     -fx-font-weight: bold;
     -fx-text-fill: black;
     -fx-alignment: center;
     -fx-font-size: 25px;
 }
 
-.table-view{
+.table-view {
     -fx-fixed-cell-size: 40px;
 }

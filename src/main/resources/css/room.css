@@ -1,0 +1,26 @@
+Button {
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+    -fx-min-width: 350;
+    -fx-max-width: 350;
+    -fx-min-height: 80;
+    -fx-max-height: 80;
+}
+
+TextField{
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-min-width: 150;
+    -fx-max-width: 150;
+    -fx-min-height: 40;
+    -fx-max-height: 40;
+}
+
+Label{
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}

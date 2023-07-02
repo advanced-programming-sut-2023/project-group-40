@@ -4,7 +4,6 @@ import javafx.scene.image.Image;
 import view.MapMenu;
 
 
-
 public enum Texture {
     LAND("land", "dry", new Image(MapMenu.class.getResource("/images/textures/land.jpg").toString(), true)),
     LAND_WITH_PEBBLES("land with pebbles", "dry", new Image(MapMenu.class.getResource("/images/textures/land with pebbles.jpeg").toString(), true)),

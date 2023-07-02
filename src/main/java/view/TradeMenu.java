@@ -1,56 +1,162 @@
 package view;
 
+import controller.ConnectToServer;
 import controller.TradeMenuController;
-import view.enums.Commands;
+import javafx.beans.binding.Bindings;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import model.*;
 
-import java.util.regex.Matcher;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Executors;
 
 public class TradeMenu {
-    private static String targetUsername;
+    private static String requestType;
+    private static HashMap<Good, Integer> productList = new HashMap<>();
+    private final Button enterButton = new Button("enter trade list");
+    BarPane bar;
+    Pane root;
 
-    public static void run() throws ReflectiveOperationException {
-        System.out.println("you are in trade menu");
-        System.out.print(TradeMenuController.showNotification());
-        System.out.println("--------------------------------------------");
-        System.out.println(TradeMenuController.showGovernment());
-        while (true) {
-            System.out.print("select the username you want to exchange with: ");
-            targetUsername = Commands.scanner.nextLine();
-            if (!TradeMenuController.isGovernmentValid(targetUsername)) {
-                System.out.println("invalid username");
-                continue;
+    public void start(Stage stage) throws Exception {
+        root = new Pane();
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(Objects.requireNonNull(TradeMenu.class.getResource("/css/tradeMenu.css")).toExternalForm());
+        stage.setScene(scene);
+        stage.show();
+        App.setupStage(stage);
+        App.setWindowSize(stage.getWidth(), stage.getHeight());
+        Image image = new Image(MapMenu.class.getResource("/images/backgrounds/oldPaperBackground.png").toString());
+        root.setBackground(new Background(new BackgroundImage(image, null, null, null, new BackgroundSize(100, 100, true, true
+                , true, false))));
+        bar = new BarPane();
+        bar.addPage("food", makeVBox("food", 0));
+        bar.addPage("material", makeVBox("material", 1));
+        bar.addPage("weapon", makeVBox("weapon", 2));
+        bar.setMaxWidth(App.getWidth());
+        bar.translateXProperty().bind(bar.widthProperty().divide(-2).add(App.getWidth() / 2));
+//        enterTradeListButton.setTranslateX(20);
+//        enterTradeListButton.setTranslateY(App.getHeight() - 100);
+        enterButton.setTranslateX(App.getWidth() - 290);
+        enterButton.setTranslateY(App.getHeight() - 100);
+//        enterTradeListButton.setOnMouseClicked(event -> {
+//            try {
+//                new TradeListMenu().start(stage);
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+        enterButton.setOnMouseClicked(event -> {
+            try {
+                new TradeListMenu().start(stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-            break;
+        });
+        root.getChildren().addAll(enterButton);
+        VBox vbox = new VBox(bar);
+        root.getChildren().add(vbox);
+    }
+
+    private VBox makeVBox(String type, int index) {
+        List<PrivateUser> users = ConnectToServer.getUsers();
+        ComboBox<String> userComboBox = new ComboBox<>();
+        for (PrivateUser user : users) {
+            userComboBox.getItems().add(user.getUsername());
         }
-        while (true) {
-            String command = Commands.scanner.nextLine();
-            if (command.equals("return")) {
-                System.out.println("you are in game menu");
-                return;
+        userComboBox.setValue(userComboBox.getItems().get(0));
+        TradeMenuController.setTargetGovernment(Government.getGovernmentByUser(userComboBox.getItems().get(0)));
+        userComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            TradeMenuController.setTargetGovernment(Government.getGovernmentByUser(newValue));
+        });
+        Button donateButton = new Button("donate");
+        Button requestButton = new Button("request");
+
+        HBox buttonHbox = new HBox(new Label("trade request type: "), donateButton, requestButton);
+        buttonHbox.setSpacing(10);
+        donateButton.setOnMouseClicked(event -> {
+            donateButton.setStyle("-fx-border-color: green");
+            requestButton.setStyle("-fx-border-color: black");
+            requestType = "donate";
+        });
+        requestButton.setOnMouseClicked(event -> {
+            donateButton.setStyle("-fx-border-color: black");
+            requestButton.setStyle("-fx-border-color: green");
+            requestType = "request";
+        });
+        TextArea textArea = new TextArea();
+        textArea.setTranslateY(20);
+        textArea.setMaxHeight(80);
+        textArea.setMaxWidth(400);
+        Label messageLabel = new Label("message: ");
+        HBox messageHBox = new HBox(messageLabel, textArea);
+        messageLabel.translateYProperty().bind(Bindings.add(textArea.translateYProperty(), textArea.heightProperty().divide(4).add(-20)));
+        HBox imageHBox1 = new HBox();
+        HBox imageHBox2 = new HBox();
+        int ImageSize = 100;
+        for (Good good : Good.values()) {
+            if (!good.getType().equals(type)) continue;
+            ImageView imageView = new ImageView(good.getImage());
+            imageView.setFitHeight(ImageSize);
+            imageView.setFitWidth(ImageSize);
+            ImageView miunusIcon = new ImageView(new Image(TradeMenu.class.getResource("/images/minusIcon.png").toString(), 40, 40, false, false));
+            ImageView plusIcon = new ImageView(new Image(TradeMenu.class.getResource("/images/plusIcon.png").toString(), 40, 40, false, false));
+            Label label = new Label("0");
+            HBox hBox = new HBox(miunusIcon, label, plusIcon);
+            hBox.setSpacing(0);
+            plusIcon.setOnMouseClicked(event -> {
+                int number = Integer.parseInt(label.getText());
+                String[] url = imageView.getImage().getUrl().split("/");
+                Good product = Good.getGoodByName(url[url.length - 1].split("\\.")[0]);
+                label.setText(String.valueOf(number + 1));
+                productList.merge(product, 1, Integer::sum);
+            });
+            miunusIcon.setOnMouseClicked(event -> {
+                int number = Integer.parseInt(label.getText());
+                String[] url = imageView.getImage().getUrl().split("/");
+                Good product = Good.getGoodByName(url[url.length - 1].split("\\.")[0]);
+                if (number == 0) return;
+                label.setText(String.valueOf(number - 1));
+                productList.merge(product, -1, Integer::sum);
+            });
+            VBox vBox = new VBox(imageView, hBox);
+            if (imageHBox1.getChildren().size() == 4) imageHBox2.getChildren().add(vBox);
+            else imageHBox1.getChildren().add(vBox);
+        }
+        VBox imageVBox = new VBox(imageHBox1, imageHBox2);
+        Button submitButton = new Button("submit");
+        submitButton.setTranslateY(40);
+        submitButton.setOnMouseClicked(event -> {
+            Node[] nodes = MapMenu.makePopup(TradeMenuController.sendRequest(requestType, productList, textArea.getText()), "request sent");
+            root.getChildren().add(nodes[0]);
+            nodes[1].setOnMouseClicked(mouseEvent -> {
+                root.getChildren().remove(nodes[0]);
+            });
+        });
+        Executors.newSingleThreadExecutor().submit(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-            System.out.println(Commands.regexFinder(command, TradeMenu.class));
-        }
-    }
+            ToolBar toolBar = (ToolBar) bar.getTop();
+            toolBar.getItems().get(index).setOnMouseClicked(event -> {
+                requestButton.setStyle("-fx-border-color: black");
+                donateButton.setStyle("-fx-border-color: black");
+                textArea.setText("");
+                productList = new HashMap<>();
+                requestType = null;
+                userComboBox.setValue(userComboBox.getItems().get(0));
+                TradeMenuController.setTargetGovernment(Government.getGovernmentByUser(userComboBox.getItems().get(0)));
+            });
+        });
 
-    public static String sendRequest(Matcher matcher) {
-        String resourceType = Commands.eraseQuot(matcher.group("resourceType"));
-        int resourceAmount = Integer.parseInt(matcher.group("resourceAmount"));
-        int price = Integer.parseInt(matcher.group("price"));
-        String message = Commands.eraseQuot(matcher.group("message"));
-        return TradeMenuController.sendRequest(resourceType, resourceAmount, price, message, targetUsername);
-    }
-
-    public static String showTradeList(Matcher matcher) {
-        return TradeMenuController.showTradeList();
-    }
-
-    public static String acceptTrade(Matcher matcher) {
-        int id = Integer.parseInt(matcher.group("id"));
-        String message = Commands.eraseQuot(matcher.group("message"));
-        return TradeMenuController.acceptTrade(id, message);
-    }
-
-    public static String showTradeHistory(Matcher matcher) {
-        return TradeMenuController.showTradeHistory();
+        return new VBox(new HBox(userComboBox, imageVBox), buttonHbox, messageHBox, submitButton);
     }
 }

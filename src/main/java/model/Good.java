@@ -27,11 +27,19 @@ public enum Good {
     private final int sellPrice, buyPrice;
     private final String type;
     private final Image image;
+
     Good(int priceSell, int priceBuy, String type) {
         this.sellPrice = priceSell;
         this.buyPrice = priceBuy;
         this.type = type;
-        this.image = new Image(Good.class.getResource("/images/goods/" + "apple" + ".png").toString());
+        this.image = new Image(Good.class.getResource("/images/goods/" + name().toLowerCase() + ".png").toString());
+    }
+
+    public static Good getGoodByName(String name) {
+        for (Good value : values()) {
+            if (value.name().toLowerCase().equals(name)) return value;
+        }
+        return null;
     }
 
     public int getBuyPrice() {

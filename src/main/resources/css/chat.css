@@ -1,0 +1,30 @@
+Button {
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-min-width: 150;
+    -fx-max-width: 150;
+    -fx-min-height: 40;
+    -fx-max-height: 40;
+}
+
+#sendButton {
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-min-width: 70;
+    -fx-max-width: 70;
+    -fx-min-height: 40;
+    -fx-max-height: 40;
+}
+
+TextField{
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-min-width: 600;
+    -fx-max-width: 600;
+    -fx-min-height: 40;
+    -fx-max-height: 40;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}

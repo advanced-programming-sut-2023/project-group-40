@@ -1,59 +1,38 @@
 package model;
 
 
+import java.util.HashMap;
+import java.util.Random;
+import java.util.random.RandomGenerator;
+
 public class TradeRequest {
-    private static int lastId = 1000;
-    private final Government sender, receiver;
-    private final Good commodity;
-    private final int price, count;
+    private final String senderUsername, receiverUsername;
+    private final HashMap<Good, Integer> productList;
     private final String senderMessage;
-    private final Integer id = lastId++;
-    private String receiverMessage;
+    private final int id;
+    private final String type;
     private boolean isAccepted = false, hasSeen = false;
 
-    public TradeRequest(Government sender, Government receiver, Good commodity, int price, int count, String message) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.commodity = commodity;
-        this.price = price;
-        this.count = count;
+    public TradeRequest(String sender, String receiver, String type, HashMap<Good, Integer> productList,
+                        String message) {
+        this.senderUsername = sender;
+        this.receiverUsername = receiver;
+        this.productList = productList;
+        this.type = type;
         this.senderMessage = message;
-    }
-
-    public static int getLastId() {
-        return lastId;
+        this.id = new Random().nextInt(1000000, 10000000);
     }
 
     public boolean getAccepted() {
         return isAccepted;
     }
 
-    public Good getCommodity() {
-        return commodity;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public int getCount() {
-        return count;
+    public HashMap<Good, Integer> getProductList() {
+        return productList;
     }
 
     public String getSenderMessage() {
         return senderMessage;
-    }
-
-    public String getReceiverMessage() {
-        return receiverMessage;
-    }
-
-    public void setReceiverMessage(String message) {
-        this.receiverMessage = message;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public boolean isAccepted() {
@@ -64,12 +43,12 @@ public class TradeRequest {
         isAccepted = accepted;
     }
 
-    public Government getSender() {
-        return sender;
+    public String getReceiverUsername() {
+        return receiverUsername;
     }
 
-    public Government getReceiver() {
-        return receiver;
+    public String getSenderUsername() {
+        return senderUsername;
     }
 
     public boolean getHasSeen() {
@@ -78,5 +57,13 @@ public class TradeRequest {
 
     public void setHasSeen(boolean hasSeen) {
         this.hasSeen = hasSeen;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getType() {
+        return type;
     }
 }

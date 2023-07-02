@@ -1,22 +1,26 @@
-TextField, PasswordField, Button, CheckBox ,ComboBox , ToggleButton{
+TextField, PasswordField, Button, CheckBox, ComboBox, ToggleButton {
     -fx-font-size: 30;
     -fx-font-weight: bold;
 }
-Label{
+
+Label {
     -fx-font-size: 30;
     -fx-font-weight: bold;
     -fx-text-fill: white;
 }
+
 .border {
     -fx-border-color: black;
     -fx-border-style: solid;
     -fx-border-width: 5;
 }
-Line{
+
+Line {
     -fx-stroke-width: 4;
     -fx-stroke: white;
 }
-Slider{
+
+Slider {
     -fx-block-increment: 1;
     -fx-show-tick-labels: true;
     -fx-show-tick-marks: true;

@@ -1,15 +1,10 @@
 package view;
 
-import controller.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import controller.ConnectToServer;
+import controller.GameMenuController;
+import controller.MainMenuController;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
-import javafx.collections.ObservableList;
-import javafx.geometry.Bounds;
-import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -17,7 +12,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.Government;
 import model.Map;
-import model.User;
+import model.PrivateUser;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -26,15 +21,14 @@ public class SetupGameMenu extends Application {
     private static Stage primaryStage;
     private final ComboBox<String> gameModeComboBox = new ComboBox<>();
     private final ScrollPane scrollPane = new ScrollPane();
-    private Pane root;
     private final VBox mainVbox = new VBox();
-    private int countOfPlayers = 2;
     private final ArrayList<CheckBox> checkBoxes = new ArrayList<>();
     private final Button startGame = new Button("start game");
-    private int size = 200;
     private final Button firstSizeButton = new Button("200 x 200");
     private final Button secondSizeButton = new Button("400 x 400");
-
+    private Pane root;
+    private int countOfPlayers = 2;
+    private int size = 200;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -79,8 +73,7 @@ public class SetupGameMenu extends Application {
 
     private void setupList() {
         VBox scrollVbox = new VBox();
-        //spacing problem
-        for (User user : User.getUsers()) {
+        for (PrivateUser user : ConnectToServer.getUsers()) {
             if (Objects.equals(user.getUsername(), MainMenuController.getCurrentUser().getUsername()))
                 continue;
             Label label = new Label(user.getUsername());
@@ -94,7 +87,8 @@ public class SetupGameMenu extends Application {
                         return;
                     }
                     Government.addGovernment(label.getText());
-                } else {
+                }
+                else {
                     Government.removeGovernment(label.getText());
                 }
             });
@@ -124,9 +118,8 @@ public class SetupGameMenu extends Application {
                 return;
             }
             Map.initMap(size);
-            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(MainMenuController.getCurrentUser()));
+            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(MainMenuController.getCurrentUser().getUsername()));
             GameMenuController.setNumberOfPlayers(countOfPlayers);
-            // TODO: 6/7/2023
             try {
                 new EnvironmentMenu().start(primaryStage);
             } catch (Exception e) {

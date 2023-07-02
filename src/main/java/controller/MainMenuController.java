@@ -1,12 +1,10 @@
 package controller;
 
 import model.Government;
-import model.Map;
 import model.User;
-import view.MainMenu;
 
 public class MainMenuController {
-    private static User currentUser = new User("username1","password","nickname","email","slogan");
+    private static User currentUser;
 
     public static String logout() {
         return "log out!";
@@ -21,10 +19,10 @@ public class MainMenuController {
     }
 
     public static String enterGameMenu() {
-        Government governmentByUser = Government.getGovernmentByUser(currentUser);
+        Government governmentByUser = Government.getGovernmentByUser(currentUser.getUsername());
         if (Government.getGovernments().size() == 0) {
             Government.addGovernment(currentUser.getUsername());
-            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(currentUser));
+            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(currentUser.getUsername()));
             return "you entered a new game!";
         }
         if (governmentByUser == null)
@@ -33,8 +31,4 @@ public class MainMenuController {
         return "you entered in progress game";
     }
 
-    public static void continueGame() {
-        User user = MainMenuController.getCurrentUser();
-        GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(user));
-    }
 }
