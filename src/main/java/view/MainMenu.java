@@ -1,5 +1,6 @@
 package view;
 
+import controller.GameMenuController;
 import controller.MainMenuController;
 import controller.ProfileMenuController;
 import javafx.application.Application;
@@ -8,11 +9,15 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import model.Government;
+import model.User;
 
 import java.util.Objects;
 
 public class MainMenu extends Application {
     private static Stage primaryStage;
+    private static boolean gameStarted = false;
+
     VBox vbox;
     private Pane root;
     private Button startNewGame, continueGame, enterProfileMenu, enterChatMenu, logout;
@@ -58,10 +63,15 @@ public class MainMenu extends Application {
             }
         });
         continueGame.setOnMouseClicked(event -> {
-            MainMenuController.continueGame();
-            // TODO: 6/7/2023
+            User user = MainMenuController.getCurrentUser();
+            GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(user.getUsername()));
             try {
-                new MapMenu().start(primaryStage);
+                if (Government.getPlayedGovernments().contains(GameMenuController.getCurrentGovernment())) {
+                    GameMenuController.setCurrentGovernment(null);
+                    return;
+                }
+                if (gameStarted) new MapMenu().start(primaryStage);
+                else new EnvironmentMenu().start(primaryStage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -90,6 +100,7 @@ public class MainMenu extends Application {
             }
         });
     }
-
-
+    public static void setGameStarted(boolean b) {
+        MainMenu.gameStarted = b;
+    }
 }

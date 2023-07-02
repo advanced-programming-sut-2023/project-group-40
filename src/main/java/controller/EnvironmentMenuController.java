@@ -7,12 +7,11 @@ import javafx.scene.layout.Pane;
 import model.*;
 import model.buildings.Building;
 import model.buildings.Buildings;
-import view.GameMenu;
 
 public class EnvironmentMenuController {
     private static ImageView[][] map;
-    private static SimpleDoubleProperty textureSize;
     private static Pane mapPane;
+    private static SimpleDoubleProperty textureSize;
 
     public static boolean isFirstPlayer() {
         return Government.getGovernmentsSize() == 1;
@@ -20,10 +19,6 @@ public class EnvironmentMenuController {
 
     public static boolean isCurrentGovernmentChoseColor(User user) {
         return Government.getGovernmentByUser(user.getUsername()).getColor() != null;
-    }
-
-    public static void checkGameStarted() {
-        if (Government.checkAllGovernmentsChoseColor()) GameMenu.setGameStarted(true);
     }
 
     public static void addPlayer(String username) {
@@ -87,50 +82,59 @@ public class EnvironmentMenuController {
                 Map.getMap()[i][j].setAvailable(false);
                 Map.getMap()[i][j].setPassable(false);
             }
+        ImageView imageView = new ImageView(new Image(Rock.class.getResource("/images/buildings/stockpile.png").toString()));
+        imageView.fitWidthProperty().bind(textureSize.multiply(targetBuilding.getWidth()));
+        imageView.fitHeightProperty().bind(textureSize.multiply(targetBuilding.getHeight()));
+        imageView.translateXProperty().bind(map[x][y].translateXProperty());
+        imageView.translateYProperty().bind(map[x][y].translateYProperty());
+        mapPane.getChildren().add(imageView);
+                GameMenuController.getCurrentGovernment().getBuildings().add(Buildings.getBuildingObjectByType("stockpile"));
+        government.getBuildings().add(Buildings.getBuildingObjectByType("armoury"));
+        government.getBuildings().add(Buildings.getBuildingObjectByType("granary"));
+        government.increaseAmountOfGood(Good.GOLD, 200);
+        government.increaseAmountOfGood(Good.STONE, 200);
+        government.increaseAmountOfGood(Good.IRON, 200);
+        government.increaseAmountOfGood(Good.WOOD, 200);
+        government.increaseAmountOfGood(Good.PITCH, 200);
+        government.increaseAmountOfGood(Good.BOW, 10);
     }
 
     public static void organizeCastles(int countOfPlayers, int size) {
         if (countOfPlayers == 2) {
-            placeCastle(40, 40);
-            placeCastle(size - 40, size - 40);
-//            dropStockpile(30, 40, Government.getGovernments().get(0));
-//            dropStockpile(size - 50, size - 40, Government.getGovernments().get(1));
+            placeCastle(40, 40,Government.getGovernments().get(0));
+            placeCastle(size - 40, size - 40,Government.getGovernments().get(1));
+            dropStockpile(30, 40, Government.getGovernments().get(0));
+            dropStockpile(size - 50, size - 40, Government.getGovernments().get(1));
         }
 
         if (countOfPlayers == 4) {
-            placeCastle(40, 40);
-            placeCastle(40, size - 40);
-            placeCastle(size - 40, 40);
-            placeCastle(size - 40, size - 40);
-//            dropStockpile(30, 40, Government.getGovernments().get(0));
-//            dropStockpile(30, size - 40, Government.getGovernments().get(1));
-//            dropStockpile(size - 50, 40, Government.getGovernments().get(2));
-//            dropStockpile(size - 50, size - 40, Government.getGovernments().get(3));
+            placeCastle(40, 40, Government.getGovernments().get(0));
+            placeCastle(40, size - 40, Government.getGovernments().get(0));
+            placeCastle(size - 40, 40, Government.getGovernments().get(0));
+            placeCastle(size - 40, size - 40, Government.getGovernments().get(0));
+            dropStockpile(30, 40, Government.getGovernments().get(0));
+            dropStockpile(30, size - 40, Government.getGovernments().get(1));
+            dropStockpile(size - 50, 40, Government.getGovernments().get(2));
+            dropStockpile(size - 50, size - 40, Government.getGovernments().get(3));
         }
 
         if (countOfPlayers == 8) {
-            placeCastle(40, 40);
-            placeCastle(40, size / 2);
-            placeCastle(40, size - 40);
-            placeCastle(size / 2, 40);
-            placeCastle(size / 2, size - 40);
-            placeCastle(size - 40, 40);
-            placeCastle(size - 40, size / 2);
-            placeCastle(size - 40, size - 40);
-//            dropStockpile(30, 40, Government.getGovernments().get(0));
-//            dropStockpile(30, size / 2, Government.getGovernments().get(1));
-//            dropStockpile(30, size - 40, Government.getGovernments().get(2));
-//            dropStockpile(size / 2 - 10, 40, Government.getGovernments().get(3));
-//            dropStockpile(size / 2 - 10, size - 40, Government.getGovernments().get(4));
-//            dropStockpile(size - 50, 40, Government.getGovernments().get(5));
-//            dropStockpile(size - 50, size / 2, Government.getGovernments().get(6));
-//            dropStockpile(size - 50, size - 40, Government.getGovernments().get(7));
-        }
-
-        for (Government government : Government.getGovernments()) {
-            government.increaseAmountOfGood(Good.GOLD, 100);
-            government.increaseAmountOfGood(Good.IRON, 100);
-            government.increaseAmountOfGood(Good.STONE, 100);
+            placeCastle(40, 40, Government.getGovernments().get(0));
+            placeCastle(40, size / 2, Government.getGovernments().get(0));
+            placeCastle(40, size - 40, Government.getGovernments().get(0));
+            placeCastle(size / 2, 40, Government.getGovernments().get(0));
+            placeCastle(size / 2, size - 40, Government.getGovernments().get(0));
+            placeCastle(size - 40, 40, Government.getGovernments().get(0));
+            placeCastle(size - 40, size / 2, Government.getGovernments().get(0));
+            placeCastle(size - 40, size - 40, Government.getGovernments().get(0));
+            dropStockpile(30, 40, Government.getGovernments().get(0));
+            dropStockpile(30, size / 2, Government.getGovernments().get(1));
+            dropStockpile(30, size - 40, Government.getGovernments().get(2));
+            dropStockpile(size / 2 - 10, 40, Government.getGovernments().get(3));
+            dropStockpile(size / 2 - 10, size - 40, Government.getGovernments().get(4));
+            dropStockpile(size - 50, 40, Government.getGovernments().get(5));
+            dropStockpile(size - 50, size / 2, Government.getGovernments().get(6));
+            dropStockpile(size - 50, size - 40, Government.getGovernments().get(7));
         }
     }
 
@@ -139,7 +143,7 @@ public class EnvironmentMenuController {
 //        castle.setGovernment(government);
 //    }
 
-    public static void placeCastle(int x, int y) {
+    public static void placeCastle(int x, int y, Government government) {
         Castle castle = new Castle(x, y, x + 12, y + 12);
         for (int i = x; i <= x + 12; i++)
             for (int j = y; j <= y + 12; j++)
@@ -149,6 +153,7 @@ public class EnvironmentMenuController {
         imageView.fitHeightProperty().bind(textureSize.multiply(12));
         imageView.translateXProperty().bind(map[x][y].translateXProperty());
         imageView.translateYProperty().bind(map[x][y].translateYProperty());
+        government.setCastle(castle);
         mapPane.getChildren().add(imageView);
     }
 

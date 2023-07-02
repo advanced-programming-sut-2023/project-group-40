@@ -6,11 +6,13 @@ import model.buildings.Hovel;
 import model.buildings.Storage;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class Government {
     private static ArrayList<Government> governments = new ArrayList<>();
+    private static final HashSet<Government> playedGovernments = new HashSet<>();
     private final ArrayList<TradeRequest> incomingRequests = new ArrayList<>();
     private final ArrayList<TradeRequest> outgoingRequests = new ArrayList<>();
     private transient ArrayList<Building> buildings = new ArrayList<>();
@@ -308,5 +310,9 @@ public class Government {
 
     public String getUsername() {
         return username;
+    }
+
+    public static HashSet<Government> getPlayedGovernments() {
+        return playedGovernments;
     }
 }

@@ -11,6 +11,7 @@ import view.MapMenu;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class GameMenuController {
@@ -22,6 +23,16 @@ public class GameMenuController {
 
     private static int numberOfPlayers = 2;
     private static List<Integer> path = new ArrayList<>();
+    private static Government sickGovernment;
+    public static void setSickness() {
+        if(sickGovernment != null) sickGovernment.changePopularity(5);
+        int random = new Random().nextInt(1, numberOfPlayers+ 1);
+        sickGovernment = Government.getGovernments().get(random - 1);
+        sickGovernment.changePopularity(-5);
+    }
+    public static Government getSickGovernment() {
+        return sickGovernment;
+    }
 
     public static void setFoodRate(int rate) {
         if (rate > 2 || rate < -2) return;
@@ -626,18 +637,10 @@ public class GameMenuController {
         return result.toString();
     }
 
-    public static void setOnGovernment() {
-        if (onGovernment == null) {
-            onGovernment = currentGovernment;
-            return;
-        }
+    public static void nextGovernment() {
         int index = Government.getGovernments().indexOf(currentGovernment) + 1;
         if (index >= Government.getGovernments().size()) index %= Government.getGovernments().size();
-        onGovernment = Government.getGovernments().get(index);
-    }
-
-    public static Government getOnGovernment() {
-        return onGovernment;
+        currentGovernment = Government.getGovernments().get(index);
     }
 
     public static void checkPopulation() {
@@ -873,6 +876,8 @@ public class GameMenuController {
     }
 
     public static void nextTurn() {
+        GameMenuController.nextGovernment();
+        setSickness();
         if (isLastGovernment()) {
             foodVarietyAction();
             runBuildings();
@@ -882,7 +887,7 @@ public class GameMenuController {
         }
         diggingDitch();
         handleAttacks();
-        setOnGovernment();
+        nextGovernment();
         setDefaults();
     }
 
@@ -901,4 +906,5 @@ public class GameMenuController {
     public static ImageView getUnitImageView() {
         return unitImageView;
     }
+
 }

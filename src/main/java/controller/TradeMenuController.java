@@ -2,17 +2,15 @@ package controller;
 
 
 import com.auth0.jwt.JWT;
-import com.google.gson.Gson;
 import model.Good;
 import model.Government;
 import model.TradeRequest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static controller.MainController.*;
+import static controller.MainController.dataOutputStream;
 
 public class TradeMenuController {
     private static Government currentGovernment, targetGovernment;
@@ -27,36 +25,10 @@ public class TradeMenuController {
 
     public static String sendRequest(String type, HashMap<Good, Integer> products, String message) {
         TradeRequest tradeRequest = new TradeRequest(currentGovernment.getUsername(), targetGovernment.getUsername(), type, products, message);
-        targetGovernment.getOutgoingRequests().add(tradeRequest);
-        String token = JWT.create().withSubject("send trade request")
-                .withExpiresAt(MainController.getExpirationDate())
-                .withClaim("trade request", new Gson().toJson(tradeRequest))
-                .withHeader(MainController.headerClaims)
-                .sign(MainController.tokenAlgorithm);
-        try {
-            dataOutputStream.writeUTF(token);
-            return "request sent";
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(0);
-            return null;
-        }
+        GameMenuController.getCurrentGovernment().getOutgoingRequests().add(tradeRequest);
+        Government.getGovernmentByUser(targetGovernment.getUsername()).getIncomingRequests().add(tradeRequest);
+        return "request sent";
     }
-
-//    public static String showTradeList() {
-//        StringBuilder output = new StringBuilder("Unaccepted Requests:");
-//        for (TradeRequest request : currentGovernment.getRequests()) {
-//            if (!request.getAccepted()) {
-//                String username = request.getSender().getOwner().getUsername();
-//                output.append("\n").append(request.getId()).append(") username: ").append(username).append("\n   count: ")
-//                        .append(request.getCount()).append("\n").append("   price: ").append(request.getPrice())
-//                        .append("\n   ").append(username).append("'s message: ").append(request.getSenderMessage()).append("\n");
-//            }
-//        }
-//        if (!output.toString().contains("count"))
-//            return "no exist unaccepted requests";
-//        return output.toString();
-//    }
 
     public static String acceptTrade(int id, int totalPrice) {
         TradeRequest tradeRequest = null;
@@ -88,19 +60,6 @@ public class TradeMenuController {
         acceptRequest(tradeRequest);
         return "Accept Trade Request Successful";
     }
-
-//    public static String showTradeHistory() {
-//        StringBuilder output = new StringBuilder("All Request:");
-//        for (TradeRequest request : currentGovernment.getRequests()) {
-//            String username = request.getSender().getOwner().getUsername();
-//            output.append("\n").append(request.getId()).append(") username: ").append(username).append("\n   count: ").append(request.getCount()).append("\n   price: ").append(request.getPrice()).append("\n   ").append(username).append("'s message: ").append(request.getSenderMessage());
-//            if (request.getReceiverMessage() != null)
-//                output.append("\n   your message: ").append(request.getReceiverMessage());
-//        }
-//        if (!output.toString().contains("count"))
-//            return "no exist request";
-//        return output.toString();
-//    }
 
     public static String showGovernment() {
         StringBuilder output = new StringBuilder("Governments : \n");

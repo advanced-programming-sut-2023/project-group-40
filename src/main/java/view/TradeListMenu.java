@@ -43,7 +43,11 @@ public class TradeListMenu {
             }
         });
         enterButton.setOnMouseClicked(event -> {
-            // TODO: 6/29/2023
+            try {
+                new MapMenu().start(stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
         root.getChildren().addAll(backButton, enterButton);
         HBox hBox = new HBox(makeIncomingRequestsVBox(),makeOutgoingRequestsVBox());

@@ -55,6 +55,7 @@ public class ProfileMenu extends Application {
     private HBox usernameHBox, nicknameHBox, emailHBox, sloganHBox, buttonHBox, oldPasswordHBox, newPasswordHBox;
     private Stage primaryStage;
     private VBox changePasswordVbox;
+    private Timeline timeline;
 
     private static byte[] convertPathToByteArray(String avatarPath) {
         try {
@@ -207,6 +208,7 @@ public class ProfileMenu extends Application {
         Button back = new Button("back");
         back.setOnMouseClicked(event -> {
             try {
+                timeline.stop();
                 new MainMenu().start(primaryStage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -321,7 +323,7 @@ public class ProfileMenu extends Application {
             refreshState2();
         });
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), actionEvent -> {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(5), actionEvent -> {
             allUsers = getUsers();
             if (state == 0) refreshState0();
             if (state == 1) refreshState1();

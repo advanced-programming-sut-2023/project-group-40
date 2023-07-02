@@ -1,8 +1,6 @@
 package view;
 
 import controller.ConnectToServer;
-import controller.GameMenuController;
-import controller.ShopMenuController;
 import controller.TradeMenuController;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
@@ -22,8 +20,7 @@ import java.util.concurrent.Executors;
 public class TradeMenu {
     private static String requestType;
     private static HashMap<Good, Integer> productList = new HashMap<>();
-    private final Button backButton = new Button("back");
-    private final Button enterButton = new Button("enter map menu");
+    private final Button enterButton = new Button("enter trade list");
     BarPane bar;
     Pane root;
 
@@ -44,21 +41,25 @@ public class TradeMenu {
         bar.addPage("weapon", makeVBox("weapon", 2));
         bar.setMaxWidth(App.getWidth());
         bar.translateXProperty().bind(bar.widthProperty().divide(-2).add(App.getWidth() / 2));
-        backButton.setTranslateX(20);
-        backButton.setTranslateY(App.getHeight() - 100);
+//        enterTradeListButton.setTranslateX(20);
+//        enterTradeListButton.setTranslateY(App.getHeight() - 100);
         enterButton.setTranslateX(App.getWidth() - 290);
         enterButton.setTranslateY(App.getHeight() - 100);
-        backButton.setOnMouseClicked(event -> {
+//        enterTradeListButton.setOnMouseClicked(event -> {
+//            try {
+//                new TradeListMenu().start(stage);
+//            } catch (Exception e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+        enterButton.setOnMouseClicked(event -> {
             try {
                 new TradeListMenu().start(stage);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
-        enterButton.setOnMouseClicked(event -> {
-            // TODO: 6/29/2023
-        });
-        root.getChildren().addAll(backButton, enterButton);
+        root.getChildren().addAll(enterButton);
         VBox vbox = new VBox(bar);
         root.getChildren().add(vbox);
     }

@@ -3,11 +3,7 @@ package view;
 import view.enums.Commands;
 
 public class GameMenu {
-    private static boolean gameStarted = false;
 
-    public static void setGameStarted(boolean b) {
-        GameMenu.gameStarted = b;
-    }
 
     public static int[] getCoordinate() {
         System.out.println("type your coordinate :");

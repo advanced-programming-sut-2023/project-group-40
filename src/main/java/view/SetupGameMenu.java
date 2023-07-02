@@ -87,7 +87,8 @@ public class SetupGameMenu extends Application {
                         return;
                     }
                     Government.addGovernment(label.getText());
-                } else {
+                }
+                else {
                     Government.removeGovernment(label.getText());
                 }
             });
@@ -119,7 +120,6 @@ public class SetupGameMenu extends Application {
             Map.initMap(size);
             GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(MainMenuController.getCurrentUser().getUsername()));
             GameMenuController.setNumberOfPlayers(countOfPlayers);
-            // TODO: 6/7/2023
             try {
                 new EnvironmentMenu().start(primaryStage);
             } catch (Exception e) {

@@ -36,23 +36,24 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MapMenu extends Application {
-    private boolean isSelectTarget = false;
+    private static boolean isSelectTarget = false;
     private static Stage stage;
-    private final ArrayList<ImageView> buildings = new ArrayList<>();
-    private final ArrayList<ImageView> troops = new ArrayList<>();
-    private final ArrayList<Line> borderLines = new ArrayList<>();
-    public static final SimpleDoubleProperty textureSize = new SimpleDoubleProperty();
-    private final SimpleDoubleProperty deltaX = new SimpleDoubleProperty();
-    private final SimpleDoubleProperty deltaY = new SimpleDoubleProperty();
-    private final ArrayList<Cell> selectedCells = new ArrayList<>();
+    private static final ArrayList<ImageView> buildings = new ArrayList<>();
+    private static final ArrayList<ImageView> troops = new ArrayList<>();
+    private static final ArrayList<Line> borderLines = new ArrayList<>();
+    public static final SimpleDoubleProperty textureSize = EnvironmentMenu.textureSize;
+    private static final SimpleDoubleProperty deltaX = new SimpleDoubleProperty();
+    private static final SimpleDoubleProperty deltaY = new SimpleDoubleProperty();
+    private static final ArrayList<Cell> selectedCells = new ArrayList<>();
+    Pane bluePane = new Pane();
     private static final int MAP_SIZE = 200;
-    public static final ImageView[][] map = new ImageView[MAP_SIZE][MAP_SIZE];
-    private final Image redFace = new Image(MapMenu.class.getResource("/images/baseimages/redMask.png").toString(), 30, 30, false, false);
-    private final Image yellowFace = new Image(MapMenu.class.getResource("/images/baseimages/yellowMask.png").toString(), 30, 30, false, false);
-    private final Image greenFace = new Image(MapMenu.class.getResource("/images/baseimages/greenMask.png").toString(), 30, 30, false, false);
-    private final ArrayList<ImageView> faces = new ArrayList<>();
-    private final int SCROLL_PANE_HEIGHT = 200;
-    private String buttonStyle = " -fx-background-color: #090633;\n" +
+    public static final ImageView[][] map = EnvironmentMenu.map;
+    private static final Image redFace = new Image(MapMenu.class.getResource("/images/baseimages/redMask.png").toString(), 30, 30, false, false);
+    private static final Image yellowFace = new Image(MapMenu.class.getResource("/images/baseimages/yellowMask.png").toString(), 30, 30, false, false);
+    private static final Image greenFace = new Image(MapMenu.class.getResource("/images/baseimages/greenMask.png").toString(), 30, 30, false, false);
+    private static final ArrayList<ImageView> faces = new ArrayList<>();
+    private static final int SCROLL_PANE_HEIGHT = 200;
+    private static String buttonStyle = " -fx-background-color: #090633;\n" +
             "    -fx-text-fill: white;\n" +
             "    -fx-font-size: 30;\n" +
             "    -fx-font-family: \"Times New Roman\";\n" +
@@ -61,21 +62,22 @@ public class MapMenu extends Application {
             "    -fx-border-style: solid solid solid solid;\n" +
             "    -fx-border-width: 3;\n" +
             "    -fx-min-height: 50;";
-    Pane root;
-    AnchorPane mapPane;
-    private HBox scrollPaneHBox;
-    private double defaultTextureSize;
-    private int hoverX;
-    private int hoverY;
-    private VBox showDetailsBox = new VBox();
-    private final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
-    private VBox showManyCellsDetailsBox = new VBox();
-    private Cell selectedCell;
-    private int startIndexI, startIndexJ, endIndexI, endIndexJ;
+    private static Pane root = EnvironmentMenu.root;
+    private static AnchorPane mapPane = EnvironmentMenu.mapPane;
+    private static HBox scrollPaneHBox;
+    private static double defaultTextureSize;
+    private static int hoverX;
+    private static int hoverY;
+    private static VBox showDetailsBox = new VBox();
+    private static final Timeline hoverTimeline = new Timeline(new KeyFrame(Duration.seconds(2), event1 -> showDetails()));
+    private static VBox showManyCellsDetailsBox = new VBox();
+    private static Cell selectedCell;
+    private static int startIndexI, startIndexJ, endIndexI, endIndexJ;
     public static Label popularityLabel, populationLabel, treasuryLabel;
-    private Label fearRateLabel, taxRateLabel, foodRateLabel, sumRateLabel;
-    private VBox clipBoardVbox;
-    private Pane blackPane;
+    private static Label fearRateLabel, taxRateLabel, foodRateLabel, sumRateLabel;
+    private static VBox clipBoardVbox;
+    private static Pane blackPane;
+    private static Scene scene = EnvironmentMenu.scene;
 
     public static Node[] makePopup(String result, String successful) {
         VBox messageVbox = new VBox();
@@ -128,10 +130,6 @@ public class MapMenu extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         MapMenu.stage = stage;
-        root = new Pane();
-        mapPane = new AnchorPane();
-        root.getChildren().add(mapPane);
-        Scene scene = new Scene(root);
         scene.getStylesheets().add(Objects.requireNonNull(LoginMenu.class.getResource("/css/mapMenu.css")).toExternalForm());
         stage.setScene(scene);
         stage.show();
@@ -140,7 +138,6 @@ public class MapMenu extends Application {
 
         defaultTextureSize = App.getWidth() / 50;
         textureSize.set(defaultTextureSize);
-        Map.initMap(MAP_SIZE);
         mapPane.setMaxWidth(App.getWidth());
         mapPane.setMaxHeight(App.getHeight() - SCROLL_PANE_HEIGHT);
         mapPane.setPrefWidth(App.getWidth());
@@ -172,12 +169,24 @@ public class MapMenu extends Application {
     private void handleNextTurn() {
         root.addEventFilter(KeyEvent.KEY_PRESSED, keyEvent -> {
             if (keyEvent.getCode() == KeyCode.N) {
+                selectedCell = null;
+                GameMenuController.setSelectedBuilding(null);
+                mapPane.getChildren().remove(borderLines);
                 GameMenuController.nextTurn();
                 updateSumLabel();
                 updateLabel(GameMenuController.getCurrentGovernment().getFoodRate(), foodRateLabel, 0);
                 updateLabel(GameMenuController.getCurrentGovernment().getFearRate(), fearRateLabel, 1);
                 updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(), taxRateLabel, 2);
+                GameMenuController.setTaxRate(GameMenuController.getCurrentGovernment().getTaxRate());
+                GameMenuController.setFearRate(GameMenuController.getCurrentGovernment().getFearRate());
+                GameMenuController.setFoodRate(GameMenuController.getCurrentGovernment().getFoodRate());
                 updateScribeReport();
+                setSickness(GameMenuController.getSickGovernment());
+                try {
+                    new LoginMenu().start(stage);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
@@ -206,6 +215,9 @@ public class MapMenu extends Application {
         popularityLabel.setAlignment(Pos.CENTER);
         populationLabel.setMinWidth(vBox.getMinWidth());
         populationLabel.setAlignment(Pos.CENTER);
+        faces.add(new ImageView());
+        faces.add(new ImageView());
+        faces.add(new ImageView());
         popularityLabel.setOnMouseClicked(event -> {
             showPopularityFactors();
         });
@@ -235,10 +247,14 @@ public class MapMenu extends Application {
         vBox.setMaxHeight(300);
         vBox.translateXProperty().bind(vBox.widthProperty().divide(-2).add(App.getWidth() / 2));
         vBox.setTranslateY(10);
+        ImageView closeIcon = new ImageView(new Image(MapMenu.class.getResource("/images/errorIcon.png").toString(), 45, 45, false, false));
+        closeIcon.translateXProperty().bind(Bindings.add(0, vBox.widthProperty().divide(2).add(40)));
+        closeIcon.setTranslateY(-45);
+        vBox.getChildren().add(closeIcon);
+        closeIcon.setOnMouseClicked(event -> {
+            root.getChildren().remove(vBox);
+        });
         VBox labelVBox = new VBox(foodRateLabel, fearRateLabel, taxRateLabel);
-        faces.add(new ImageView());
-        faces.add(new ImageView());
-        faces.add(new ImageView());
         VBox textLabelVBox = new VBox(new Label("food rate"), new Label("fear rate"), new Label("tax rate"));
         foodRateLabel.setMinWidth(80);
         fearRateLabel.setMinWidth(80);
@@ -248,6 +264,7 @@ public class MapMenu extends Application {
         updateLabel(GameMenuController.getCurrentGovernment().getFearRate(), fearRateLabel, 1);
         updateLabel(GameMenuController.getCurrentGovernment().getTaxRate(), taxRateLabel, 2);
         HBox sumHbox = new HBox(new Label("In The Coming Month"), sumRateLabel);
+        sumHbox.setTranslateY(-30);
         sumHbox.setMinWidth(vBox.getMaxWidth());
         sumHbox.setAlignment(Pos.CENTER);
         sumHbox.setTranslateY(30);
@@ -268,7 +285,7 @@ public class MapMenu extends Application {
         foodRateSlider.setValue(Double.parseDouble(foodRateLabel.getText()));
         foodRateSlider.valueProperty().addListener((observableValue, number, t1) -> {
             updateLabel(t1.intValue(), foodRateLabel, 0);
-            GameMenuController.setFoodRate(t1.intValue());
+            GameMenuController.getCurrentGovernment().setFoodRate(t1.intValue());
         });
 
         Slider fearRateSlider = new Slider();
@@ -277,7 +294,7 @@ public class MapMenu extends Application {
         fearRateSlider.setValue(Double.parseDouble(fearRateLabel.getText()));
         fearRateSlider.valueProperty().addListener((observableValue, number, t1) -> {
             updateLabel(t1.intValue(), fearRateLabel, 1);
-            GameMenuController.setFearRate(t1.intValue());
+            GameMenuController.getCurrentGovernment().setFearRate(t1.intValue());
         });
         Slider taxRateSlider = new Slider();
         taxRateSlider.setMin(-3);
@@ -285,7 +302,7 @@ public class MapMenu extends Application {
         taxRateSlider.setValue(Double.parseDouble(taxRateLabel.getText()));
         taxRateSlider.valueProperty().addListener((observableValue, number, t1) -> {
             updateLabel(t1.intValue(), taxRateLabel, 2);
-            GameMenuController.setTaxRate(t1.intValue());
+            GameMenuController.getCurrentGovernment().setTaxRate(t1.intValue());
         });
         sidebarVBox.getChildren().addAll(foodRateSlider, fearRateSlider, taxRateSlider);
         vBox.getChildren().addAll(sidebarVBox);
@@ -440,6 +457,50 @@ public class MapMenu extends Application {
         handleZoom();
         handleCopyAndPaste();
     }
+    private void setupCells() {
+        for (int i = 0; i < MAP_SIZE; i++) {
+            for (int j = 0; j < MAP_SIZE; j++) {
+                int finalI = i;
+                int finalJ = j;
+                map[i][j].addEventFilter(DragEvent.DRAG_OVER, event -> {
+                    if (event.getDragboard().hasImage()) {
+                        String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
+                        String type = getTypeByUrl(url);
+                        boolean b = GameMenuController.checkDropBuilding(finalI, finalJ, type);
+                        if (b)
+                            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                        else event.acceptTransferModes(TransferMode.NONE);
+                    }
+                    event.consume();
+                });
+                map[i][j].setOnDragDropped(event -> {
+                    if (event.getDragboard().hasImage()) {
+                        String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
+                        String type = getTypeByUrl(url);
+                        ImageView imageView = new ImageView(event.getDragboard().getImage());
+                        buildings.add(imageView);
+                        int width = Buildings.getBuildingObjectByType(type).getWidth();
+                        int height = Buildings.getBuildingObjectByType(type).getHeight();
+                        imageView.fitWidthProperty().bind(textureSize.multiply(width));
+                        imageView.fitHeightProperty().bind(textureSize.multiply(height));
+                        imageView.translateXProperty().bind(map[finalI][finalJ].translateXProperty());
+                        imageView.translateYProperty().bind(map[finalI][finalJ].translateYProperty());
+                        mapPane.getChildren().add(imageView);
+                        for (int k = finalI; k <= finalI + width; k++) {
+                            for (int l = finalJ; l <= finalJ + height; l++) {
+                                if (Map.getMap()[k][l].equals(selectedCell)) {
+                                    selectedCell = null;
+                                    mapPane.getChildren().removeAll(borderLines);
+                                }
+                            }
+                        }
+                        GameMenuController.dropBuilding(finalI, finalJ, type);
+                    }
+                    event.consume();
+                });
+            }
+        }
+    }
 
     private void handleCopyAndPaste() {
         KeyCodeCombination copyKeyCodeCombination = new KeyCodeCombination(KeyCode.C, KeyCodeCombination.CONTROL_DOWN);
@@ -549,7 +610,7 @@ public class MapMenu extends Application {
     }
 
     private void handleSelectCell() {
-        mapPane.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+        mapPane.setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 double mouseX = event.getX(), mouseY = event.getY();
                 double x = map[0][0].getTranslateX();
@@ -603,7 +664,6 @@ public class MapMenu extends Application {
                     }
                     if (name.equals("shop")) {
                         try {
-                            GameMenuController.getCurrentGovernment().increaseAmountOfGood(Good.GOLD, 100);
                             new ShopMenu().start(stage);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
@@ -722,6 +782,7 @@ public class MapMenu extends Application {
             mapPane.getChildren().remove(showDetailsBox);
         });
         mapPane.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, event -> {
+            if (mapPane.getChildren().contains(showDetailsBox)) return;
             double mouseX = event.getX(), mouseY = event.getY();
             double x = map[0][0].getTranslateX();
             double y = map[0][0].getTranslateY();
@@ -821,67 +882,11 @@ public class MapMenu extends Application {
         root.getChildren().add(showManyCellsDetailsBox);
     }
 
-    private void setupCells() {
-        for (int i = 0; i < MAP_SIZE; i++) {
-            for (int j = 0; j < MAP_SIZE; j++) {
-                map[i][j] = new ImageView(Texture.LAND.getImage());
-                Map.getMap()[i][j].setTexture(Texture.LAND);
-                if (i == j) {
-                    map[i][j] = new ImageView(Texture.LAND.getImage());
-                    Map.getMap()[i][j].setTexture(Texture.LAND);
-                }
-                int finalI = i;
-                int finalJ = j;
-                map[i][j].addEventFilter(DragEvent.DRAG_OVER, event -> {
-                    if (event.getDragboard().hasImage()) {
-                        String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
-                        String type = getTypeByUrl(url);
-                        boolean b = GameMenuController.checkDropBuilding(finalI, finalJ, type);
-                        if (b)
-                            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                        else event.acceptTransferModes(TransferMode.NONE);
-                    }
-                    event.consume();
-                });
-                map[i][j].addEventFilter(DragEvent.DRAG_DROPPED, event -> {
-                    if (event.getDragboard().hasImage()) {
-                        String url = (String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
-                        String type = getTypeByUrl(url);
-                        ImageView imageView = new ImageView(event.getDragboard().getImage());
-                        buildings.add(imageView);
-                        int width = Buildings.getBuildingObjectByType(type).getWidth();
-                        int height = Buildings.getBuildingObjectByType(type).getHeight();
-                        imageView.fitWidthProperty().bind(textureSize.multiply(width));
-                        imageView.fitHeightProperty().bind(textureSize.multiply(height));
-                        imageView.translateXProperty().bind(map[finalI][finalJ].translateXProperty());
-                        imageView.translateYProperty().bind(map[finalI][finalJ].translateYProperty());
-                        mapPane.getChildren().add(imageView);
-                        for (int k = finalI; k <= finalI + width; k++) {
-                            for (int l = finalJ; l <= finalJ + height; l++) {
-                                if (Map.getMap()[k][l].equals(selectedCell)) {
-                                    selectedCell = null;
-                                    mapPane.getChildren().removeAll(borderLines);
-                                }
-                            }
-                        }
-                        GameMenuController.dropBuilding(finalI, finalJ, type);
-                    }
-                    event.consume();
-                });
-                map[i][j].fitHeightProperty().bind(textureSize);
-                map[i][j].fitWidthProperty().bind(textureSize);
-                map[i][j].translateXProperty().bind(Bindings.add(textureSize.multiply(i), deltaX));
-                map[i][j].translateYProperty().bind(Bindings.add(textureSize.multiply(j), deltaY));
-                mapPane.getChildren().add(map[i][j]);
-            }
-        }
-    }
-
     private void zoom(double percentage) {
         textureSize.set(textureSize.get() * (100 + percentage) / 100);
     }
 
-    private void showDetails() {
+    private static void showDetails() {
         showDetailsBox = new VBox();
         Cell cell = Map.getMap()[hoverX][hoverY];
         HBox textureHBox = new HBox();
@@ -1159,5 +1164,15 @@ public class MapMenu extends Application {
         error.setTranslateY(50);
         closeIcon.setTranslateY(-55);
         messageVbox.getChildren().add(closeIcon);
+    }
+
+    public void setSickness(Government sickGovernment) {
+        mapPane.getChildren().remove(bluePane);
+        bluePane.setStyle("-fx-background-color: rgba(11,68,239,0.25)");
+        bluePane.translateXProperty().bind(textureSize.multiply(sickGovernment.getCastle().getX1() - 4));
+        bluePane.translateYProperty().bind(textureSize.multiply(sickGovernment.getCastle().getY1() -4));
+        bluePane.prefWidthProperty().bind(textureSize.multiply(20));
+        bluePane.prefHeightProperty().bind(textureSize.multiply(20));
+        mapPane.getChildren().add(bluePane);
     }
 }

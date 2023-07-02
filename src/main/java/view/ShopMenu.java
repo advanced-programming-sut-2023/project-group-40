@@ -2,6 +2,7 @@ package view;
 
 import controller.GameMenuController;
 import controller.ShopMenuController;
+import controller.TradeMenuController;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -41,10 +42,15 @@ public class ShopMenu {
         enterButton.setTranslateX(App.getWidth() - 290);
         enterButton.setTranslateY(App.getHeight() - 100);
         backButton.setOnMouseClicked(event -> {
-            // TODO: 6/29/2023
+            try {
+                new MapMenu().start(stage);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
         enterButton.setOnMouseClicked(event -> {
             try {
+                TradeMenuController.setCurrentGovernment(GameMenuController.getCurrentGovernment());
                 new TradeMenu().start(stage);
             } catch (Exception e) {
                 throw new RuntimeException(e);

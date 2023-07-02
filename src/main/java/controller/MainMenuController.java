@@ -31,8 +31,4 @@ public class MainMenuController {
         return "you entered in progress game";
     }
 
-    public static void continueGame() {
-        User user = MainMenuController.getCurrentUser();
-        GameMenuController.setCurrentGovernment(Government.getGovernmentByUser(user.getUsername()));
-    }
 }

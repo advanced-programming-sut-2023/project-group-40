@@ -2,9 +2,6 @@ package model;
 
 import javafx.scene.image.Image;
 
-import java.util.Random;
-import java.util.random.RandomGenerator;
-
 public enum Good {
     MACE(30, 60, "weapon"),
     SWORD(30, 60, "weapon"),
@@ -35,11 +32,7 @@ public enum Good {
         this.sellPrice = priceSell;
         this.buyPrice = priceBuy;
         this.type = type;
-        String[] names = new String[2];
-        names[0] = "apple";
-        names[1] = "cheese";
-        int random = RandomGenerator.getDefault().nextInt(2);
-        this.image = new Image(Good.class.getResource("/images/goods/" + names[random] + ".png").toString());
+        this.image = new Image(Good.class.getResource("/images/goods/" + name().toLowerCase() + ".png").toString());
     }
 
     public static Good getGoodByName(String name) {

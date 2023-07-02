@@ -3,8 +3,6 @@ package view;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
@@ -34,7 +32,6 @@ public class ErrorDialog {
         vBox.setMaxHeight(330);
         vBox.setTranslateY(20);
         vBox.setAlignment(Pos.CENTER);
-        ImageView imageView = new ImageView(new Image(ErrorDialog.class.getResource("/images/errorIcon.png").toString(), 50, 50, true, true));
         Label label = new Label("Error");
         label.minWidthProperty().bind(vBox.widthProperty());
         label.maxWidthProperty().bind(vBox.widthProperty());
@@ -43,10 +40,10 @@ public class ErrorDialog {
         contentLabel.setMinWidth(vBox.getMinWidth());
         contentLabel.setTranslateY(20);
         Button okButton = new Button("OK");
-        okButton.setTranslateY(35);
+        okButton.setTranslateY(10);
         okButton.setStyle("-fx-background-color: red");
         okButton.setOnMouseClicked(mouseEvent -> removeDialog());
-        vBox.getChildren().addAll(imageView, label, contentLabel, okButton);
+        vBox.getChildren().addAll(label, contentLabel, okButton);
         root.getChildren().add(vBox);
     }
 

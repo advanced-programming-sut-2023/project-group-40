@@ -7,7 +7,8 @@ public enum Tree {
     CHERRY_PALM("cheery palm"),
     OLIVE_TREE("olive tree"),
     COCONUT_PALM("coconut palm"),
-    DATE_PALM("date palm");
+    DATE_PALM("date palm"),
+    PINE_TREE("pine tree");
     private final String name;
     private Image image;
 
